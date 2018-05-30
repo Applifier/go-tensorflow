@@ -1,0 +1,26 @@
+
+version: "3"
+
+services:
+  serving:
+    build:
+      dockerfile: ./Dockerfile-serving
+      context: .
+    volumes:
+      - ../../testdata/models:/tensorflow/models
+    ports:
+      - "7000:7000"
+
+  test:
+    build:
+      dockerfile: ./Dockerfile-testing
+      context: .
+    volumes:
+      - ../../:/go/src/github.com/Applifier/go-tensorflow
+    working_dir: /go/src/github.com/Applifier/go-tensorflow
+    command: go test -v -bench=. ./...
+    environment:
+      SERVING_ADDR: serving:7000
+    links:
+      - serving
+    
