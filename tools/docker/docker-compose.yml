@@ -23,4 +23,17 @@ services:
       SERVING_ADDR: serving:7000
     links:
       - serving
+
+  mobilenet:
+    build:
+      dockerfile: ./Dockerfile-testing
+      context: .
+    volumes:
+      - ../../:/go/src/github.com/Applifier/go-tensorflow
+    working_dir: /go/src/github.com/Applifier/go-tensorflow/examples/mobilenet
+    command: bash -c "go run *.go ../../testdata/cup.jpg"
+    environment:
+      SERVING_ADDR: serving:7000
+    links:
+      - serving
     

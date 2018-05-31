@@ -38,6 +38,7 @@ func NewTensor(value interface{}) (*Tensor, error) {
 		return tensor, nil
 	}
 
+	// TODO figure out if this actually causes more issues that it solves
 	if byteSliceSlize, ok := value.([][]byte); ok {
 		newValue := make([]string, len(byteSliceSlize))
 		for i, b := range byteSliceSlize {
@@ -70,6 +71,8 @@ func NewTensor(value interface{}) (*Tensor, error) {
 		tensor.IntVal = singleDimInt32Slice(value, shape, flattened)
 	case framework.DataType_DT_UINT32:
 		tensor.Uint32Val = singleDimUInt32Slice(value, shape, flattened)
+	case framework.DataType_DT_UINT8:
+		tensor.IntVal = singleDimUInt8Slice(value, shape, flattened)
 	case framework.DataType_DT_STRING:
 		flattenedArr := singleDimStringSlice(value, shape, flattened)
 		if flattenedArr != nil {
@@ -316,6 +319,17 @@ func flatten2DInt32Slice(in [][]int32, out []int32) []int32 {
 	return out
 }
 
+func flatten2DUInt8Slice(in [][]uint8, out []int32) []int32 {
+	for _, vals := range in {
+		arr := make([]int32, len(vals))
+		for i, v := range vals {
+			arr[i] = int32(v)
+		}
+		out = append(out, arr...)
+	}
+	return out
+}
+
 func flatten2DInt64Slice(in [][]int64, out []int64) []int64 {
 	for _, vals := range in {
 		out = append(out, vals...)
@@ -434,6 +448,40 @@ func singleDimInt32Slice(val interface{}, dims []int64, flatN int64) []int32 {
 	flattenNDArray(val, flat)
 
 	return flat
+}
+
+func singleDimUInt8Slice(val interface{}, dims []int64, flatN int64) []int32 {
+	switch v := val.(type) {
+	case uint8:
+		return []int32{int32(v)}
+	case []uint8:
+		flat := make([]int32, flatN)
+		for i, v := range v {
+			flat[i] = int32(v)
+		}
+		return flat
+	case [][]uint8:
+		flat := make([]int32, 0, flatN)
+		return flatten2DUInt8Slice(v, flat)
+	case [][][]uint8:
+		flat := make([]int32, 0, flatN)
+		for _, dSlice := range v {
+			flat = flatten2DUInt8Slice(dSlice, flat)
+		}
+
+		return flat
+	}
+
+	flat := make([]uint8, flatN, flatN)
+	flattenNDArray(val, flat)
+
+	// TODO optimize this
+	returnArr := make([]int32, flatN)
+	for i, v := range flat {
+		returnArr[i] = int32(v)
+	}
+
+	return returnArr
 }
 
 func singleDimInt64Slice(val interface{}, dims []int64, flatN int64) []int64 {

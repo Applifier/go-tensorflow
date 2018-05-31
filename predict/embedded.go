@@ -52,6 +52,8 @@ func NewEmbeddedPredictor(modelsDir string, name string, version int, signature 
 
 func (ep *embeddedPredictor) convertValueToTensor(val interface{}) (*tf.Tensor, error) {
 	switch v := val.(type) {
+	case *tf.Tensor:
+		return v, nil
 	case *serving.Tensor:
 		return tf.NewTensor(serving.ValueFromTensor(v))
 	case map[string]interface{}:

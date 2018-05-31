@@ -25,7 +25,10 @@
 
 [[projects]]
   name = "github.com/tensorflow/tensorflow"
-  packages = ["tensorflow/go"]
+  packages = [
+    "tensorflow/go",
+    "tensorflow/go/op"
+  ]
   revision = "93bc2e2072e0daccbcff7a90d397b704a9e8f778"
   version = "v1.8.0"
 
@@ -104,6 +107,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e5a6bc05ee97477c131acb097991182f928c1bf515e11bc991b35fd94b85b18f"
+  inputs-digest = "fbb2c0def123ca3356711ce68711e719adf60ffc9ba6bbb9a8f16decaa03b532"
   solver-name = "gps-cdcl"
   solver-version = 1

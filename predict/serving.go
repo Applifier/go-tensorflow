@@ -24,6 +24,8 @@ func NewServingPredictor(modelClient serving.ModelPredictionClient) Predictor {
 
 func (sp *servingPredictor) convertValueToTensor(val interface{}) (*serving.Tensor, error) {
 	switch v := val.(type) {
+	case *serving.Tensor:
+		return v, nil
 	case *tf.Tensor:
 		return serving.NewTensor(v.Value())
 	case map[string]interface{}:
