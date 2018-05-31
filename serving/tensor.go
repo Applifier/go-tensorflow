@@ -119,14 +119,20 @@ func NewTensor(value interface{}) (*Tensor, error) {
 	return tensor, nil
 }
 
-// ValueFromTensor returns value from a given tensor
-func ValueFromTensor(t *Tensor) interface{} {
-	typ := typeOf(t.Dtype, t.TensorShape.Dim)
-
+// ShapeFromTensor returns shape from a tensor
+func ShapeFromTensor(t *Tensor) []int64 {
 	dims := make([]int64, 0, len(t.TensorShape.Dim))
 	for _, d := range t.TensorShape.Dim {
 		dims = append(dims, d.Size_)
 	}
+	return dims
+}
+
+// ValueFromTensor returns value from a given tensor
+func ValueFromTensor(t *Tensor) interface{} {
+	typ := typeOf(t.Dtype, t.TensorShape.Dim)
+
+	dims := ShapeFromTensor(t)
 
 	val := reflect.New(typ)
 
