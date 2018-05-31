@@ -44,7 +44,11 @@ res, modelInfo, _ := predictor.Predict(
     nil,
 )
 
-scores := res["scores"].Value()
+scores := res["scores"].Value().([][]float32)
+
+fmt.Printf("scores %+v\n", scores[0])
+
+// Output: scores [0.54612064 0.45387936]
 
 ```
 
