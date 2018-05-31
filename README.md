@@ -2,6 +2,53 @@
 [![Build Status](https://travis-ci.com/Applifier/go-tensorflow.svg?branch=master)](https://travis-ci.com/Applifier/go-tensorflow)
 
 # Packages
+## predict
+
+Unified interface for TensorFlow prediction. Implementations automatically convert go types into matching TensorFlow Tensors.
+
+
+### Example
+
+Example uses pre-trained model found under testdata/models [wide_deep](https://github.com/tensorflow/models/tree/master/official/wide_deep)
+
+```go
+import "github.com/Applifier/go-tensorflow/predict"
+```
+
+```go
+
+// Uncomment line below to witch implementation
+// predictor := NewServingPredictor(servingModelClient)
+predictor, _ := NewEmbeddedPredictor("testdata/models", "wide_deep", 1527087570, "serving_default")
+
+
+m := map[string]interface{}{
+    "age":            35.0,
+    "capital_gain":   0.0,
+    "capital_loss":   0.0,
+    "education":      "Masters",
+    "education_num":  14.0,
+    "gender":         "Female",
+    "hours_per_week": 29.0,
+    "native_country": "United-States",
+    "occupation":     "Prof-specialty",
+    "relationship":   "Husband",
+    "workclass":      "Private",
+}
+
+res, modelInfo, _ := predictor.Predict(
+    context.Background(),
+    map[string]interface{}{
+        "inputs": m,
+    },
+    nil,
+)
+
+scores := res["scores"].Value()
+
+```
+
+
 ## serving
 
 Go client for [Tensorflow Serving](https://github.com/tensorflow/serving)
@@ -10,7 +57,7 @@ Go client for [Tensorflow Serving](https://github.com/tensorflow/serving)
 
 Example uses pre-trained model found under testdata/models [wide_deep](https://github.com/tensorflow/models/tree/master/official/wide_deep)
 
-```
+```go
 import "github.com/Applifier/go-tensorflow/serving"
 ```
 
