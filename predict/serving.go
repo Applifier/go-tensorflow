@@ -69,13 +69,13 @@ func (sp *servingPredictor) Predict(ctx context.Context, inputs map[string]inter
 		return nil, ModelInfo{}, err
 	}
 
-	outpuMap := make(map[string]Tensor, len(res.Outputs))
+	outputMap := make(map[string]Tensor, len(res.Outputs))
 
 	for key, tensor := range res.Outputs {
-		outpuMap[key] = &servingPredictorTensor{t: tensor}
+		outputMap[key] = &servingPredictorTensor{t: tensor}
 	}
 
-	return outpuMap, ModelInfo{
+	return outputMap, ModelInfo{
 		Name:    res.ModelSpec.Name,
 		Version: int(res.ModelSpec.Version.Value),
 	}, nil
