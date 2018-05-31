@@ -60,6 +60,7 @@ func main() {
 		panic(err)
 	}
 
+	// Run prediction both against a local model and tensorflow serving
 	for name, predictor := range map[string]predict.Predictor{
 		"serving":  getServingPredictor(),
 		"embedded": getLocalPredictor(),
