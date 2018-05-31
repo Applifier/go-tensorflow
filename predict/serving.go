@@ -6,6 +6,8 @@ import (
 
 	"github.com/Applifier/go-tensorflow/serving"
 	"github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
+
+	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
 // servingPredictor implementation of the Predictor interface for TensorFlow Serving
@@ -22,6 +24,8 @@ func NewServingPredictor(modelClient serving.ModelPredictionClient) Predictor {
 
 func (sp *servingPredictor) convertValueToTensor(val interface{}) (*serving.Tensor, error) {
 	switch v := val.(type) {
+	case *tf.Tensor:
+		return serving.NewTensor(v.Value())
 	case map[string]interface{}:
 		example, err := serving.NewExampleFromMap(v)
 		if err != nil {
