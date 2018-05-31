@@ -50,7 +50,7 @@ fmt.Printf("scores %+v\n", scores[0])
 
 // Output: scores [0.54612064 0.45387936]
 
-fmt.Printf("model name %s, version %s", model.Name, model.Version)
+fmt.Printf("model name %s, version %s", modelInfo.Name, modelInfo.Version)
 // Output: model name wide_deep, version 1527087570
 
 ```
