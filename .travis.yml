@@ -12,4 +12,6 @@ before_install:
 - make load-models
 
 
-script: make test
+script: 
+- make test
+- make run-mobilenet
