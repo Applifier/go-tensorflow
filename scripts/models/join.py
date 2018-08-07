@@ -9,7 +9,7 @@ sess = tf.Session()
 
 tf.saved_model.simple_save(
     sess,
-    '../../testdata/models/join/1/',
+    '../../testdata/test_models/join/1/',
     {'a': a, 'b': b},
     {'joined': c}
 )

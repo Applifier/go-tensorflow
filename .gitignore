@@ -1,4 +1,5 @@
 .serving_repo/
 .tensorflow_repo/
 
-testdata/models/
+testdata/models/mobilenet
+testdata/test_models

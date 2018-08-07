@@ -23,8 +23,12 @@ type test struct {
 	want map[string]interface{}
 }
 
+func getTestSavedModelsDir() string {
+	return path.Join(getTestPath(), "../../testdata/test_models")
+}
+
 func runPredict(modelName string, in map[string]interface{}) map[string]interface{} {
-	embeddedPredictor, err := NewEmbeddedPredictor(getModelsDir(), modelName, 1, "serving_default")
+	embeddedPredictor, err := NewEmbeddedPredictor(getTestSavedModelsDir(), modelName, 1, "serving_default")
 	if err != nil {
 		panic(err)
 	}
@@ -91,12 +95,27 @@ func loadTests() (tests []test) {
 	return tests
 }
 
+func jsonify(in map[string]interface{}) map[string]interface{} {
+	out := map[string]interface{}{}
+
+	b, err := json.Marshal(in)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := json.Unmarshal(b, &out); err != nil {
+		panic(err)
+	}
+
+	return out
+}
+
 func Test_runPredict(t *testing.T) {
 	loadTests()
 	tests := loadTests()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := runPredict(tt.args.modelName, tt.args.in); !reflect.DeepEqual(got, tt.want) {
+			if got := runPredict(tt.args.modelName, tt.args.in); !reflect.DeepEqual(jsonify(got), tt.want) {
 				t.Errorf("runPredict() = %v, want %v", got, tt.want)
 			}
 		})
