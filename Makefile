@@ -1,5 +1,12 @@
 MODELS_PATH := `pwd`/testdata/models
 
+build: load-models generate-models
+.PHONY: build
+
+generate-models:
+	./scripts/generatemodels.sh
+.PHONY: generate-models
+
 update-proto:
 	./scripts/update_proto.sh
 .PHONY: update-proto
