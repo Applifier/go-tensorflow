@@ -9,6 +9,7 @@ import (
 
 	"github.com/Applifier/go-tensorflow/savedmodel"
 	"github.com/Applifier/go-tensorflow/serving"
+	"github.com/Applifier/go-tensorflow/utils"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
@@ -56,8 +57,30 @@ func (ep *embeddedPredictor) convertValueToTensor(val interface{}) (*tf.Tensor, 
 		return v, nil
 	case *serving.Tensor:
 		return tf.NewTensor(serving.ValueFromTensor(v))
+	case *Example:
+		exampleSerialized, err := v.Marshal()
+		if err != nil {
+			return nil, err
+		}
+
+		return tf.NewTensor([]string{string(exampleSerialized)})
+	case Examplifier:
+		examples, err := v.Examples()
+		if err != nil {
+			return nil, err
+		}
+		examplesStrings := make([]string, len(examples))
+
+		for i, example := range examples {
+			exampleSerialized, err := example.Marshal()
+			if err != nil {
+				return nil, err
+			}
+			examplesStrings[i] = string(exampleSerialized)
+		}
+		return tf.NewTensor(examples)
 	case map[string]interface{}:
-		example, err := serving.NewExampleFromMap(v)
+		example, err := utils.NewExampleFromMap(v)
 		if err != nil {
 			return nil, err
 		}
@@ -71,7 +94,7 @@ func (ep *embeddedPredictor) convertValueToTensor(val interface{}) (*tf.Tensor, 
 		examples := make([]string, len(v))
 
 		for i, m := range v {
-			example, err := serving.NewExampleFromMap(m)
+			example, err := utils.NewExampleFromMap(m)
 			if err != nil {
 				return nil, err
 			}
@@ -110,6 +133,20 @@ func (ep *embeddedPredictor) Predict(ctx context.Context, inputs map[string]inte
 	}
 
 	return outputMap, ModelInfo{
+		Name:    ep.name,
+		Version: ep.version,
+	}, nil
+}
+
+func (ep *embeddedPredictor) Classify(ctx context.Context, examples []*Example, context *Example) ([][]Class, ModelInfo, error) {
+	return nil, ModelInfo{
+		Name:    ep.name,
+		Version: ep.version,
+	}, nil
+}
+
+func (ep *embeddedPredictor) Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error) {
+	return nil, ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
 	}, nil
