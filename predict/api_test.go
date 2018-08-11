@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/Applifier/go-tensorflow/serving"
+	"github.com/Applifier/go-tensorflow/utils"
 )
 
 func getServingAddr() string {
@@ -28,7 +29,86 @@ func getModelsDir() string {
 	return path.Join(getTestPath(), "../../testdata/models")
 }
 
-func TestPredictorAPI(t *testing.T) {
+func TestPredictorClassifyApi(t *testing.T) {
+	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+		getServingAddr(),
+		"wide_deep",
+		"serving_default",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer servingModelClient.Close()
+
+	servingPredictor := NewServingPredictor(servingModelClient)
+
+	embeddedPredictor, err := NewEmbeddedPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	predictors := map[string]Predictor{
+		"serving":  servingPredictor,
+		"embedded": embeddedPredictor,
+	}
+
+	for name, predictor := range predictors {
+		t.Run(name, func(t *testing.T) {
+			m := map[string]interface{}{
+				"capital_gain":   0.0,
+				"capital_loss":   0.0,
+				"education":      "Masters",
+				"education_num":  14.0,
+				"hours_per_week": 29.0,
+				"native_country": "United-States",
+				"occupation":     "Prof-specialty",
+				"relationship":   "Husband",
+				"workclass":      "Private",
+			}
+
+			contextMap := map[string]interface{}{
+				"gender": "Female",
+				"age":    35.0,
+			}
+
+			example, err := utils.NewExampleFromMap(m)
+			if err != nil {
+				t.Error(err)
+			}
+
+			contextExample, err := utils.NewExampleFromMap(contextMap)
+			if err != nil {
+				t.Error(err)
+			}
+
+			res, modelInfo, err := predictor.Classify(
+				context.Background(),
+				[]*Example{example},
+				contextExample,
+			)
+
+			if err != nil {
+				t.Error(err)
+			}
+
+			if modelInfo.Name != "wide_deep" {
+				t.Error("Wrong model name returned")
+			}
+
+			if modelInfo.Version != 1527087570 {
+				t.Error("Wrong model version returned")
+			}
+
+			if res[0][0].Score != 0.54612064 {
+				t.Error("Wrong result received")
+			}
+
+		})
+	}
+}
+
+func TestPredictorPredictAPI(t *testing.T) {
 	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
 		getServingAddr(),
 		"wide_deep",

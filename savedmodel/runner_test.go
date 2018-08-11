@@ -7,7 +7,7 @@ import (
 
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 
-	"github.com/Applifier/go-tensorflow/serving"
+	"github.com/Applifier/go-tensorflow/utils"
 )
 
 func TestRunner(t *testing.T) {
@@ -29,7 +29,7 @@ func TestRunner(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	example, _ := serving.NewExampleFromMap(map[string]interface{}{
+	example, _ := utils.NewExampleFromMap(map[string]interface{}{
 		"age":            35.0,
 		"capital_gain":   0.0,
 		"capital_loss":   0.0,

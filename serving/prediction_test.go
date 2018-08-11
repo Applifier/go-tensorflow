@@ -6,6 +6,8 @@ import (
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/Applifier/go-tensorflow/utils"
 )
 
 func getServingAddr() string {
@@ -174,7 +176,7 @@ func testPredict(cli ModelPredictionClient, featureMaps ...map[string]interface{
 	tensorData := [][]byte{}
 
 	for _, featureMap := range featureMaps {
-		example, err := NewExampleFromMap(featureMap)
+		example, err := utils.NewExampleFromMap(featureMap)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -213,7 +215,7 @@ func ExampleModelPredictionClient() {
 	)
 
 	// Create Example and Features
-	example, _ := NewExampleFromMap(map[string]interface{}{
+	example, _ := utils.NewExampleFromMap(map[string]interface{}{
 		"age":            35.0,
 		"capital_gain":   0.0,
 		"capital_loss":   0.0,

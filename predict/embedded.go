@@ -6,6 +6,8 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"sync"
+	"unsafe"
 
 	"github.com/Applifier/go-tensorflow/savedmodel"
 	"github.com/Applifier/go-tensorflow/serving"
@@ -13,10 +15,14 @@ import (
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
+const defaultBufferSize = 2048
+
 type embeddedPredictor struct {
 	runner  *savedmodel.Runner
 	name    string
 	version int
+
+	bufferPool sync.Pool
 }
 
 // NewEmbeddedPredictor returns a new embedded predictor for a given saved model folder path name and version
@@ -48,7 +54,28 @@ func NewEmbeddedPredictor(modelsDir string, name string, version int, signature 
 		runner:  runner,
 		name:    name,
 		version: version,
+
+		bufferPool: sync.Pool{
+			New: func() interface{} {
+				return make([]byte, 0, defaultBufferSize)
+			},
+		},
 	}, nil
+}
+
+func (ep *embeddedPredictor) getBuffer(size int) []byte {
+
+	buf := ep.bufferPool.Get().([]byte)
+
+	if cap(buf) >= size {
+		return buf[:size]
+	}
+
+	return make([]byte, size)
+}
+
+func (ep *embeddedPredictor) putBuffer(b []byte) {
+	ep.bufferPool.Put(b)
 }
 
 func (ep *embeddedPredictor) convertValueToTensor(val interface{}) (*tf.Tensor, error) {
@@ -138,11 +165,98 @@ func (ep *embeddedPredictor) Predict(ctx context.Context, inputs map[string]inte
 	}, nil
 }
 
+func (ep *embeddedPredictor) marshalExample(e *Example) ([]byte, error) {
+	buf := ep.getBuffer(e.Size())
+	n, err := e.MarshalTo(buf)
+	if err != nil {
+		return nil, err
+	}
+	return buf[:n], nil
+}
+
 func (ep *embeddedPredictor) Classify(ctx context.Context, examples []*Example, context *Example) ([][]Class, ModelInfo, error) {
-	return nil, ModelInfo{
+	modelInfo := ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
-	}, nil
+	}
+
+	var contextBuf []byte
+	if context != nil {
+		var err error
+		contextBuf, err = ep.marshalExample(context)
+		if contextBuf != nil {
+			defer ep.putBuffer(contextBuf)
+		}
+
+		if err != nil {
+			return nil, modelInfo, err
+		}
+	}
+
+	serializedExamples := make([]string, len(examples))
+
+	for i, example := range examples {
+		buf, err := ep.marshalExample(example)
+		if err != nil {
+			return nil, modelInfo, err
+		}
+
+		if contextBuf != nil {
+			buf = append(buf, contextBuf...)
+		}
+
+		serializedExamples[i] = byteSlizeToString(buf)
+		defer ep.putBuffer(buf)
+	}
+
+	inputs, err := tf.NewTensor(serializedExamples)
+	if err != nil {
+		return nil, modelInfo, err
+	}
+
+	res, err := ep.runner.Run(map[string]*tf.Tensor{
+		"inputs": inputs,
+	}, nil)
+	if err != nil {
+		return nil, modelInfo, err
+	}
+
+	result := make([][]Class, len(examples))
+
+	classesTensor, classesOk := res["classes"]
+	scoresTensor, scoresOk := res["scores"]
+
+	var classes [][]string
+	var scores [][]float32
+	var dims []int64
+
+	if scoresOk {
+		scores = scoresTensor.Value().([][]float32)
+		dims = scoresTensor.Shape()
+	}
+	if classesOk {
+		classes = classesTensor.Value().([][]string)
+		if dims == nil {
+			dims = classesTensor.Shape()
+		}
+	}
+
+	if dims != nil {
+		for exampleI := int64(0); exampleI < dims[0]; exampleI++ {
+			exampleClasses := make([]Class, dims[1])
+			result[exampleI] = exampleClasses
+			for classI := int64(0); classI < dims[1]; classI++ {
+				if scoresOk {
+					exampleClasses[classI].Score = scores[exampleI][classI]
+				}
+				if classesOk {
+					exampleClasses[classI].Label = classes[exampleI][classI]
+				}
+			}
+		}
+	}
+
+	return result, modelInfo, err
 }
 
 func (ep *embeddedPredictor) Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error) {
@@ -189,4 +303,8 @@ func (ept *embeddedPredictorTensor) Type() TensorType {
 	default:
 		panic(fmt.Errorf("unsupported type %v", ept.t.DataType()))
 	}
+}
+
+func byteSlizeToString(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b)) // nolint: gas
 }
