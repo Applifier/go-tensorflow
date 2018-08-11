@@ -108,6 +108,85 @@ func TestPredictorClassifyApi(t *testing.T) {
 	}
 }
 
+func TestPredictorRegressAPI(t *testing.T) {
+	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+		getServingAddr(),
+		"wide_deep",
+		"regression",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer servingModelClient.Close()
+
+	servingPredictor := NewServingPredictor(servingModelClient)
+
+	embeddedPredictor, err := NewEmbeddedPredictor(getModelsDir(), "wide_deep", 1527087570, "regression")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	predictors := map[string]Predictor{
+		"serving":  servingPredictor,
+		"embedded": embeddedPredictor,
+	}
+
+	for name, predictor := range predictors {
+		t.Run(name, func(t *testing.T) {
+			m := map[string]interface{}{
+				"capital_gain":   0.0,
+				"capital_loss":   0.0,
+				"education":      "Masters",
+				"education_num":  14.0,
+				"hours_per_week": 29.0,
+				"native_country": "United-States",
+				"occupation":     "Prof-specialty",
+				"relationship":   "Husband",
+				"workclass":      "Private",
+			}
+
+			contextMap := map[string]interface{}{
+				"gender": "Female",
+				"age":    35.0,
+			}
+
+			example, err := utils.NewExampleFromMap(m)
+			if err != nil {
+				t.Error(err)
+			}
+
+			contextExample, err := utils.NewExampleFromMap(contextMap)
+			if err != nil {
+				t.Error(err)
+			}
+
+			res, modelInfo, err := predictor.Regress(
+				context.Background(),
+				[]*Example{example},
+				contextExample,
+			)
+
+			if err != nil {
+				t.Error(err)
+			}
+
+			if modelInfo.Name != "wide_deep" {
+				t.Error("Wrong model name returned")
+			}
+
+			if modelInfo.Version != 1527087570 {
+				t.Error("Wrong model version returned")
+			}
+
+			if res[0].Value != 0.4538794 {
+				t.Error("Wrong value returned", res[0].Value)
+			}
+
+		})
+	}
+}
+
 func TestPredictorPredictAPI(t *testing.T) {
 	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
 		getServingAddr(),

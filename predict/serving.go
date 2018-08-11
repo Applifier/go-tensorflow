@@ -178,7 +178,10 @@ func (sp *servingPredictor) Regress(ctx context.Context, examples []*Example, co
 		regressions[i].Value = regression.Value
 	}
 
-	return nil, ModelInfo{}, nil
+	return regressions, ModelInfo{
+		Name:    res.ModelSpec.Name,
+		Version: int(res.ModelSpec.Version.Value),
+	}, nil
 }
 
 type servingPredictorTensor struct {

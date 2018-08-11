@@ -260,7 +260,60 @@ func (ep *embeddedPredictor) Classify(ctx context.Context, examples []*Example, 
 }
 
 func (ep *embeddedPredictor) Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error) {
-	return nil, ModelInfo{
+	modelInfo := ModelInfo{
+		Name:    ep.name,
+		Version: ep.version,
+	}
+
+	var contextBuf []byte
+	if context != nil {
+		var err error
+		contextBuf, err = ep.marshalExample(context)
+		if contextBuf != nil {
+			defer ep.putBuffer(contextBuf)
+		}
+
+		if err != nil {
+			return nil, modelInfo, err
+		}
+	}
+
+	serializedExamples := make([]string, len(examples))
+
+	for i, example := range examples {
+		buf, err := ep.marshalExample(example)
+		if err != nil {
+			return nil, modelInfo, err
+		}
+
+		if contextBuf != nil {
+			buf = append(buf, contextBuf...)
+		}
+
+		serializedExamples[i] = byteSlizeToString(buf)
+		defer ep.putBuffer(buf)
+	}
+
+	inputs, err := tf.NewTensor(serializedExamples)
+	if err != nil {
+		return nil, modelInfo, err
+	}
+
+	res, err := ep.runner.Run(map[string]*tf.Tensor{
+		"inputs": inputs,
+	}, nil)
+	if err != nil {
+		return nil, modelInfo, err
+	}
+
+	regressions := res["outputs"].Value().([][]float32)
+	results := make([]Regression, len(regressions))
+
+	for i, reg := range regressions {
+		results[i].Value = reg[0]
+	}
+
+	return results, ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
 	}, nil
