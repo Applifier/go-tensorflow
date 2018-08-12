@@ -4,7 +4,7 @@
 # Packages
 ## predict
 
-Unified interface for TensorFlow prediction. Implementations automatically convert go types into matching TensorFlow Tensors.
+Unified interface for TensorFlow prediction for both embedded models and calls to Tensorflow Serving. Implementations automatically convert go types into matching TensorFlow Tensors.
 
 
 ### Example
