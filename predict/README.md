@@ -5,6 +5,8 @@
 
 Unified interface for TensorFlow prediction for both embedded models and calls to Tensorflow Serving. Implementations automatically convert go types into matching TensorFlow Tensors.
 
+Models should be exported in the SavedModel format.
+
 ### Example
 
 Example uses pre-trained model found under testdata/models [wide_deep](https://github.com/tensorflow/models/tree/master/official/wide_deep)
