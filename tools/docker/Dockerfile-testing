@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:1.8.0
+FROM tensorflow/tensorflow:1.10.0
 
 # Install golang
 RUN apt-get update
