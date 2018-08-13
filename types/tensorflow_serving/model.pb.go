@@ -19,8 +19,20 @@ var _ = math.Inf
 type ModelSpec struct {
 	// Required servable name.
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	// Optional version.
-	Version *google_protobuf1.Int64Value `protobuf:"bytes,2,opt,name=version" json:"version,omitempty"`
+	// Optional choice of which version of the model to use.
+	//
+	// Recommended to be left unset in the common case. Should be specified only
+	// when there is a strong version consistency requirement.
+	//
+	// When left unspecified, the system will serve the best available version.
+	// This is typically the latest version, though during version transitions,
+	// notably when serving on a fleet of instances, may be either the previous or
+	// new version.
+	//
+	// Types that are valid to be assigned to VersionChoice:
+	//	*ModelSpec_Version
+	//	*ModelSpec_VersionLabel
+	VersionChoice isModelSpec_VersionChoice `protobuf_oneof:"version_choice"`
 	// A named signature to evaluate. If unspecified, the default signature will
 	// be used.
 	SignatureName string `protobuf:"bytes,3,opt,name=signature_name,json=signatureName,proto3" json:"signature_name,omitempty"`
@@ -31,6 +43,29 @@ func (m *ModelSpec) String() string            { return proto.CompactTextString(
 func (*ModelSpec) ProtoMessage()               {}
 func (*ModelSpec) Descriptor() ([]byte, []int) { return fileDescriptorModel, []int{0} }
 
+type isModelSpec_VersionChoice interface {
+	isModelSpec_VersionChoice()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+
+type ModelSpec_Version struct {
+	Version *google_protobuf1.Int64Value `protobuf:"bytes,2,opt,name=version,oneof"`
+}
+type ModelSpec_VersionLabel struct {
+	VersionLabel string `protobuf:"bytes,4,opt,name=version_label,json=versionLabel,proto3,oneof"`
+}
+
+func (*ModelSpec_Version) isModelSpec_VersionChoice()      {}
+func (*ModelSpec_VersionLabel) isModelSpec_VersionChoice() {}
+
+func (m *ModelSpec) GetVersionChoice() isModelSpec_VersionChoice {
+	if m != nil {
+		return m.VersionChoice
+	}
+	return nil
+}
+
 func (m *ModelSpec) GetName() string {
 	if m != nil {
 		return m.Name
@@ -39,10 +74,17 @@ func (m *ModelSpec) GetName() string {
 }
 
 func (m *ModelSpec) GetVersion() *google_protobuf1.Int64Value {
-	if m != nil {
-		return m.Version
+	if x, ok := m.GetVersionChoice().(*ModelSpec_Version); ok {
+		return x.Version
 	}
 	return nil
+}
+
+func (m *ModelSpec) GetVersionLabel() string {
+	if x, ok := m.GetVersionChoice().(*ModelSpec_VersionLabel); ok {
+		return x.VersionLabel
+	}
+	return ""
 }
 
 func (m *ModelSpec) GetSignatureName() string {
@@ -50,6 +92,76 @@ func (m *ModelSpec) GetSignatureName() string {
 		return m.SignatureName
 	}
 	return ""
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*ModelSpec) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _ModelSpec_OneofMarshaler, _ModelSpec_OneofUnmarshaler, _ModelSpec_OneofSizer, []interface{}{
+		(*ModelSpec_Version)(nil),
+		(*ModelSpec_VersionLabel)(nil),
+	}
+}
+
+func _ModelSpec_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*ModelSpec)
+	// version_choice
+	switch x := m.VersionChoice.(type) {
+	case *ModelSpec_Version:
+		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.Version); err != nil {
+			return err
+		}
+	case *ModelSpec_VersionLabel:
+		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
+		_ = b.EncodeStringBytes(x.VersionLabel)
+	case nil:
+	default:
+		return fmt.Errorf("ModelSpec.VersionChoice has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _ModelSpec_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*ModelSpec)
+	switch tag {
+	case 2: // version_choice.version
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(google_protobuf1.Int64Value)
+		err := b.DecodeMessage(msg)
+		m.VersionChoice = &ModelSpec_Version{msg}
+		return true, err
+	case 4: // version_choice.version_label
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		x, err := b.DecodeStringBytes()
+		m.VersionChoice = &ModelSpec_VersionLabel{x}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _ModelSpec_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*ModelSpec)
+	// version_choice
+	switch x := m.VersionChoice.(type) {
+	case *ModelSpec_Version:
+		s := proto.Size(x.Version)
+		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *ModelSpec_VersionLabel:
+		n += proto.SizeVarint(4<<3 | proto.WireBytes)
+		n += proto.SizeVarint(uint64(len(x.VersionLabel)))
+		n += len(x.VersionLabel)
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
 }
 
 func init() {
@@ -76,15 +188,12 @@ func (m *ModelSpec) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintModel(dAtA, i, uint64(len(m.Name)))
 		i += copy(dAtA[i:], m.Name)
 	}
-	if m.Version != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintModel(dAtA, i, uint64(m.Version.Size()))
-		n1, err := m.Version.MarshalTo(dAtA[i:])
+	if m.VersionChoice != nil {
+		nn1, err := m.VersionChoice.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n1
+		i += nn1
 	}
 	if len(m.SignatureName) > 0 {
 		dAtA[i] = 0x1a
@@ -95,6 +204,28 @@ func (m *ModelSpec) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *ModelSpec_Version) MarshalTo(dAtA []byte) (int, error) {
+	i := 0
+	if m.Version != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintModel(dAtA, i, uint64(m.Version.Size()))
+		n2, err := m.Version.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
+	}
+	return i, nil
+}
+func (m *ModelSpec_VersionLabel) MarshalTo(dAtA []byte) (int, error) {
+	i := 0
+	dAtA[i] = 0x22
+	i++
+	i = encodeVarintModel(dAtA, i, uint64(len(m.VersionLabel)))
+	i += copy(dAtA[i:], m.VersionLabel)
+	return i, nil
+}
 func encodeVarintModel(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -111,14 +242,30 @@ func (m *ModelSpec) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovModel(uint64(l))
 	}
-	if m.Version != nil {
-		l = m.Version.Size()
-		n += 1 + l + sovModel(uint64(l))
+	if m.VersionChoice != nil {
+		n += m.VersionChoice.Size()
 	}
 	l = len(m.SignatureName)
 	if l > 0 {
 		n += 1 + l + sovModel(uint64(l))
 	}
+	return n
+}
+
+func (m *ModelSpec_Version) Size() (n int) {
+	var l int
+	_ = l
+	if m.Version != nil {
+		l = m.Version.Size()
+		n += 1 + l + sovModel(uint64(l))
+	}
+	return n
+}
+func (m *ModelSpec_VersionLabel) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.VersionLabel)
+	n += 1 + l + sovModel(uint64(l))
 	return n
 }
 
@@ -219,12 +366,11 @@ func (m *ModelSpec) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.Version == nil {
-				m.Version = &google_protobuf1.Int64Value{}
-			}
-			if err := m.Version.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			v := &google_protobuf1.Int64Value{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
+			m.VersionChoice = &ModelSpec_Version{v}
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
@@ -254,6 +400,35 @@ func (m *ModelSpec) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.SignatureName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field VersionLabel", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowModel
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthModel
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.VersionChoice = &ModelSpec_VersionLabel{string(dAtA[iNdEx:postIndex])}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -384,18 +559,21 @@ var (
 func init() { proto.RegisterFile("tensorflow_serving/model.proto", fileDescriptorModel) }
 
 var fileDescriptorModel = []byte{
-	// 208 bytes of a gzipped FileDescriptorProto
+	// 246 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2b, 0x49, 0xcd, 0x2b,
 	0xce, 0x2f, 0x4a, 0xcb, 0xc9, 0x2f, 0x8f, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0xcc, 0x4b, 0xd7, 0xcf,
 	0xcd, 0x4f, 0x49, 0xcd, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x42, 0xc8, 0xeb, 0x41,
 	0xe5, 0xa5, 0xe4, 0xd2, 0xf3, 0xf3, 0xd3, 0x73, 0x52, 0xf5, 0xc1, 0x2a, 0x92, 0x4a, 0xd3, 0xf4,
-	0xcb, 0x8b, 0x12, 0x0b, 0x0a, 0x52, 0x8b, 0x8a, 0x21, 0x7a, 0x94, 0x6a, 0xb9, 0x38, 0x7d, 0x41,
-	0x46, 0x04, 0x17, 0xa4, 0x26, 0x0b, 0x09, 0x71, 0xb1, 0xe4, 0x25, 0xe6, 0xa6, 0x4a, 0x30, 0x2a,
-	0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x42, 0xa6, 0x5c, 0xec, 0x65, 0xa9, 0x45, 0xc5, 0x99, 0xf9,
-	0x79, 0x12, 0x4c, 0x0a, 0x8c, 0x1a, 0xdc, 0x46, 0xd2, 0x7a, 0x10, 0x23, 0xf5, 0x60, 0x46, 0xea,
-	0x79, 0xe6, 0x95, 0x98, 0x99, 0x84, 0x25, 0xe6, 0x94, 0xa6, 0x06, 0xc1, 0xd4, 0x0a, 0xa9, 0x72,
-	0xf1, 0x15, 0x67, 0xa6, 0xe7, 0x25, 0x96, 0x94, 0x16, 0xa5, 0xc6, 0x83, 0x0d, 0x65, 0x06, 0x1b,
-	0xca, 0x0b, 0x17, 0xf5, 0x4b, 0xcc, 0x4d, 0x75, 0x12, 0x3e, 0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23,
-	0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63, 0xf8, 0xc1, 0xc8, 0x98, 0xc4, 0x06,
-	0x36, 0xd9, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0x44, 0x11, 0xb0, 0x95, 0xf0, 0x00, 0x00, 0x00,
+	0xcb, 0x8b, 0x12, 0x0b, 0x0a, 0x52, 0x8b, 0x8a, 0x21, 0x7a, 0x94, 0x76, 0x30, 0x72, 0x71, 0xfa,
+	0x82, 0xcc, 0x08, 0x2e, 0x48, 0x4d, 0x16, 0x12, 0xe2, 0x62, 0xc9, 0x4b, 0xcc, 0x4d, 0x95, 0x60,
+	0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x02, 0xb3, 0x85, 0xcc, 0xb9, 0xd8, 0xcb, 0x52, 0x8b, 0x8a, 0x33,
+	0xf3, 0xf3, 0x24, 0x98, 0x14, 0x18, 0x35, 0xb8, 0x8d, 0xa4, 0xf5, 0x20, 0x66, 0xea, 0xc1, 0xcc,
+	0xd4, 0xf3, 0xcc, 0x2b, 0x31, 0x33, 0x09, 0x4b, 0xcc, 0x29, 0x4d, 0xf5, 0x60, 0x08, 0x82, 0xa9,
+	0x16, 0x52, 0xe5, 0xe2, 0x2b, 0xce, 0x4c, 0xcf, 0x4b, 0x2c, 0x29, 0x2d, 0x4a, 0x8d, 0x07, 0x1b,
+	0xcb, 0x0c, 0x36, 0x96, 0x17, 0x2e, 0xea, 0x07, 0x32, 0x5f, 0x95, 0x8b, 0x17, 0xaa, 0x23, 0x3e,
+	0x27, 0x31, 0x29, 0x35, 0x47, 0x82, 0x05, 0xa4, 0xca, 0x83, 0x21, 0x88, 0x07, 0x2a, 0xec, 0x03,
+	0x12, 0x75, 0x12, 0xe0, 0xe2, 0x83, 0x29, 0x4b, 0xce, 0xc8, 0xcf, 0x4c, 0x4e, 0x75, 0x12, 0x3e,
+	0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63,
+	0xf8, 0xc1, 0xc8, 0x98, 0xc4, 0x06, 0x76, 0x94, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0xd8, 0x5f,
+	0x58, 0xd1, 0x2c, 0x01, 0x00, 0x00,
 }

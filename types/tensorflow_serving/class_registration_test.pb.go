@@ -25,6 +25,7 @@
 		tensorflow_serving/prediction_service.proto
 		tensorflow_serving/regression.proto
 		tensorflow_serving/session_service.proto
+		tensorflow_serving/ssl_config.proto
 		tensorflow_serving/static_storage_path_source.proto
 		tensorflow_serving/status.proto
 
@@ -77,6 +78,7 @@
 		RegressionResponse
 		SessionRunRequest
 		SessionRunResponse
+		SSLConfig
 		StaticStoragePathSourceConfig
 		StatusProto
 */

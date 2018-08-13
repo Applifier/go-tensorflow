@@ -56,6 +56,7 @@
 		GraphTransferInfo
 		IteratorStateMetadata
 		KernelDef
+		KernelList
 		MemoryLogStep
 		MemoryLogTensorAllocation
 		MemoryLogTensorDeallocation

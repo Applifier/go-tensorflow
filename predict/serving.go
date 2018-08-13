@@ -108,7 +108,7 @@ func (sp *servingPredictor) Predict(ctx context.Context, inputs map[string]inter
 
 	return outputMap, ModelInfo{
 		Name:    res.ModelSpec.Name,
-		Version: int(res.ModelSpec.Version.Value),
+		Version: int(res.ModelSpec.VersionChoice.(*st.ModelSpec_Version).Version.Value),
 	}, nil
 }
 
@@ -157,7 +157,7 @@ func (sp *servingPredictor) Classify(ctx context.Context, examples []*Example, c
 
 	return result, ModelInfo{
 		Name:    res.ModelSpec.Name,
-		Version: int(res.ModelSpec.Version.Value),
+		Version: int(res.ModelSpec.VersionChoice.(*st.ModelSpec_Version).Version.Value),
 	}, nil
 }
 
@@ -180,7 +180,7 @@ func (sp *servingPredictor) Regress(ctx context.Context, examples []*Example, co
 
 	return regressions, ModelInfo{
 		Name:    res.ModelSpec.Name,
-		Version: int(res.ModelSpec.Version.Value),
+		Version: int(res.ModelSpec.VersionChoice.(*st.ModelSpec_Version).Version.Value),
 	}, nil
 }
 

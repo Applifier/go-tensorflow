@@ -38,6 +38,7 @@
 		AssetFileDef
 		NamedTensorProto
 		AutoParallelOptions
+		ScopedAllocatorOptions
 		RewriterConfig
 		SavedModel
 		SaverDef

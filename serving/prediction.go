@@ -5,8 +5,9 @@ import (
 	"context"
 	"io"
 
+	gogotype "github.com/gogo/protobuf/types"
+
 	serving "github.com/Applifier/go-tensorflow/types/tensorflow_serving"
-	protobufTypes "github.com/gogo/protobuf/types"
 	"google.golang.org/grpc"
 )
 
@@ -58,8 +59,10 @@ func NewModelPredictionClientFromPredictionServiceClient(cli serving.PredictionS
 
 // SetVersion sets the used model version (defaults to latest)
 func (client *modelPredictionClient) SetVersion(version int) {
-	client.spec.Version = &protobufTypes.Int64Value{
-		Value: int64(version),
+	client.spec.VersionChoice = &serving.ModelSpec_Version{
+		Version: &gogotype.Int64Value{
+			Value: int64(version),
+		},
 	}
 }
 

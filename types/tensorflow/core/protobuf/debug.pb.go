@@ -14,7 +14,7 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-// EXPERIMENTAL. Option for watching a node.
+// Option for watching a node in TensorFlow Debugger (tfdbg).
 type DebugTensorWatch struct {
 	// Name of the node to watch.
 	NodeName string `protobuf:"bytes,1,opt,name=node_name,json=nodeName,proto3" json:"node_name,omitempty"`
@@ -94,7 +94,7 @@ func (m *DebugTensorWatch) GetTolerateDebugOpCreationFailures() bool {
 	return false
 }
 
-// EXPERIMENTAL. Options for initializing DebuggerState.
+// Options for initializing DebuggerState in TensorFlow Debugger (tfdbg).
 type DebugOptions struct {
 	// Debugging options
 	DebugTensorWatchOpts []*DebugTensorWatch `protobuf:"bytes,4,rep,name=debug_tensor_watch_opts,json=debugTensorWatchOpts" json:"debug_tensor_watch_opts,omitempty"`
