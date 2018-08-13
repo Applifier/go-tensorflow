@@ -1,7 +1,6 @@
 import tensorflow as tf
 
-input = tf.placeholder(tf.string, None)
-
+# Helper function for creating hash tables from pydict
 def createMap(d, default):
     table = tf.contrib.lookup.HashTable(
         tf.contrib.lookup.KeyValueTensorInitializer(list(d.keys()), list(d.values())), default)
@@ -10,6 +9,8 @@ def createMap(d, default):
 
     return lookup
 
+
+input = tf.placeholder(tf.string, None)
 features = tf.parse_example(
         input,
         # Defaults are not specified since both keys are required.
