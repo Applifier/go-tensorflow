@@ -3,3 +3,4 @@
 
 testdata/models/mobilenet
 testdata/test_models
+*.pyc

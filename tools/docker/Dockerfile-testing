@@ -23,11 +23,16 @@ RUN  curl -fsSL "https://storage.googleapis.com/tensorflow/libtensorflow/$TENSOR
 ENV LD_LIBRARY_PATH $TARGET_DIRECTORY/lib
 ENV LIBRARY_PATH $TARGET_DIRECTORY/lib
 
+
+# Keras
+RUN pip install keras
+
 # TensorBoard
 EXPOSE 6006
 # IPython
 EXPOSE 8888
 
 WORKDIR "/notebooks"
+
 
 CMD ["/run_jupyter.sh", "--allow-root"]
