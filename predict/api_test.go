@@ -43,14 +43,14 @@ func TestPredictorClassifyApi(t *testing.T) {
 
 	servingPredictor := NewServingPredictor(servingModelClient)
 
-	embeddedPredictor, err := NewEmbeddedPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
+	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	predictors := map[string]Predictor{
 		"serving":  servingPredictor,
-		"embedded": embeddedPredictor,
+		"embedded": savedModelPredictor,
 	}
 
 	for name, predictor := range predictors {
@@ -122,14 +122,14 @@ func TestPredictorRegressAPI(t *testing.T) {
 
 	servingPredictor := NewServingPredictor(servingModelClient)
 
-	embeddedPredictor, err := NewEmbeddedPredictor(getModelsDir(), "wide_deep", 1527087570, "regression")
+	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "wide_deep", 1527087570, "regression")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	predictors := map[string]Predictor{
 		"serving":  servingPredictor,
-		"embedded": embeddedPredictor,
+		"embedded": savedModelPredictor,
 	}
 
 	for name, predictor := range predictors {
@@ -201,14 +201,14 @@ func TestPredictorPredictAPI(t *testing.T) {
 
 	servingPredictor := NewServingPredictor(servingModelClient)
 
-	embeddedPredictor, err := NewEmbeddedPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
+	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	predictors := map[string]Predictor{
 		"serving":  servingPredictor,
-		"embedded": embeddedPredictor,
+		"embedded": savedModelPredictor,
 	}
 
 	for name, predictor := range predictors {

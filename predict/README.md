@@ -19,7 +19,7 @@ import "github.com/Applifier/go-tensorflow/predict"
 
 // Uncomment line below to switch implementation
 // predictor := NewServingPredictor(servingModelClient)
-predictor, _ := NewEmbeddedPredictor("testdata/models", "wide_deep", 1527087570, "serving_default")
+predictor, _ := NewSavedModelPredictor("testdata/models", "wide_deep", 1527087570, "serving_default")
 
 
 m := map[string]interface{}{
