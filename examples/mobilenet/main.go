@@ -12,7 +12,7 @@ import (
 )
 
 func getLocalPredictor() predict.Predictor {
-	pred, err := predict.NewEmbeddedPredictor(getModelsDir(), "mobilenet", 1, "serving_default")
+	pred, err := predict.NewSavedModelPredictor(getModelsDir(), "mobilenet", 1, "serving_default")
 	if err != nil {
 		panic(err)
 	}

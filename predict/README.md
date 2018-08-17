@@ -1,5 +1,5 @@
 [![GoDoc](https://godoc.org/github.com/Applifier/go-tensorflow/predict?status.svg)](http://godoc.org/github.com/Applifier/go-tensorflow/predict)
-[![Build Status](https://travis-ci.com/Applifier/go-tensorflow.svg?token=jeWt6weUpeDp6aNSSaST&branch=master)](https://travis-ci.com/Applifier/go-tensorflow)
+[![Build Status](https://travis-ci.org/Applifier/go-tensorflow.svg?branch=master)](https://travis-ci.org/Applifier/go-tensorflow)
 
 ## predict
 
@@ -19,7 +19,7 @@ import "github.com/Applifier/go-tensorflow/predict"
 
 // Uncomment line below to switch implementation
 // predictor := NewServingPredictor(servingModelClient)
-predictor, _ := NewEmbeddedPredictor("testdata/models", "wide_deep", 1527087570, "serving_default")
+predictor, _ := NewSavedModelPredictor("testdata/models", "wide_deep", 1527087570, "serving_default")
 
 
 m := map[string]interface{}{

@@ -28,12 +28,12 @@ func getTestSavedModelsDir() string {
 }
 
 func runPredict(modelName string, in map[string]interface{}) map[string]interface{} {
-	embeddedPredictor, err := NewEmbeddedPredictor(getTestSavedModelsDir(), modelName, 1, "serving_default")
+	savedModelPredictor, err := NewSavedModelPredictor(getTestSavedModelsDir(), modelName, 1, "serving_default")
 	if err != nil {
 		panic(err)
 	}
 
-	res, _, err := embeddedPredictor.Predict(context.TODO(), in, nil)
+	res, _, err := savedModelPredictor.Predict(context.TODO(), in, nil)
 	if err != nil {
 		panic(err)
 	}

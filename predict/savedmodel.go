@@ -17,7 +17,7 @@ import (
 
 const defaultBufferSize = 2048
 
-type embeddedPredictor struct {
+type savedModelPredictor struct {
 	runner  *savedmodel.Runner
 	name    string
 	version int
@@ -25,8 +25,8 @@ type embeddedPredictor struct {
 	bufferPool sync.Pool
 }
 
-// NewEmbeddedPredictor returns a new embedded predictor for a given saved model folder path name and version
-func NewEmbeddedPredictor(modelsDir string, name string, version int, signature string) (Predictor, error) {
+// NewSavedModelPredictor returns a new predictor for a given saved model folder path name and version
+func NewSavedModelPredictor(modelsDir string, name string, version int, signature string) (Predictor, error) {
 	tags := []string{"serve"}
 	modelPath := path.Join(modelsDir, name, strconv.Itoa(version))
 	file, err := os.Open(path.Join(modelPath, "saved_model.pb"))
@@ -50,7 +50,7 @@ func NewEmbeddedPredictor(modelsDir string, name string, version int, signature 
 		return nil, err
 	}
 
-	return &embeddedPredictor{
+	return &savedModelPredictor{
 		runner:  runner,
 		name:    name,
 		version: version,
@@ -63,7 +63,7 @@ func NewEmbeddedPredictor(modelsDir string, name string, version int, signature 
 	}, nil
 }
 
-func (ep *embeddedPredictor) getBuffer(size int) []byte {
+func (ep *savedModelPredictor) getBuffer(size int) []byte {
 
 	buf := ep.bufferPool.Get().([]byte)
 
@@ -74,11 +74,11 @@ func (ep *embeddedPredictor) getBuffer(size int) []byte {
 	return make([]byte, size)
 }
 
-func (ep *embeddedPredictor) putBuffer(b []byte) {
+func (ep *savedModelPredictor) putBuffer(b []byte) {
 	ep.bufferPool.Put(b)
 }
 
-func (ep *embeddedPredictor) convertValueToTensor(val interface{}) (*tf.Tensor, error) {
+func (ep *savedModelPredictor) convertValueToTensor(val interface{}) (*tf.Tensor, error) {
 	switch v := val.(type) {
 	case *tf.Tensor:
 		return v, nil
@@ -138,7 +138,7 @@ func (ep *embeddedPredictor) convertValueToTensor(val interface{}) (*tf.Tensor, 
 	return tf.NewTensor(val)
 }
 
-func (ep *embeddedPredictor) Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]Tensor, ModelInfo, error) {
+func (ep *savedModelPredictor) Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]Tensor, ModelInfo, error) {
 	inputTensorMap := make(map[string]*tf.Tensor, len(inputs))
 	for key, val := range inputs {
 		var err error
@@ -156,7 +156,7 @@ func (ep *embeddedPredictor) Predict(ctx context.Context, inputs map[string]inte
 	outputMap := make(map[string]Tensor, len(res))
 
 	for key, tensor := range res {
-		outputMap[key] = &embeddedPredictorTensor{t: tensor}
+		outputMap[key] = &savedModelPredictorTensor{t: tensor}
 	}
 
 	return outputMap, ModelInfo{
@@ -165,7 +165,7 @@ func (ep *embeddedPredictor) Predict(ctx context.Context, inputs map[string]inte
 	}, nil
 }
 
-func (ep *embeddedPredictor) marshalExample(e *Example) ([]byte, error) {
+func (ep *savedModelPredictor) marshalExample(e *Example) ([]byte, error) {
 	buf := ep.getBuffer(e.Size())
 	n, err := e.MarshalTo(buf)
 	if err != nil {
@@ -174,7 +174,7 @@ func (ep *embeddedPredictor) marshalExample(e *Example) ([]byte, error) {
 	return buf[:n], nil
 }
 
-func (ep *embeddedPredictor) Classify(ctx context.Context, examples []*Example, context *Example) ([][]Class, ModelInfo, error) {
+func (ep *savedModelPredictor) Classify(ctx context.Context, examples []*Example, context *Example) ([][]Class, ModelInfo, error) {
 	modelInfo := ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
@@ -259,7 +259,7 @@ func (ep *embeddedPredictor) Classify(ctx context.Context, examples []*Example, 
 	return result, modelInfo, err
 }
 
-func (ep *embeddedPredictor) Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error) {
+func (ep *savedModelPredictor) Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error) {
 	modelInfo := ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
@@ -319,19 +319,19 @@ func (ep *embeddedPredictor) Regress(ctx context.Context, examples []*Example, c
 	}, nil
 }
 
-type embeddedPredictorTensor struct {
+type savedModelPredictorTensor struct {
 	t *tf.Tensor
 }
 
-func (ept *embeddedPredictorTensor) Value() interface{} {
+func (ept *savedModelPredictorTensor) Value() interface{} {
 	return ept.t.Value()
 }
 
-func (ept *embeddedPredictorTensor) Shape() []int64 {
+func (ept *savedModelPredictorTensor) Shape() []int64 {
 	return ept.t.Shape()
 }
 
-func (ept *embeddedPredictorTensor) Type() TensorType {
+func (ept *savedModelPredictorTensor) Type() TensorType {
 	switch ept.t.DataType() {
 	case tf.Float:
 		return TensorTypeFloat
