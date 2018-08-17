@@ -1,5 +1,5 @@
 [![GoDoc](https://godoc.org/github.com/Applifier/go-tensorflow?status.svg)](http://godoc.org/github.com/Applifier/go-tensorflow)
-[![Build Status](https://travis-ci.com/Applifier/go-tensorflow.svg?token=jeWt6weUpeDp6aNSSaST&branch=master)](https://travis-ci.com/Applifier/go-tensorflow)
+[![Build Status](https://travis-ci.org/Applifier/go-tensorflow.svg?branch=master)](https://travis-ci.org/Applifier/go-tensorflow)
 
 # Packages
 ## predict
