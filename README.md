@@ -109,3 +109,8 @@ fmt.Printf("scores %+v\n", res.Outputs["scores"].FloatVal)
 // Output: scores [0.54612064 0.45387936]
 
 ```
+
+
+## License
+
+[MIT](https://github.com/Applifier/go-tensorflow/blob/master/LICENSE)
