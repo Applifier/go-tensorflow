@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Applifier/go-tensorflow/internal/typeconv"
 	"github.com/Applifier/go-tensorflow/serving"
 	"github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
 	"github.com/Applifier/go-tensorflow/utils"
@@ -80,6 +81,13 @@ func (sp *servingPredictor) convertValueToTensor(val interface{}) (*serving.Tens
 		}
 
 		return serving.NewTensor(examples)
+	case []interface{}:
+		typedSlice, err := typeconv.ConvertInterfaceSliceToTypedSlice(v)
+		if err != nil {
+			return nil, err
+		}
+
+		return sp.convertValueToTensor(typedSlice)
 	}
 
 	return serving.NewTensor(val)

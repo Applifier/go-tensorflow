@@ -9,6 +9,7 @@ import (
 	"sync"
 	"unsafe"
 
+	"github.com/Applifier/go-tensorflow/internal/typeconv"
 	"github.com/Applifier/go-tensorflow/savedmodel"
 	"github.com/Applifier/go-tensorflow/serving"
 	"github.com/Applifier/go-tensorflow/utils"
@@ -133,6 +134,13 @@ func (ep *savedModelPredictor) convertValueToTensor(val interface{}) (*tf.Tensor
 		}
 
 		return tf.NewTensor(examples)
+	case []interface{}:
+		typedSlice, err := typeconv.ConvertInterfaceSliceToTypedSlice(v)
+		if err != nil {
+			return nil, err
+		}
+
+		return ep.convertValueToTensor(typedSlice)
 	}
 
 	return tf.NewTensor(val)

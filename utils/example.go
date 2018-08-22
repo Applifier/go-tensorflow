@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/Applifier/go-tensorflow/internal/typeconv"
 	"github.com/Applifier/go-tensorflow/types/tensorflow/core/example"
 )
 
@@ -110,7 +111,53 @@ func NewFeature(val interface{}) (*Feature, error) {
 				},
 			},
 		}, nil
+	case map[string]interface{}:
+		ex, err := NewExampleFromMap(v)
+		if err != nil {
+			return nil, err
+		}
 
+		b, err := ex.Marshal()
+		if err != nil {
+			return nil, err
+		}
+
+		return &Feature{
+			Kind: &example.Feature_BytesList{
+				BytesList: &example.BytesList{
+					Value: [][]byte{b},
+				},
+			},
+		}, nil
+	case []map[string]interface{}:
+		values := make([][]byte, len(v))
+
+		for i, m := range v {
+			ex, err := NewExampleFromMap(m)
+			if err != nil {
+				return nil, err
+			}
+
+			b, err := ex.Marshal()
+			if err != nil {
+				return nil, err
+			}
+			values[i] = b
+		}
+
+		return &Feature{
+			Kind: &example.Feature_BytesList{
+				BytesList: &example.BytesList{
+					Value: values,
+				},
+			},
+		}, nil
+	case []interface{}:
+		arr, err := typeconv.ConvertInterfaceSliceToTypedSlice(v)
+		if err != nil {
+			return nil, err
+		}
+		return NewFeature(arr)
 	default:
 		return nil, fmt.Errorf("unsupported type %v", reflect.TypeOf(val))
 	}
