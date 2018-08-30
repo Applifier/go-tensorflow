@@ -20,7 +20,7 @@ type ModelPredictionClient interface {
 	// Predict -- provides access to loaded TensorFlow model.
 	Predict(ctx context.Context, inputs TensorMap, outputFilter []string, opts ...grpc.CallOption) (*serving.PredictResponse, error)
 	// GetModelMetadata - provides access to metadata for loaded models.
-	GetModelMetadata(ctx context.Context, input *serving.Input, opts ...grpc.CallOption) (*serving.GetModelMetadataResponse, error)
+	GetModelMetadata(ctx context.Context, opts ...grpc.CallOption) (*serving.GetModelMetadataResponse, error)
 
 	io.Closer
 }
@@ -91,7 +91,7 @@ func (client *modelPredictionClient) Predict(ctx context.Context, inputs TensorM
 	}, opts...)
 }
 
-func (client *modelPredictionClient) GetModelMetadata(ctx context.Context, input *serving.Input, opts ...grpc.CallOption) (*serving.GetModelMetadataResponse, error) {
+func (client *modelPredictionClient) GetModelMetadata(ctx context.Context, opts ...grpc.CallOption) (*serving.GetModelMetadataResponse, error) {
 	// TODO optimize by memory pooling
 	return client.cli.GetModelMetadata(ctx, &serving.GetModelMetadataRequest{
 		ModelSpec: client.spec,
