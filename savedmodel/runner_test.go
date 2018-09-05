@@ -1,7 +1,6 @@
 package savedmodel
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 
@@ -59,8 +58,6 @@ func TestRunner(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	fmt.Printf("scores %+v\n", res)
 
 	scores := res["scores"].Value().([][]float32)[0]
 

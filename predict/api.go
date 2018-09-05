@@ -45,16 +45,6 @@ type Regression struct {
 	Value float32
 }
 
-// Predictor interface for unified model execution with different backend (embedded go model & tensorflow serving)
-type Predictor interface {
-	// Predict runs prediction with given input map. Output is filtered with given filter. (nil defaults to all outputs)
-	Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]Tensor, ModelInfo, error)
-	// Classify runs classify with given features and context
-	Classify(ctx context.Context, examples []*Example, context *Example) ([][]Class, ModelInfo, error)
-	// Regress runs regression with given features and context
-	Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error)
-}
-
 // ModelInfo struct contains infomation about the model used for the prediction (name, version, etc.)
 type ModelInfo struct {
 	Name    string
@@ -85,4 +75,16 @@ type Tensor interface {
 	Value() interface{}
 	Shape() []int64
 	Type() TensorType
+}
+
+// Predictor interface for unified model execution with different backend (embedded go model & tensorflow serving)
+type Predictor interface {
+	// Predict runs prediction with given input map. Output is filtered with given filter. (nil defaults to all outputs)
+	Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]Tensor, ModelInfo, error)
+	// Classify runs classify with given features and context
+	Classify(ctx context.Context, examples []*Example, context *Example) ([][]Class, ModelInfo, error)
+	// Regress runs regression with given features and context
+	Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error)
+	// GetModelInfo returns the ModelInfo for the Predictor
+	GetModelInfo(ctx context.Context) (ModelInfo, error)
 }

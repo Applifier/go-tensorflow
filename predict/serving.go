@@ -192,6 +192,18 @@ func (sp *servingPredictor) Regress(ctx context.Context, examples []*Example, co
 	}, nil
 }
 
+func (sp *servingPredictor) GetModelInfo(ctx context.Context) (ModelInfo, error) {
+	res, err := sp.modelClient.GetModelMetadata(ctx)
+	if err != nil {
+		return ModelInfo{}, err
+	}
+
+	return ModelInfo{
+		Name:    res.ModelSpec.Name,
+		Version: int(res.ModelSpec.VersionChoice.(*st.ModelSpec_Version).Version.Value),
+	}, nil
+}
+
 type servingPredictorTensor struct {
 	t *serving.Tensor
 }

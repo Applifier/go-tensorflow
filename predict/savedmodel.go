@@ -327,6 +327,13 @@ func (ep *savedModelPredictor) Regress(ctx context.Context, examples []*Example,
 	}, nil
 }
 
+func (ep *savedModelPredictor) GetModelInfo(ctx context.Context) (ModelInfo, error) {
+	return ModelInfo{
+		Name:    ep.name,
+		Version: ep.version,
+	}, nil
+}
+
 type savedModelPredictorTensor struct {
 	t *tf.Tensor
 }

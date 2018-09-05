@@ -187,6 +187,49 @@ func TestPredictorRegressAPI(t *testing.T) {
 	}
 }
 
+func TestPredictorModelInfoAPI(t *testing.T) {
+	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+		getServingAddr(),
+		"wide_deep",
+		"serving_default",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer servingModelClient.Close()
+
+	servingPredictor := NewServingPredictor(servingModelClient)
+
+	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	predictors := map[string]Predictor{
+		"serving":  servingPredictor,
+		"embedded": savedModelPredictor,
+	}
+
+	for name, predictor := range predictors {
+		t.Run(name, func(t *testing.T) {
+			modelInfo, err := predictor.GetModelInfo(context.Background())
+
+			if err != nil {
+				t.Error(err)
+			}
+
+			if modelInfo.Name != "wide_deep" {
+				t.Error("Wrong model name returned")
+			}
+
+			if modelInfo.Version != 1527087570 {
+				t.Error("Wrong model version returned")
+			}
+		})
+	}
+}
+
 func TestPredictorPredictAPI(t *testing.T) {
 	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
 		getServingAddr(),

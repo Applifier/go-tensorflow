@@ -3,6 +3,7 @@ version: "3"
 
 services:
   serving:
+    image: go-tensorflow-serving
     build:
       dockerfile: ./Dockerfile-serving
       context: .
@@ -12,6 +13,7 @@ services:
       - "7000:7000"
 
   test:
+    image: go-tensorflow-testing
     build:
       dockerfile: ./Dockerfile-testing
       context: .
@@ -25,6 +27,7 @@ services:
       - serving
 
   mobilenet:
+    image: go-tensorflow-testing
     build:
       dockerfile: ./Dockerfile-testing
       context: .

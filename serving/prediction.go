@@ -94,7 +94,8 @@ func (client *modelPredictionClient) Predict(ctx context.Context, inputs TensorM
 func (client *modelPredictionClient) GetModelMetadata(ctx context.Context, opts ...grpc.CallOption) (*serving.GetModelMetadataResponse, error) {
 	// TODO optimize by memory pooling
 	return client.cli.GetModelMetadata(ctx, &serving.GetModelMetadataRequest{
-		ModelSpec: client.spec,
+		ModelSpec:     client.spec,
+		MetadataField: []string{"signature_def"},
 	}, opts...)
 }
 
