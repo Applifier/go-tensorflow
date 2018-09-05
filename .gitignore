@@ -2,6 +2,7 @@
 .tensorflow_repo/
 
 testdata/models/mobilenet
+testdata/models/test
 testdata/test_models
 *.pyc
 

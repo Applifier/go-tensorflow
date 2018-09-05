@@ -297,3 +297,62 @@ func TestPredictorPredictAPI(t *testing.T) {
 		})
 	}
 }
+
+func TestPredictorPredictShapesAPI(t *testing.T) {
+	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+		getServingAddr(),
+		"test",
+		"serving_default",
+	)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer servingModelClient.Close()
+
+	servingPredictor := NewServingPredictor(servingModelClient)
+
+	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "test", 1, "serving_default")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	predictors := map[string]Predictor{
+		"serving":  servingPredictor,
+		"embedded": savedModelPredictor,
+	}
+
+	for name, predictor := range predictors {
+		t.Run(name, func(t *testing.T) {
+			res, _, err := predictor.Predict(
+				context.Background(),
+				map[string]interface{}{
+					"single": []int64{1},
+					"vector": []int64{1, 2, 3},
+					"matrix": [][]int64{[]int64{1, 2}, []int64{3, 4}, []int64{5, 6}},
+				},
+				nil,
+			)
+
+			if err != nil {
+				t.Error(err)
+			}
+
+			expected := map[string]interface{}{
+				"input_single": []int64{1},
+				"input_vector": []int64{1, 2, 3},
+				"input_matrix": [][]int64{[]int64{1, 2}, []int64{3, 4}, []int64{5, 6}},
+
+				"single": int32(1),
+				"vector": []int32{1, 2, 3},
+				"matrix": [][]int32{[]int32{1, 2}, []int32{3, 4}, []int32{5, 6}},
+			}
+
+			for key, tensor := range res {
+				if !reflect.DeepEqual(expected[key], tensor.Value()) {
+					t.Errorf("%s expected to match %+v (%T) but %+v (%T) returned", key, expected[key], expected[key], tensor.Value(), tensor.Value())
+				}
+			}
+		})
+	}
+}

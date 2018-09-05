@@ -8,5 +8,10 @@ model_config_list: {
     name: "mobilenet",
     base_path: "/tensorflow/models/mobilenet",
     model_platform: "tensorflow"
+  },
+  config: {
+    name: "test",
+    base_path: "/tensorflow/models/test",
+    model_platform: "tensorflow"
   }
 }

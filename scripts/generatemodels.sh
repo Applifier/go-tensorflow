@@ -6,4 +6,9 @@ for filename in *.py; do
     echo "Running $filename"
     python3 $filename
 done
+
+
+rm -Rf ../../testdata/models/test
+cd ..
+python3 output_test_model.py
 '
