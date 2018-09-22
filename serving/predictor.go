@@ -28,7 +28,7 @@ func (sp *servingPredictor) convertValueToTensor(val interface{}) (*Tensor, erro
 	switch v := val.(type) {
 	case *Tensor:
 		return v, nil
-	case predict.Tensor:
+	case nativeTensor:
 		return NewTensor(v.Value())
 	case *predict.Example:
 		exampleSerialized, err := v.Marshal()
@@ -237,4 +237,9 @@ func (spt *servingPredictorTensor) Type() predict.TensorType {
 	default:
 		panic(fmt.Errorf("unsupported type %v", spt.t.Dtype))
 	}
+}
+
+type nativeTensor interface {
+	Value() interface{}
+	Shape() []int64
 }
