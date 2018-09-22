@@ -1,45 +1,43 @@
-package predict
+package serving
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/Applifier/go-tensorflow/internal/typeconv"
-	"github.com/Applifier/go-tensorflow/serving"
+	"github.com/Applifier/go-tensorflow/predict"
 	"github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
 	"github.com/Applifier/go-tensorflow/utils"
 
 	st "github.com/Applifier/go-tensorflow/types/tensorflow_serving"
-
-	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
 // servingPredictor implementation of the Predictor interface for TensorFlow Serving
 type servingPredictor struct {
-	modelClient serving.ModelPredictionClient
+	modelClient ModelPredictionClient
 }
 
-// NewServingPredictor returns a new predictor using a given TF Serving client
-func NewServingPredictor(modelClient serving.ModelPredictionClient) Predictor {
+// NewPredictor returns a new predictor (implements Predictor interface) using a given TF Serving client
+func NewPredictor(modelClient ModelPredictionClient) predict.Predictor {
 	return &servingPredictor{
 		modelClient: modelClient,
 	}
 }
 
-func (sp *servingPredictor) convertValueToTensor(val interface{}) (*serving.Tensor, error) {
+func (sp *servingPredictor) convertValueToTensor(val interface{}) (*Tensor, error) {
 	switch v := val.(type) {
-	case *serving.Tensor:
+	case *Tensor:
 		return v, nil
-	case *tf.Tensor:
-		return serving.NewTensor(v.Value())
-	case *Example:
+	case predict.Tensor:
+		return NewTensor(v.Value())
+	case *predict.Example:
 		exampleSerialized, err := v.Marshal()
 		if err != nil {
 			return nil, err
 		}
 
-		return serving.NewTensor([][]byte{exampleSerialized})
-	case Examplifier:
+		return NewTensor([][]byte{exampleSerialized})
+	case predict.Examplifier:
 		examples, err := v.Examples()
 		if err != nil {
 			return nil, err
@@ -63,7 +61,7 @@ func (sp *servingPredictor) convertValueToTensor(val interface{}) (*serving.Tens
 		if err != nil {
 			return nil, err
 		}
-		return serving.NewTensor([][]byte{exampleSerialized})
+		return NewTensor([][]byte{exampleSerialized})
 
 	case []map[string]interface{}:
 		examples := make([][]byte, len(v))
@@ -80,7 +78,7 @@ func (sp *servingPredictor) convertValueToTensor(val interface{}) (*serving.Tens
 			examples[i] = exampleSerialized
 		}
 
-		return serving.NewTensor(examples)
+		return NewTensor(examples)
 	case []interface{}:
 		typedSlice, err := typeconv.ConvertInterfaceSliceToTypedSlice(v)
 		if err != nil {
@@ -90,37 +88,37 @@ func (sp *servingPredictor) convertValueToTensor(val interface{}) (*serving.Tens
 		return sp.convertValueToTensor(typedSlice)
 	}
 
-	return serving.NewTensor(val)
+	return NewTensor(val)
 }
 
-func (sp *servingPredictor) Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]Tensor, ModelInfo, error) {
-	inputTensorMap := make(serving.TensorMap, len(inputs))
+func (sp *servingPredictor) Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]predict.Tensor, predict.ModelInfo, error) {
+	inputTensorMap := make(TensorMap, len(inputs))
 	for key, val := range inputs {
 		var err error
 		inputTensorMap[key], err = sp.convertValueToTensor(val)
 		if err != nil {
-			return nil, ModelInfo{}, err
+			return nil, predict.ModelInfo{}, err
 		}
 	}
 
 	res, err := sp.modelClient.Predict(ctx, inputTensorMap, outputFilter)
 	if err != nil {
-		return nil, ModelInfo{}, err
+		return nil, predict.ModelInfo{}, err
 	}
 
-	outputMap := make(map[string]Tensor, len(res.Outputs))
+	outputMap := make(map[string]predict.Tensor, len(res.Outputs))
 
 	for key, tensor := range res.Outputs {
 		outputMap[key] = &servingPredictorTensor{t: tensor}
 	}
 
-	return outputMap, ModelInfo{
+	return outputMap, predict.ModelInfo{
 		Name:    res.ModelSpec.Name,
 		Version: int(res.ModelSpec.VersionChoice.(*st.ModelSpec_Version).Version.Value),
 	}, nil
 }
 
-func (sp *servingPredictor) convertExamplesToInput(examples []*Example, context *Example) (*st.Input, error) {
+func (sp *servingPredictor) convertExamplesToInput(examples []*predict.Example, context *predict.Example) (*st.Input, error) {
 	input := &st.Input{}
 
 	if context == nil {
@@ -141,21 +139,21 @@ func (sp *servingPredictor) convertExamplesToInput(examples []*Example, context 
 	return input, nil
 }
 
-func (sp *servingPredictor) Classify(ctx context.Context, examples []*Example, context *Example) ([][]Class, ModelInfo, error) {
+func (sp *servingPredictor) Classify(ctx context.Context, examples []*predict.Example, context *predict.Example) ([][]predict.Class, predict.ModelInfo, error) {
 	input, err := sp.convertExamplesToInput(examples, context)
 
 	if err != nil {
-		return nil, ModelInfo{}, err
+		return nil, predict.ModelInfo{}, err
 	}
 
 	res, err := sp.modelClient.Classify(ctx, input)
 	if err != nil {
-		return nil, ModelInfo{}, err
+		return nil, predict.ModelInfo{}, err
 	}
 
-	result := make([][]Class, len(res.Result.Classifications))
+	result := make([][]predict.Class, len(res.Result.Classifications))
 	for i, classifications := range res.Result.Classifications {
-		classes := make([]Class, len(classifications.Classes))
+		classes := make([]predict.Class, len(classifications.Classes))
 		result[i] = classes
 		for i, class := range classifications.Classes {
 			classes[i].Label = class.Label
@@ -163,79 +161,79 @@ func (sp *servingPredictor) Classify(ctx context.Context, examples []*Example, c
 		}
 	}
 
-	return result, ModelInfo{
+	return result, predict.ModelInfo{
 		Name:    res.ModelSpec.Name,
 		Version: int(res.ModelSpec.VersionChoice.(*st.ModelSpec_Version).Version.Value),
 	}, nil
 }
 
-func (sp *servingPredictor) Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error) {
+func (sp *servingPredictor) Regress(ctx context.Context, examples []*predict.Example, context *predict.Example) ([]predict.Regression, predict.ModelInfo, error) {
 	input, err := sp.convertExamplesToInput(examples, context)
 
 	if err != nil {
-		return nil, ModelInfo{}, err
+		return nil, predict.ModelInfo{}, err
 	}
 
 	res, err := sp.modelClient.Regress(ctx, input)
 	if err != nil {
-		return nil, ModelInfo{}, err
+		return nil, predict.ModelInfo{}, err
 	}
 
-	regressions := make([]Regression, len(examples))
+	regressions := make([]predict.Regression, len(examples))
 	for i, regression := range res.Result.Regressions {
 		regressions[i].Value = regression.Value
 	}
 
-	return regressions, ModelInfo{
+	return regressions, predict.ModelInfo{
 		Name:    res.ModelSpec.Name,
 		Version: int(res.ModelSpec.VersionChoice.(*st.ModelSpec_Version).Version.Value),
 	}, nil
 }
 
-func (sp *servingPredictor) GetModelInfo(ctx context.Context) (ModelInfo, error) {
+func (sp *servingPredictor) GetModelInfo(ctx context.Context) (predict.ModelInfo, error) {
 	res, err := sp.modelClient.GetModelMetadata(ctx)
 	if err != nil {
-		return ModelInfo{}, err
+		return predict.ModelInfo{}, err
 	}
 
-	return ModelInfo{
+	return predict.ModelInfo{
 		Name:    res.ModelSpec.Name,
 		Version: int(res.ModelSpec.VersionChoice.(*st.ModelSpec_Version).Version.Value),
 	}, nil
 }
 
 type servingPredictorTensor struct {
-	t *serving.Tensor
+	t *Tensor
 }
 
 func (spt *servingPredictorTensor) Value() interface{} {
-	return serving.ValueFromTensor(spt.t)
+	return ValueFromTensor(spt.t)
 }
 func (spt *servingPredictorTensor) Shape() []int64 {
-	return serving.ShapeFromTensor(spt.t)
+	return ShapeFromTensor(spt.t)
 }
-func (spt *servingPredictorTensor) Type() TensorType {
+func (spt *servingPredictorTensor) Type() predict.TensorType {
 	switch spt.t.Dtype {
 	case framework.DataType_DT_FLOAT:
-		return TensorTypeFloat
+		return predict.TensorTypeFloat
 	case framework.DataType_DT_DOUBLE:
-		return TensorTypeDouble
+		return predict.TensorTypeDouble
 	case framework.DataType_DT_INT32:
-		return TensorTypeInt32
+		return predict.TensorTypeInt32
 	case framework.DataType_DT_UINT32:
-		return TensorTypeUInt32
+		return predict.TensorTypeUInt32
 	case framework.DataType_DT_STRING:
-		return TensorTypeString
+		return predict.TensorTypeString
 	case framework.DataType_DT_INT64:
-		return TensorTypeInt64
+		return predict.TensorTypeInt64
 	case framework.DataType_DT_UINT64:
-		return TensorTypeUInt64
+		return predict.TensorTypeUInt64
 	case framework.DataType_DT_BOOL:
-		return TensorTypeBool
+		return predict.TensorTypeBool
 	case framework.DataType_DT_COMPLEX64:
-		return TensorTypeComplex64
+		return predict.TensorTypeComplex64
 	case framework.DataType_DT_COMPLEX128:
-		return TensorTypeComplex128
+		return predict.TensorTypeComplex128
 	default:
 		panic(fmt.Errorf("unsupported type %v", spt.t.Dtype))
 	}

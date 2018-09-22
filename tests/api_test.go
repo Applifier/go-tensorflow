@@ -1,13 +1,16 @@
-package predict
+package tests
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path"
 	"reflect"
 	"runtime"
 	"testing"
 
+	"github.com/Applifier/go-tensorflow/predict"
+	"github.com/Applifier/go-tensorflow/savedmodel"
 	"github.com/Applifier/go-tensorflow/serving"
 	"github.com/Applifier/go-tensorflow/utils"
 )
@@ -41,14 +44,14 @@ func TestPredictorClassifyApi(t *testing.T) {
 	}
 	defer servingModelClient.Close()
 
-	servingPredictor := NewServingPredictor(servingModelClient)
+	servingPredictor := serving.NewPredictor(servingModelClient)
 
-	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
+	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	predictors := map[string]Predictor{
+	predictors := map[string]predict.Predictor{
 		"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
@@ -84,7 +87,7 @@ func TestPredictorClassifyApi(t *testing.T) {
 
 			res, modelInfo, err := predictor.Classify(
 				context.Background(),
-				[]*Example{example},
+				[]*predict.Example{example},
 				contextExample,
 			)
 
@@ -99,6 +102,8 @@ func TestPredictorClassifyApi(t *testing.T) {
 			if modelInfo.Version != 1527087570 {
 				t.Error("Wrong model version returned")
 			}
+
+			fmt.Printf("%+v\n", res)
 
 			if res[0][0].Score != 0.54612064 {
 				t.Error("Wrong result received")
@@ -120,14 +125,14 @@ func TestPredictorRegressAPI(t *testing.T) {
 	}
 	defer servingModelClient.Close()
 
-	servingPredictor := NewServingPredictor(servingModelClient)
+	servingPredictor := serving.NewPredictor(servingModelClient)
 
-	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "wide_deep", 1527087570, "regression")
+	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "wide_deep", 1527087570, "regression")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	predictors := map[string]Predictor{
+	predictors := map[string]predict.Predictor{
 		"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
@@ -163,7 +168,7 @@ func TestPredictorRegressAPI(t *testing.T) {
 
 			res, modelInfo, err := predictor.Regress(
 				context.Background(),
-				[]*Example{example},
+				[]*predict.Example{example},
 				contextExample,
 			)
 
@@ -199,14 +204,14 @@ func TestPredictorModelInfoAPI(t *testing.T) {
 	}
 	defer servingModelClient.Close()
 
-	servingPredictor := NewServingPredictor(servingModelClient)
+	servingPredictor := serving.NewPredictor(servingModelClient)
 
-	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
+	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	predictors := map[string]Predictor{
+	predictors := map[string]predict.Predictor{
 		"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
@@ -242,14 +247,14 @@ func TestPredictorPredictAPI(t *testing.T) {
 	}
 	defer servingModelClient.Close()
 
-	servingPredictor := NewServingPredictor(servingModelClient)
+	servingPredictor := serving.NewPredictor(servingModelClient)
 
-	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
+	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	predictors := map[string]Predictor{
+	predictors := map[string]predict.Predictor{
 		"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
@@ -310,14 +315,14 @@ func TestPredictorPredictShapesAPI(t *testing.T) {
 	}
 	defer servingModelClient.Close()
 
-	servingPredictor := NewServingPredictor(servingModelClient)
+	servingPredictor := serving.NewPredictor(servingModelClient)
 
-	savedModelPredictor, err := NewSavedModelPredictor(getModelsDir(), "test", 1, "serving_default")
+	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "test", 1, "serving_default")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	predictors := map[string]Predictor{
+	predictors := map[string]predict.Predictor{
 		"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}

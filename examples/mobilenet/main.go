@@ -8,11 +8,12 @@ import (
 	"path"
 
 	"github.com/Applifier/go-tensorflow/predict"
+	"github.com/Applifier/go-tensorflow/savedmodel"
 	"github.com/Applifier/go-tensorflow/serving"
 )
 
 func getLocalPredictor() predict.Predictor {
-	pred, err := predict.NewSavedModelPredictor(getModelsDir(), "mobilenet", 1, "serving_default")
+	pred, err := savedmodel.NewPredictor(getModelsDir(), "mobilenet", 1, "serving_default")
 	if err != nil {
 		panic(err)
 	}
@@ -31,7 +32,7 @@ func getServingPredictor() predict.Predictor {
 		panic(err)
 	}
 
-	return predict.NewServingPredictor(servingModelClient)
+	return serving.NewPredictor(servingModelClient)
 }
 
 func readImage(url string) []byte {
