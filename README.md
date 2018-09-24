@@ -12,14 +12,15 @@ Models should be exported in the SavedModel format.
 Example uses pre-trained model found under testdata/models [wide_deep](https://github.com/tensorflow/models/tree/master/official/wide_deep)
 
 ```go
-import "github.com/Applifier/go-tensorflow/predict"
+import "github.com/Applifier/go-tensorflow/savedmodel"
+// import "github.com/Applifier/go-tensorflow/serving"
 ```
 
 ```go
 
 // Uncomment line below to switch implementation
-// predictor := NewServingPredictor(servingModelClient)
-predictor, _ := NewSavedModelPredictor("testdata/models", "wide_deep", 1527087570, "serving_default")
+// predictor := serving.NewPredictor(servingModelClient)
+predictor, _ := savedmodel.NewPredictor("testdata/models", "wide_deep", 1527087570, "serving_default")
 
 
 m := map[string]interface{}{

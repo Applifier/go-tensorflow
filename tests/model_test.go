@@ -1,4 +1,4 @@
-package predict
+package tests
 
 import (
 	"context"
@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/Applifier/go-tensorflow/savedmodel"
 )
 
 type testargs struct {
@@ -28,7 +30,7 @@ func getTestSavedModelsDir() string {
 }
 
 func runPredict(modelName string, in map[string]interface{}) map[string]interface{} {
-	savedModelPredictor, err := NewSavedModelPredictor(getTestSavedModelsDir(), modelName, 1, "serving_default")
+	savedModelPredictor, err := savedmodel.NewPredictor(getTestSavedModelsDir(), modelName, 1, "serving_default")
 	if err != nil {
 		panic(err)
 	}

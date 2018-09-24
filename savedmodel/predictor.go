@@ -1,4 +1,4 @@
-package predict
+package savedmodel
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"unsafe"
 
 	"github.com/Applifier/go-tensorflow/internal/typeconv"
-	"github.com/Applifier/go-tensorflow/savedmodel"
+	"github.com/Applifier/go-tensorflow/predict"
 	"github.com/Applifier/go-tensorflow/serving"
 	"github.com/Applifier/go-tensorflow/utils"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
@@ -19,15 +19,15 @@ import (
 const defaultBufferSize = 2048
 
 type savedModelPredictor struct {
-	runner  *savedmodel.Runner
+	runner  *Runner
 	name    string
 	version int
 
 	bufferPool sync.Pool
 }
 
-// NewSavedModelPredictor returns a new predictor for a given saved model folder path name and version
-func NewSavedModelPredictor(modelsDir string, name string, version int, signature string) (Predictor, error) {
+// NewPredictor returns a new predictor (predict.Predictor) for a given saved model folder path name and version
+func NewPredictor(modelsDir string, name string, version int, signature string) (predict.Predictor, error) {
 	tags := []string{"serve"}
 	modelPath := path.Join(modelsDir, name, strconv.Itoa(version))
 	file, err := os.Open(path.Join(modelPath, "saved_model.pb"))
@@ -36,7 +36,7 @@ func NewSavedModelPredictor(modelsDir string, name string, version int, signatur
 	}
 	defer file.Close()
 
-	signatureDef, err := savedmodel.GetSignatureDefFromReader(tags, signature, file)
+	signatureDef, err := GetSignatureDefFromReader(tags, signature, file)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func NewSavedModelPredictor(modelsDir string, name string, version int, signatur
 		return nil, err
 	}
 
-	runner, err := savedmodel.NewRunnerWithSignature(model, signatureDef)
+	runner, err := NewRunnerWithSignature(model, signatureDef)
 	if err != nil {
 		return nil, err
 	}
@@ -85,14 +85,14 @@ func (ep *savedModelPredictor) convertValueToTensor(val interface{}) (*tf.Tensor
 		return v, nil
 	case *serving.Tensor:
 		return tf.NewTensor(serving.ValueFromTensor(v))
-	case *Example:
+	case *predict.Example:
 		exampleSerialized, err := v.Marshal()
 		if err != nil {
 			return nil, err
 		}
 
 		return tf.NewTensor([]string{string(exampleSerialized)})
-	case Examplifier:
+	case predict.Examplifier:
 		examples, err := v.Examples()
 		if err != nil {
 			return nil, err
@@ -146,34 +146,34 @@ func (ep *savedModelPredictor) convertValueToTensor(val interface{}) (*tf.Tensor
 	return tf.NewTensor(val)
 }
 
-func (ep *savedModelPredictor) Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]Tensor, ModelInfo, error) {
+func (ep *savedModelPredictor) Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]predict.Tensor, predict.ModelInfo, error) {
 	inputTensorMap := make(map[string]*tf.Tensor, len(inputs))
 	for key, val := range inputs {
 		var err error
 		inputTensorMap[key], err = ep.convertValueToTensor(val)
 		if err != nil {
-			return nil, ModelInfo{}, err
+			return nil, predict.ModelInfo{}, err
 		}
 	}
 
 	res, err := ep.runner.Run(inputTensorMap, outputFilter)
 	if err != nil {
-		return nil, ModelInfo{}, err
+		return nil, predict.ModelInfo{}, err
 	}
 
-	outputMap := make(map[string]Tensor, len(res))
+	outputMap := make(map[string]predict.Tensor, len(res))
 
 	for key, tensor := range res {
 		outputMap[key] = &savedModelPredictorTensor{t: tensor}
 	}
 
-	return outputMap, ModelInfo{
+	return outputMap, predict.ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
 	}, nil
 }
 
-func (ep *savedModelPredictor) marshalExample(e *Example) ([]byte, error) {
+func (ep *savedModelPredictor) marshalExample(e *predict.Example) ([]byte, error) {
 	buf := ep.getBuffer(e.Size())
 	n, err := e.MarshalTo(buf)
 	if err != nil {
@@ -182,8 +182,8 @@ func (ep *savedModelPredictor) marshalExample(e *Example) ([]byte, error) {
 	return buf[:n], nil
 }
 
-func (ep *savedModelPredictor) Classify(ctx context.Context, examples []*Example, context *Example) ([][]Class, ModelInfo, error) {
-	modelInfo := ModelInfo{
+func (ep *savedModelPredictor) Classify(ctx context.Context, examples []*predict.Example, context *predict.Example) ([][]predict.Class, predict.ModelInfo, error) {
+	modelInfo := predict.ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
 	}
@@ -229,7 +229,7 @@ func (ep *savedModelPredictor) Classify(ctx context.Context, examples []*Example
 		return nil, modelInfo, err
 	}
 
-	result := make([][]Class, len(examples))
+	result := make([][]predict.Class, len(examples))
 
 	classesTensor, classesOk := res["classes"]
 	scoresTensor, scoresOk := res["scores"]
@@ -251,7 +251,7 @@ func (ep *savedModelPredictor) Classify(ctx context.Context, examples []*Example
 
 	if dims != nil {
 		for exampleI := int64(0); exampleI < dims[0]; exampleI++ {
-			exampleClasses := make([]Class, dims[1])
+			exampleClasses := make([]predict.Class, dims[1])
 			result[exampleI] = exampleClasses
 			for classI := int64(0); classI < dims[1]; classI++ {
 				if scoresOk {
@@ -267,8 +267,8 @@ func (ep *savedModelPredictor) Classify(ctx context.Context, examples []*Example
 	return result, modelInfo, err
 }
 
-func (ep *savedModelPredictor) Regress(ctx context.Context, examples []*Example, context *Example) ([]Regression, ModelInfo, error) {
-	modelInfo := ModelInfo{
+func (ep *savedModelPredictor) Regress(ctx context.Context, examples []*predict.Example, context *predict.Example) ([]predict.Regression, predict.ModelInfo, error) {
+	modelInfo := predict.ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
 	}
@@ -315,20 +315,20 @@ func (ep *savedModelPredictor) Regress(ctx context.Context, examples []*Example,
 	}
 
 	regressions := res["outputs"].Value().([][]float32)
-	results := make([]Regression, len(regressions))
+	results := make([]predict.Regression, len(regressions))
 
 	for i, reg := range regressions {
 		results[i].Value = reg[0]
 	}
 
-	return results, ModelInfo{
+	return results, predict.ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
 	}, nil
 }
 
-func (ep *savedModelPredictor) GetModelInfo(ctx context.Context) (ModelInfo, error) {
-	return ModelInfo{
+func (ep *savedModelPredictor) GetModelInfo(ctx context.Context) (predict.ModelInfo, error) {
+	return predict.ModelInfo{
 		Name:    ep.name,
 		Version: ep.version,
 	}, nil
@@ -346,28 +346,28 @@ func (ept *savedModelPredictorTensor) Shape() []int64 {
 	return ept.t.Shape()
 }
 
-func (ept *savedModelPredictorTensor) Type() TensorType {
+func (ept *savedModelPredictorTensor) Type() predict.TensorType {
 	switch ept.t.DataType() {
 	case tf.Float:
-		return TensorTypeFloat
+		return predict.TensorTypeFloat
 	case tf.Double:
-		return TensorTypeDouble
+		return predict.TensorTypeDouble
 	case tf.Int32:
-		return TensorTypeInt32
+		return predict.TensorTypeInt32
 	case tf.Uint32:
-		return TensorTypeUInt32
+		return predict.TensorTypeUInt32
 	case tf.String:
-		return TensorTypeString
+		return predict.TensorTypeString
 	case tf.Int64:
-		return TensorTypeInt64
+		return predict.TensorTypeInt64
 	case tf.Uint64:
-		return TensorTypeUInt64
+		return predict.TensorTypeUInt64
 	case tf.Bool:
-		return TensorTypeBool
+		return predict.TensorTypeBool
 	case tf.Complex64:
-		return TensorTypeComplex64
+		return predict.TensorTypeComplex64
 	case tf.Complex128:
-		return TensorTypeComplex128
+		return predict.TensorTypeComplex128
 	default:
 		panic(fmt.Errorf("unsupported type %v", ept.t.DataType()))
 	}
