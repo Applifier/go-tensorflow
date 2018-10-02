@@ -79,6 +79,19 @@ func NewFeature(val interface{}) (*Feature, error) {
 				},
 			},
 		}, nil
+	case []float64:
+		vals := make([]float32, len(v))
+		for i, f64Val := range v {
+			vals[i] = float32(f64Val)
+			// TODO trough error if truncated
+		}
+		return &Feature{
+			Kind: &example.Feature_FloatList{
+				FloatList: &example.FloatList{
+					Value: vals,
+				},
+			},
+		}, nil
 	case float32:
 		return &Feature{
 			Kind: &example.Feature_FloatList{
@@ -111,6 +124,42 @@ func NewFeature(val interface{}) (*Feature, error) {
 				},
 			},
 		}, nil
+	case int32:
+		return &Feature{
+			Kind: &example.Feature_Int64List{
+				Int64List: &example.Int64List{
+					Value: []int64{int64(v)},
+				},
+			},
+		}, nil
+	case []int32:
+		vals := make([]int64, len(v))
+		for i, i64Val := range v {
+			vals[i] = int64(i64Val)
+		}
+		return &Feature{
+			Kind: &example.Feature_Int64List{
+				Int64List: &example.Int64List{
+					Value: vals,
+				},
+			},
+		}, nil
+	case bool:
+		if v {
+			return NewFeature(int64(1))
+		}
+
+		return NewFeature(int64(0))
+	case []bool:
+		vals := make([]int64, len(v))
+		for i, bVal := range v {
+			if bVal {
+				vals[i] = 1
+			} else {
+				vals[i] = 0
+			}
+		}
+		return NewFeature(vals)
 	case map[string]interface{}:
 		ex, err := NewExampleFromMap(v)
 		if err != nil {
