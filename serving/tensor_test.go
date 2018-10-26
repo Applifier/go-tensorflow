@@ -7,6 +7,31 @@ import (
 	"github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
 )
 
+func TestNewTensorWithShape(t *testing.T) {
+	raw := []float32{1, 2, 3, 4}
+	tensor, err := NewTensorWithShape(raw, []int64{4, 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	v := ValueFromTensor(tensor)
+
+	mat, ok := v.([][]float32)
+	if !ok {
+		t.Error("wrong value returned")
+	}
+
+	for i, val := range raw {
+		if mat[i][0] != val {
+			t.Error("wrong value received")
+		}
+	}
+
+	if reflect.ValueOf(tensor.FloatVal).Pointer() != reflect.ValueOf(raw).Pointer() {
+		t.Error("should be backed with original slice")
+	}
+}
+
 func TestNewTensor(t *testing.T) {
 	type args struct {
 		value interface{}

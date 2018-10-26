@@ -32,6 +32,33 @@ func NewShape(dims []int64) *Shape {
 	}
 }
 
+// NewTensorWithShape returns a tensor with a specific shape
+func NewTensorWithShape(value interface{}, shape []int64) (*Tensor, error) {
+	if tensor, ok := value.(*Tensor); ok {
+		return NewTensorWithShape(ValueFromTensor(tensor), shape)
+	}
+
+	// TODO figure out if this actually causes more issues that it solves
+	if byteSliceSlize, ok := value.([][]byte); ok {
+		newValue := make([]string, len(byteSliceSlize))
+		for i, b := range byteSliceSlize {
+			// TODO optimize this for alloc
+			newValue[i] = string(b)
+		}
+
+		value = newValue
+	}
+
+	val := reflect.ValueOf(value)
+	sourceShape, dataType, err := shapeAndDataTypeOf(val)
+	if err != nil {
+		return nil, err
+	}
+	flattened := numElements(sourceShape)
+
+	return createTensor(value, sourceShape, shape, dataType, flattened)
+}
+
 // NewTensor returns a Tensor for a given go value
 func NewTensor(value interface{}) (*Tensor, error) {
 	if tensor, ok := value.(*Tensor); ok {
@@ -56,25 +83,29 @@ func NewTensor(value interface{}) (*Tensor, error) {
 	}
 	flattened := numElements(shape)
 
+	return createTensor(value, shape, shape, dataType, flattened)
+}
+
+func createTensor(value interface{}, sourceShape []int64, tensorShape []int64, dataType framework.DataType, flattened int64) (*Tensor, error) {
 	// TODO optimize by memory pooling
 	tensor := &Tensor{
 		Dtype:       dataType,
-		TensorShape: NewShape(shape),
+		TensorShape: NewShape(tensorShape),
 	}
 
 	switch dataType {
 	case framework.DataType_DT_FLOAT:
-		tensor.FloatVal = singleDimFloat32Slice(value, shape, flattened)
+		tensor.FloatVal = singleDimFloat32Slice(value, sourceShape, flattened)
 	case framework.DataType_DT_DOUBLE:
-		tensor.DoubleVal = singleDimFloat64Slice(value, shape, flattened)
+		tensor.DoubleVal = singleDimFloat64Slice(value, sourceShape, flattened)
 	case framework.DataType_DT_INT32:
-		tensor.IntVal = singleDimInt32Slice(value, shape, flattened)
+		tensor.IntVal = singleDimInt32Slice(value, sourceShape, flattened)
 	case framework.DataType_DT_UINT32:
-		tensor.Uint32Val = singleDimUInt32Slice(value, shape, flattened)
+		tensor.Uint32Val = singleDimUInt32Slice(value, sourceShape, flattened)
 	case framework.DataType_DT_UINT8:
-		tensor.IntVal = singleDimUInt8Slice(value, shape, flattened)
+		tensor.IntVal = singleDimUInt8Slice(value, sourceShape, flattened)
 	case framework.DataType_DT_STRING:
-		flattenedArr := singleDimStringSlice(value, shape, flattened)
+		flattenedArr := singleDimStringSlice(value, sourceShape, flattened)
 		if flattenedArr != nil {
 			value = flattenedArr
 		}
@@ -89,11 +120,11 @@ func NewTensor(value interface{}) (*Tensor, error) {
 		}
 
 	case framework.DataType_DT_INT64:
-		tensor.Int64Val = singleDimInt64Slice(value, shape, flattened)
+		tensor.Int64Val = singleDimInt64Slice(value, sourceShape, flattened)
 	case framework.DataType_DT_UINT64:
-		tensor.Uint64Val = singleDimUInt64Slice(value, shape, flattened)
+		tensor.Uint64Val = singleDimUInt64Slice(value, sourceShape, flattened)
 	case framework.DataType_DT_BOOL:
-		tensor.BoolVal = singleDimBoolSlice(value, shape, flattened)
+		tensor.BoolVal = singleDimBoolSlice(value, sourceShape, flattened)
 	case framework.DataType_DT_COMPLEX64:
 		vals := value.([]complex64)
 		scomplex := make([]float32, len(vals)*2)
@@ -116,7 +147,7 @@ func NewTensor(value interface{}) (*Tensor, error) {
 		tensor.DcomplexVal = dcomplex
 
 	default:
-		return nil, fmt.Errorf("unsupported type %v", val.Type())
+		return nil, fmt.Errorf("unsupported type %T", value)
 	}
 
 	return tensor, nil
