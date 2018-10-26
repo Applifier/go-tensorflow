@@ -26,6 +26,10 @@ func TestNewTensorWithShape(t *testing.T) {
 			t.Error("wrong value received")
 		}
 	}
+
+	if reflect.ValueOf(tensor.FloatVal).Pointer() != reflect.ValueOf(raw).Pointer() {
+		t.Error("should be backed with original slice")
+	}
 }
 
 func TestNewTensor(t *testing.T) {
