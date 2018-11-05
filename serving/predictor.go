@@ -3,6 +3,7 @@ package serving
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/Applifier/go-tensorflow/internal/typeconv"
 	"github.com/Applifier/go-tensorflow/predict"
@@ -15,13 +16,31 @@ import (
 // servingPredictor implementation of the Predictor interface for TensorFlow Serving
 type servingPredictor struct {
 	modelClient ModelPredictionClient
+
+	tensorMapPool sync.Pool
 }
 
 // NewPredictor returns a new predictor (implements Predictor interface) using a given TF Serving client
 func NewPredictor(modelClient ModelPredictionClient) predict.Predictor {
 	return &servingPredictor{
 		modelClient: modelClient,
+		tensorMapPool: sync.Pool{
+			New: func() interface{} {
+				return TensorMap{}
+			},
+		},
 	}
+}
+
+func (sp *servingPredictor) getTensorMap() TensorMap {
+	return sp.tensorMapPool.Get().(TensorMap)
+}
+
+func (sp *servingPredictor) putTensorMap(m TensorMap) {
+	for key := range m {
+		delete(m, key)
+	}
+	sp.tensorMapPool.Put(m)
 }
 
 func (sp *servingPredictor) convertValueToTensor(val interface{}) (*Tensor, error) {
@@ -92,7 +111,9 @@ func (sp *servingPredictor) convertValueToTensor(val interface{}) (*Tensor, erro
 }
 
 func (sp *servingPredictor) Predict(ctx context.Context, inputs map[string]interface{}, outputFilter []string) (map[string]predict.Tensor, predict.ModelInfo, error) {
-	inputTensorMap := make(TensorMap, len(inputs))
+	inputTensorMap := sp.getTensorMap()
+	defer sp.putTensorMap(inputTensorMap)
+
 	for key, val := range inputs {
 		var err error
 		inputTensorMap[key], err = sp.convertValueToTensor(val)
