@@ -21,7 +21,8 @@ type Class struct {
 	// Label or name of the class.
 	Label string `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
 	// Score for this class (e.g., the probability the item belongs to this
-	// class).
+	// class). As per the proto3 default-value semantics, if the score is missing,
+	// it should be treated as 0.
 	Score float32 `protobuf:"fixed32,2,opt,name=score,proto3" json:"score,omitempty"`
 }
 

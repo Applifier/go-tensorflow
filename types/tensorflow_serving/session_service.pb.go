@@ -6,7 +6,7 @@ package tensorflow_serving
 import proto "github.com/gogo/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import tensorflow21 "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
+import tensorflow21 "tensorflow/core/protobuf"
 import tensorflow22 "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
 
 import context "golang.org/x/net/context"

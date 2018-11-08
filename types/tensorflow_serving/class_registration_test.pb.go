@@ -19,6 +19,7 @@
 		tensorflow_serving/model_management.proto
 		tensorflow_serving/model_server_config.proto
 		tensorflow_serving/model_service.proto
+		tensorflow_serving/monitoring_config.proto
 		tensorflow_serving/platform_config.proto
 		tensorflow_serving/predict.proto
 		tensorflow_serving/prediction_log.proto
@@ -62,6 +63,8 @@
 		ModelConfig
 		ModelConfigList
 		ModelServerConfig
+		PrometheusConfig
+		MonitoringConfig
 		PlatformConfig
 		PlatformConfigMap
 		PredictRequest
