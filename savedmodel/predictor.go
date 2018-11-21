@@ -106,7 +106,7 @@ func (ep *savedModelPredictor) convertValueToTensor(val interface{}) (*tf.Tensor
 			}
 			examplesStrings[i] = string(exampleSerialized)
 		}
-		return tf.NewTensor(examples)
+		return tf.NewTensor(examplesStrings)
 	case map[string]interface{}:
 		example, err := utils.NewExampleFromMap(v)
 		if err != nil {

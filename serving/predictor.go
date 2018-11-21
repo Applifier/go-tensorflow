@@ -71,6 +71,8 @@ func (sp *servingPredictor) convertValueToTensor(val interface{}) (*Tensor, erro
 			}
 			examplesBytes[i] = exampleSerialized
 		}
+
+		return NewTensor(examplesBytes)
 	case map[string]interface{}:
 		example, err := utils.NewExampleFromMap(v)
 		if err != nil {
