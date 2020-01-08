@@ -9,7 +9,6 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
-	_ "tensorflow/core/lib/core"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.

@@ -1,4 +1,4 @@
-FROM tensorflow/tensorflow:1.10.0
+FROM tensorflow/tensorflow:1.15.0
 
 # Install golang
 RUN apt-get update
@@ -15,7 +15,7 @@ ENV GOPATH /go
 ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
-ENV TENSORFLOW_LIB_GZIP libtensorflow-cpu-linux-x86_64-1.8.0.tar.gz
+ENV TENSORFLOW_LIB_GZIP libtensorflow-cpu-linux-x86_64-1.15.0.tar.gz
 ENV TARGET_DIRECTORY /usr/local
 RUN  curl -fsSL "https://storage.googleapis.com/tensorflow/libtensorflow/$TENSORFLOW_LIB_GZIP" -o $TENSORFLOW_LIB_GZIP && \
      tar -C $TARGET_DIRECTORY -xzf $TENSORFLOW_LIB_GZIP && \

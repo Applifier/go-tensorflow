@@ -16,7 +16,6 @@ function cloneOrPull() {
 cloneOrPull https://github.com/tensorflow/tensorflow.git .tensorflow_repo
 cloneOrPull https://github.com/tensorflow/serving.git .serving_repo
 
-
 rm -rf types/tensorflow_serving
 mkdir -p types/tensorflow_serving/
 
