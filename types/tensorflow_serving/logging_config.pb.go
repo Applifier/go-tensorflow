@@ -3,18 +3,24 @@
 
 package tensorflow_serving
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
-import binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type SamplingConfig struct {
 	// Requests will be logged uniformly at random with this probability. Valid
@@ -22,10 +28,38 @@ type SamplingConfig struct {
 	SamplingRate float64 `protobuf:"fixed64,1,opt,name=sampling_rate,json=samplingRate,proto3" json:"sampling_rate,omitempty"`
 }
 
-func (m *SamplingConfig) Reset()                    { *m = SamplingConfig{} }
-func (m *SamplingConfig) String() string            { return proto.CompactTextString(m) }
-func (*SamplingConfig) ProtoMessage()               {}
-func (*SamplingConfig) Descriptor() ([]byte, []int) { return fileDescriptorLoggingConfig, []int{0} }
+func (m *SamplingConfig) Reset()         { *m = SamplingConfig{} }
+func (m *SamplingConfig) String() string { return proto.CompactTextString(m) }
+func (*SamplingConfig) ProtoMessage()    {}
+func (*SamplingConfig) Descriptor() ([]byte, []int) {
+	return fileDescriptor_15f8f28d0143a905, []int{0}
+}
+func (m *SamplingConfig) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SamplingConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SamplingConfig.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SamplingConfig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SamplingConfig.Merge(m, src)
+}
+func (m *SamplingConfig) XXX_Size() int {
+	return m.Size()
+}
+func (m *SamplingConfig) XXX_DiscardUnknown() {
+	xxx_messageInfo_SamplingConfig.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SamplingConfig proto.InternalMessageInfo
 
 func (m *SamplingConfig) GetSamplingRate() float64 {
 	if m != nil {
@@ -36,14 +70,42 @@ func (m *SamplingConfig) GetSamplingRate() float64 {
 
 // Configuration for logging query/responses.
 type LoggingConfig struct {
-	LogCollectorConfig *LogCollectorConfig `protobuf:"bytes,1,opt,name=log_collector_config,json=logCollectorConfig" json:"log_collector_config,omitempty"`
-	SamplingConfig     *SamplingConfig     `protobuf:"bytes,2,opt,name=sampling_config,json=samplingConfig" json:"sampling_config,omitempty"`
+	LogCollectorConfig *LogCollectorConfig `protobuf:"bytes,1,opt,name=log_collector_config,json=logCollectorConfig,proto3" json:"log_collector_config,omitempty"`
+	SamplingConfig     *SamplingConfig     `protobuf:"bytes,2,opt,name=sampling_config,json=samplingConfig,proto3" json:"sampling_config,omitempty"`
 }
 
-func (m *LoggingConfig) Reset()                    { *m = LoggingConfig{} }
-func (m *LoggingConfig) String() string            { return proto.CompactTextString(m) }
-func (*LoggingConfig) ProtoMessage()               {}
-func (*LoggingConfig) Descriptor() ([]byte, []int) { return fileDescriptorLoggingConfig, []int{1} }
+func (m *LoggingConfig) Reset()         { *m = LoggingConfig{} }
+func (m *LoggingConfig) String() string { return proto.CompactTextString(m) }
+func (*LoggingConfig) ProtoMessage()    {}
+func (*LoggingConfig) Descriptor() ([]byte, []int) {
+	return fileDescriptor_15f8f28d0143a905, []int{1}
+}
+func (m *LoggingConfig) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LoggingConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LoggingConfig.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *LoggingConfig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LoggingConfig.Merge(m, src)
+}
+func (m *LoggingConfig) XXX_Size() int {
+	return m.Size()
+}
+func (m *LoggingConfig) XXX_DiscardUnknown() {
+	xxx_messageInfo_LoggingConfig.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LoggingConfig proto.InternalMessageInfo
 
 func (m *LoggingConfig) GetLogCollectorConfig() *LogCollectorConfig {
 	if m != nil {
@@ -63,6 +125,30 @@ func init() {
 	proto.RegisterType((*SamplingConfig)(nil), "tensorflow.serving.SamplingConfig")
 	proto.RegisterType((*LoggingConfig)(nil), "tensorflow.serving.LoggingConfig")
 }
+
+func init() {
+	proto.RegisterFile("tensorflow_serving/logging_config.proto", fileDescriptor_15f8f28d0143a905)
+}
+
+var fileDescriptor_15f8f28d0143a905 = []byte{
+	// 226 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x2f, 0x49, 0xcd, 0x2b,
+	0xce, 0x2f, 0x4a, 0xcb, 0xc9, 0x2f, 0x8f, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0xcc, 0x4b, 0xd7, 0xcf,
+	0xc9, 0x4f, 0x4f, 0xcf, 0xcc, 0x4b, 0x8f, 0x4f, 0xce, 0xcf, 0x4b, 0xcb, 0x4c, 0xd7, 0x2b, 0x28,
+	0xca, 0x2f, 0xc9, 0x17, 0x12, 0x42, 0x28, 0xd4, 0x83, 0x2a, 0x94, 0xd2, 0xc5, 0xae, 0x39, 0x3e,
+	0x39, 0x3f, 0x27, 0x27, 0x35, 0xb9, 0x24, 0xbf, 0x08, 0xc5, 0x08, 0x25, 0x53, 0x2e, 0xbe, 0xe0,
+	0xc4, 0xdc, 0x82, 0x9c, 0xcc, 0xbc, 0x74, 0x67, 0xb0, 0xb8, 0x90, 0x32, 0x17, 0x6f, 0x31, 0x54,
+	0x24, 0xbe, 0x28, 0xb1, 0x24, 0x55, 0x82, 0x51, 0x81, 0x51, 0x83, 0x31, 0x88, 0x07, 0x26, 0x18,
+	0x94, 0x58, 0x92, 0xaa, 0xb4, 0x8d, 0x91, 0x8b, 0xd7, 0x07, 0xe2, 0x24, 0xa8, 0xb6, 0x08, 0x2e,
+	0x11, 0x6c, 0xd6, 0x80, 0x75, 0x73, 0x1b, 0xa9, 0xe9, 0x61, 0x3a, 0x55, 0xcf, 0x27, 0x3f, 0xdd,
+	0x19, 0xa6, 0x1c, 0x62, 0x4a, 0x90, 0x50, 0x0e, 0x86, 0x98, 0x90, 0x37, 0x17, 0x3f, 0xdc, 0x41,
+	0x50, 0x43, 0x99, 0xc0, 0x86, 0x2a, 0x61, 0x33, 0x14, 0xd5, 0x37, 0x41, 0x7c, 0xc5, 0x28, 0x7c,
+	0x27, 0xe9, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc2,
+	0x63, 0x39, 0x86, 0x0b, 0x8f, 0xe5, 0x18, 0x6e, 0x3c, 0x96, 0x63, 0xf8, 0xc1, 0xc8, 0x98, 0xc4,
+	0x06, 0x0e, 0x13, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0xad, 0x91, 0x74, 0x80, 0x81, 0x01,
+	0x00, 0x00,
+}
+
 func (m *SamplingConfig) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -81,7 +167,7 @@ func (m *SamplingConfig) MarshalTo(dAtA []byte) (int, error) {
 	if m.SamplingRate != 0 {
 		dAtA[i] = 0x9
 		i++
-		binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.SamplingRate))))
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.SamplingRate))))
 		i += 8
 	}
 	return i, nil
@@ -135,6 +221,9 @@ func encodeVarintLoggingConfig(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *SamplingConfig) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.SamplingRate != 0 {
@@ -144,6 +233,9 @@ func (m *SamplingConfig) Size() (n int) {
 }
 
 func (m *LoggingConfig) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.LogCollectorConfig != nil {
@@ -207,7 +299,7 @@ func (m *SamplingConfig) Unmarshal(dAtA []byte) error {
 			if (iNdEx + 8) > l {
 				return io.ErrUnexpectedEOF
 			}
-			v = uint64(binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
 			iNdEx += 8
 			m.SamplingRate = float64(math.Float64frombits(v))
 		default:
@@ -451,25 +543,3 @@ var (
 	ErrInvalidLengthLoggingConfig = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowLoggingConfig   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() {
-	proto.RegisterFile("tensorflow_serving/logging_config.proto", fileDescriptorLoggingConfig)
-}
-
-var fileDescriptorLoggingConfig = []byte{
-	// 217 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x2f, 0x49, 0xcd, 0x2b,
-	0xce, 0x2f, 0x4a, 0xcb, 0xc9, 0x2f, 0x8f, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0xcc, 0x4b, 0xd7, 0xcf,
-	0xc9, 0x4f, 0x4f, 0xcf, 0xcc, 0x4b, 0x8f, 0x4f, 0xce, 0xcf, 0x4b, 0xcb, 0x4c, 0xd7, 0x2b, 0x28,
-	0xca, 0x2f, 0xc9, 0x17, 0x12, 0x42, 0x28, 0xd4, 0x83, 0x2a, 0x94, 0xd2, 0xc5, 0xae, 0x39, 0x3e,
-	0x39, 0x3f, 0x27, 0x27, 0x35, 0xb9, 0x24, 0xbf, 0x08, 0xc5, 0x08, 0x25, 0x53, 0x2e, 0xbe, 0xe0,
-	0xc4, 0xdc, 0x82, 0x9c, 0xcc, 0xbc, 0x74, 0x67, 0xb0, 0xb8, 0x90, 0x32, 0x17, 0x6f, 0x31, 0x54,
-	0x24, 0xbe, 0x28, 0xb1, 0x24, 0x55, 0x82, 0x51, 0x81, 0x51, 0x83, 0x31, 0x88, 0x07, 0x26, 0x18,
-	0x94, 0x58, 0x92, 0xaa, 0xb4, 0x8d, 0x91, 0x8b, 0xd7, 0x07, 0xe2, 0x24, 0xa8, 0xb6, 0x08, 0x2e,
-	0x11, 0x6c, 0xd6, 0x80, 0x75, 0x73, 0x1b, 0xa9, 0xe9, 0x61, 0x3a, 0x55, 0xcf, 0x27, 0x3f, 0xdd,
-	0x19, 0xa6, 0x1c, 0x62, 0x4a, 0x90, 0x50, 0x0e, 0x86, 0x98, 0x90, 0x37, 0x17, 0x3f, 0xdc, 0x41,
-	0x50, 0x43, 0x99, 0xc0, 0x86, 0x2a, 0x61, 0x33, 0x14, 0xd5, 0x37, 0x41, 0x7c, 0xc5, 0x28, 0x7c,
-	0x27, 0xe1, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc2,
-	0x63, 0x39, 0x86, 0x1f, 0x8c, 0x8c, 0x49, 0x6c, 0xe0, 0xb0, 0x30, 0x06, 0x04, 0x00, 0x00, 0xff,
-	0xff, 0x5e, 0x8a, 0xc7, 0xe9, 0x79, 0x01, 0x00, 0x00,
-}

@@ -3,33 +3,68 @@
 
 package tensorflow_serving
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
-import io "io"
+import (
+	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 // Inference request such as classification, regression, etc...
 type InferenceTask struct {
 	// Model Specification. If version is not specified, will use the latest
 	// (numerical) version.
 	// All ModelSpecs in a MultiInferenceRequest must access the same model name.
-	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec" json:"model_spec,omitempty"`
+	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// Signature's method_name. Should be one of the method names defined in
 	// third_party/tensorflow/python/saved_model/signature_constants.py.
 	// e.g. "tensorflow/serving/classify".
 	MethodName string `protobuf:"bytes,2,opt,name=method_name,json=methodName,proto3" json:"method_name,omitempty"`
 }
 
-func (m *InferenceTask) Reset()                    { *m = InferenceTask{} }
-func (m *InferenceTask) String() string            { return proto.CompactTextString(m) }
-func (*InferenceTask) ProtoMessage()               {}
-func (*InferenceTask) Descriptor() ([]byte, []int) { return fileDescriptorInference, []int{0} }
+func (m *InferenceTask) Reset()         { *m = InferenceTask{} }
+func (m *InferenceTask) String() string { return proto.CompactTextString(m) }
+func (*InferenceTask) ProtoMessage()    {}
+func (*InferenceTask) Descriptor() ([]byte, []int) {
+	return fileDescriptor_adc181a99fb0c242, []int{0}
+}
+func (m *InferenceTask) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *InferenceTask) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_InferenceTask.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *InferenceTask) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InferenceTask.Merge(m, src)
+}
+func (m *InferenceTask) XXX_Size() int {
+	return m.Size()
+}
+func (m *InferenceTask) XXX_DiscardUnknown() {
+	xxx_messageInfo_InferenceTask.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_InferenceTask proto.InternalMessageInfo
 
 func (m *InferenceTask) GetModelSpec() *ModelSpec {
 	if m != nil {
@@ -47,17 +82,45 @@ func (m *InferenceTask) GetMethodName() string {
 
 // Inference result, matches the type of request or is an error.
 type InferenceResult struct {
-	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec" json:"model_spec,omitempty"`
+	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// Types that are valid to be assigned to Result:
 	//	*InferenceResult_ClassificationResult
 	//	*InferenceResult_RegressionResult
 	Result isInferenceResult_Result `protobuf_oneof:"result"`
 }
 
-func (m *InferenceResult) Reset()                    { *m = InferenceResult{} }
-func (m *InferenceResult) String() string            { return proto.CompactTextString(m) }
-func (*InferenceResult) ProtoMessage()               {}
-func (*InferenceResult) Descriptor() ([]byte, []int) { return fileDescriptorInference, []int{1} }
+func (m *InferenceResult) Reset()         { *m = InferenceResult{} }
+func (m *InferenceResult) String() string { return proto.CompactTextString(m) }
+func (*InferenceResult) ProtoMessage()    {}
+func (*InferenceResult) Descriptor() ([]byte, []int) {
+	return fileDescriptor_adc181a99fb0c242, []int{1}
+}
+func (m *InferenceResult) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *InferenceResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_InferenceResult.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *InferenceResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_InferenceResult.Merge(m, src)
+}
+func (m *InferenceResult) XXX_Size() int {
+	return m.Size()
+}
+func (m *InferenceResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_InferenceResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_InferenceResult proto.InternalMessageInfo
 
 type isInferenceResult_Result interface {
 	isInferenceResult_Result()
@@ -66,10 +129,10 @@ type isInferenceResult_Result interface {
 }
 
 type InferenceResult_ClassificationResult struct {
-	ClassificationResult *ClassificationResult `protobuf:"bytes,2,opt,name=classification_result,json=classificationResult,oneof"`
+	ClassificationResult *ClassificationResult `protobuf:"bytes,2,opt,name=classification_result,json=classificationResult,proto3,oneof"`
 }
 type InferenceResult_RegressionResult struct {
-	RegressionResult *RegressionResult `protobuf:"bytes,3,opt,name=regression_result,json=regressionResult,oneof"`
+	RegressionResult *RegressionResult `protobuf:"bytes,3,opt,name=regression_result,json=regressionResult,proto3,oneof"`
 }
 
 func (*InferenceResult_ClassificationResult) isInferenceResult_Result() {}
@@ -162,12 +225,12 @@ func _InferenceResult_OneofSizer(msg proto.Message) (n int) {
 	switch x := m.Result.(type) {
 	case *InferenceResult_ClassificationResult:
 		s := proto.Size(x.ClassificationResult)
-		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *InferenceResult_RegressionResult:
 		s := proto.Size(x.RegressionResult)
-		n += proto.SizeVarint(3<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case nil:
@@ -180,15 +243,43 @@ func _InferenceResult_OneofSizer(msg proto.Message) (n int) {
 // Inference request containing one or more requests.
 type MultiInferenceRequest struct {
 	// Inference tasks.
-	Tasks []*InferenceTask `protobuf:"bytes,1,rep,name=tasks" json:"tasks,omitempty"`
+	Tasks []*InferenceTask `protobuf:"bytes,1,rep,name=tasks,proto3" json:"tasks,omitempty"`
 	// Input data.
-	Input *Input `protobuf:"bytes,2,opt,name=input" json:"input,omitempty"`
+	Input *Input `protobuf:"bytes,2,opt,name=input,proto3" json:"input,omitempty"`
 }
 
-func (m *MultiInferenceRequest) Reset()                    { *m = MultiInferenceRequest{} }
-func (m *MultiInferenceRequest) String() string            { return proto.CompactTextString(m) }
-func (*MultiInferenceRequest) ProtoMessage()               {}
-func (*MultiInferenceRequest) Descriptor() ([]byte, []int) { return fileDescriptorInference, []int{2} }
+func (m *MultiInferenceRequest) Reset()         { *m = MultiInferenceRequest{} }
+func (m *MultiInferenceRequest) String() string { return proto.CompactTextString(m) }
+func (*MultiInferenceRequest) ProtoMessage()    {}
+func (*MultiInferenceRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_adc181a99fb0c242, []int{2}
+}
+func (m *MultiInferenceRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MultiInferenceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MultiInferenceRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MultiInferenceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MultiInferenceRequest.Merge(m, src)
+}
+func (m *MultiInferenceRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *MultiInferenceRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MultiInferenceRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MultiInferenceRequest proto.InternalMessageInfo
 
 func (m *MultiInferenceRequest) GetTasks() []*InferenceTask {
 	if m != nil {
@@ -208,13 +299,41 @@ func (m *MultiInferenceRequest) GetInput() *Input {
 type MultiInferenceResponse struct {
 	// List of results; one for each InferenceTask in the request, returned in the
 	// same order as the request.
-	Results []*InferenceResult `protobuf:"bytes,1,rep,name=results" json:"results,omitempty"`
+	Results []*InferenceResult `protobuf:"bytes,1,rep,name=results,proto3" json:"results,omitempty"`
 }
 
-func (m *MultiInferenceResponse) Reset()                    { *m = MultiInferenceResponse{} }
-func (m *MultiInferenceResponse) String() string            { return proto.CompactTextString(m) }
-func (*MultiInferenceResponse) ProtoMessage()               {}
-func (*MultiInferenceResponse) Descriptor() ([]byte, []int) { return fileDescriptorInference, []int{3} }
+func (m *MultiInferenceResponse) Reset()         { *m = MultiInferenceResponse{} }
+func (m *MultiInferenceResponse) String() string { return proto.CompactTextString(m) }
+func (*MultiInferenceResponse) ProtoMessage()    {}
+func (*MultiInferenceResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_adc181a99fb0c242, []int{3}
+}
+func (m *MultiInferenceResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MultiInferenceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MultiInferenceResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MultiInferenceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MultiInferenceResponse.Merge(m, src)
+}
+func (m *MultiInferenceResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MultiInferenceResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MultiInferenceResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MultiInferenceResponse proto.InternalMessageInfo
 
 func (m *MultiInferenceResponse) GetResults() []*InferenceResult {
 	if m != nil {
@@ -229,6 +348,38 @@ func init() {
 	proto.RegisterType((*MultiInferenceRequest)(nil), "tensorflow.serving.MultiInferenceRequest")
 	proto.RegisterType((*MultiInferenceResponse)(nil), "tensorflow.serving.MultiInferenceResponse")
 }
+
+func init() { proto.RegisterFile("tensorflow_serving/inference.proto", fileDescriptor_adc181a99fb0c242) }
+
+var fileDescriptor_adc181a99fb0c242 = []byte{
+	// 385 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x52, 0x3f, 0x6f, 0xda, 0x40,
+	0x14, 0xf7, 0x81, 0xa0, 0xe5, 0xac, 0xaa, 0xed, 0xa9, 0x54, 0x94, 0xaa, 0x2e, 0x35, 0x95, 0xea,
+	0xc9, 0x48, 0x74, 0xe8, 0xd2, 0x2e, 0x74, 0x69, 0x07, 0x3a, 0x1c, 0x95, 0x32, 0x5a, 0x8e, 0x79,
+	0x10, 0x0b, 0xfb, 0xce, 0xb9, 0x3b, 0x27, 0x73, 0x3e, 0x41, 0xf2, 0xb1, 0x32, 0x32, 0x66, 0x8c,
+	0xe0, 0x4b, 0x64, 0x8c, 0xe2, 0xc3, 0x26, 0x90, 0x13, 0x4b, 0x36, 0xeb, 0xbd, 0xdf, 0xbf, 0xfb,
+	0xf9, 0x61, 0x57, 0x01, 0x93, 0x5c, 0xcc, 0x12, 0x7e, 0x1e, 0x48, 0x10, 0x67, 0x31, 0x9b, 0x0f,
+	0x62, 0x36, 0x03, 0x01, 0x2c, 0x02, 0x3f, 0x13, 0x5c, 0x71, 0x42, 0xb6, 0x18, 0x7f, 0x83, 0xe9,
+	0x7e, 0x33, 0xf0, 0xa2, 0x24, 0x94, 0x32, 0x9e, 0xc5, 0x51, 0xa8, 0x62, 0xce, 0x34, 0xb9, 0xeb,
+	0x18, 0x0d, 0xb2, 0x5c, 0x1d, 0xd8, 0xa7, 0x7c, 0x0a, 0xc9, 0x66, 0xdf, 0x37, 0xec, 0x05, 0xcc,
+	0x05, 0x48, 0x59, 0x99, 0xb8, 0x0c, 0xbf, 0xfa, 0x5b, 0x86, 0xfe, 0x1f, 0xca, 0x05, 0xf9, 0x89,
+	0x71, 0x21, 0x12, 0xc8, 0x0c, 0xa2, 0x0e, 0xea, 0x21, 0xcf, 0x1e, 0x7e, 0xf2, 0x9f, 0xbe, 0xc3,
+	0x1f, 0x3f, 0xa0, 0x26, 0x19, 0x44, 0xb4, 0x95, 0x96, 0x9f, 0xe4, 0x33, 0xb6, 0x53, 0x50, 0x27,
+	0x7c, 0x1a, 0xb0, 0x30, 0x85, 0x4e, 0xad, 0x87, 0xbc, 0x16, 0xc5, 0x7a, 0xf4, 0x2f, 0x4c, 0xc1,
+	0xbd, 0xac, 0xe1, 0xd7, 0x95, 0x21, 0x05, 0x99, 0x27, 0xea, 0x99, 0x96, 0x01, 0x6e, 0xef, 0xd6,
+	0x17, 0x88, 0x42, 0xb6, 0x30, 0xb7, 0x87, 0x9e, 0x49, 0xe8, 0xf7, 0x0e, 0x41, 0xc7, 0xf8, 0x63,
+	0xd1, 0x77, 0x91, 0x61, 0x4e, 0x26, 0xf8, 0xed, 0xb6, 0xb6, 0x52, 0xbc, 0x5e, 0x88, 0x7f, 0x35,
+	0x89, 0xd3, 0x0a, 0x5c, 0x09, 0xbf, 0x11, 0x7b, 0xb3, 0xd1, 0x4b, 0xdc, 0xd4, 0x4a, 0xee, 0x05,
+	0xc2, 0xed, 0x71, 0x9e, 0xa8, 0xf8, 0x51, 0x2d, 0xa7, 0x39, 0x48, 0x45, 0x7e, 0xe0, 0x86, 0x0a,
+	0xe5, 0x42, 0x76, 0x50, 0xaf, 0xee, 0xd9, 0xc3, 0x2f, 0x26, 0xb3, 0x9d, 0x9f, 0x47, 0x35, 0x9e,
+	0x0c, 0x70, 0xa3, 0x38, 0x94, 0x4d, 0x05, 0x1f, 0xcc, 0xc4, 0x2c, 0x57, 0x54, 0xe3, 0xdc, 0x23,
+	0xfc, 0x7e, 0x3f, 0x82, 0xcc, 0x38, 0x93, 0x40, 0x7e, 0xe1, 0x17, 0x3a, 0x67, 0x99, 0xa2, 0x7f,
+	0x30, 0x85, 0x7e, 0x1d, 0x2d, 0x39, 0xa3, 0x8f, 0xd7, 0x2b, 0x07, 0x2d, 0x57, 0x0e, 0xba, 0x5d,
+	0x39, 0xe8, 0x6a, 0xed, 0x58, 0xcb, 0xb5, 0x63, 0xdd, 0xac, 0x1d, 0xeb, 0x0e, 0xa1, 0xe3, 0x66,
+	0x71, 0x82, 0xdf, 0xef, 0x03, 0x00, 0x00, 0xff, 0xff, 0x51, 0xba, 0x50, 0x1f, 0x4a, 0x03, 0x00,
+	0x00,
+}
+
 func (m *InferenceTask) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -406,6 +557,9 @@ func encodeVarintInference(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *InferenceTask) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ModelSpec != nil {
@@ -420,6 +574,9 @@ func (m *InferenceTask) Size() (n int) {
 }
 
 func (m *InferenceResult) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ModelSpec != nil {
@@ -433,6 +590,9 @@ func (m *InferenceResult) Size() (n int) {
 }
 
 func (m *InferenceResult_ClassificationResult) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ClassificationResult != nil {
@@ -442,6 +602,9 @@ func (m *InferenceResult_ClassificationResult) Size() (n int) {
 	return n
 }
 func (m *InferenceResult_RegressionResult) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.RegressionResult != nil {
@@ -451,6 +614,9 @@ func (m *InferenceResult_RegressionResult) Size() (n int) {
 	return n
 }
 func (m *MultiInferenceRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Tasks) > 0 {
@@ -467,6 +633,9 @@ func (m *MultiInferenceRequest) Size() (n int) {
 }
 
 func (m *MultiInferenceResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Results) > 0 {
@@ -1049,33 +1218,3 @@ var (
 	ErrInvalidLengthInference = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowInference   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow_serving/inference.proto", fileDescriptorInference) }
-
-var fileDescriptorInference = []byte{
-	// 377 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x52, 0xbf, 0x4e, 0xdb, 0x40,
-	0x18, 0xcf, 0x25, 0x4a, 0xda, 0x9c, 0x55, 0xb5, 0xbd, 0x36, 0x55, 0x1a, 0xa9, 0x6e, 0xea, 0x54,
-	0xc2, 0x93, 0x23, 0x85, 0x81, 0x05, 0x96, 0xb0, 0xc0, 0x10, 0x86, 0x0b, 0x12, 0xa3, 0x65, 0x9c,
-	0x2f, 0xc1, 0x8a, 0x7d, 0x67, 0xee, 0xce, 0x30, 0xf3, 0x04, 0xf0, 0x58, 0x8c, 0x3c, 0x02, 0x0a,
-	0x2f, 0xc1, 0x88, 0xf0, 0xc5, 0x0e, 0x09, 0xa7, 0x2c, 0x6c, 0xd6, 0xf7, 0xfd, 0xfe, 0xdd, 0xcf,
-	0x1f, 0x76, 0x14, 0x30, 0xc9, 0xc5, 0x34, 0xe6, 0xd7, 0xbe, 0x04, 0x71, 0x15, 0xb1, 0x59, 0x3f,
-	0x62, 0x53, 0x10, 0xc0, 0x42, 0xf0, 0x52, 0xc1, 0x15, 0x27, 0x64, 0x85, 0xf1, 0x96, 0x98, 0xce,
-	0x8e, 0x81, 0x17, 0xc6, 0x81, 0x94, 0xd1, 0x34, 0x0a, 0x03, 0x15, 0x71, 0xa6, 0xc9, 0x1d, 0xdb,
-	0x68, 0x90, 0x66, 0x6a, 0xcb, 0x3e, 0xe1, 0x13, 0x88, 0x97, 0xfb, 0x9e, 0x61, 0x2f, 0x60, 0x26,
-	0x40, 0xca, 0xd2, 0xc4, 0x61, 0xf8, 0xcb, 0x71, 0x11, 0xfa, 0x34, 0x90, 0x73, 0xb2, 0x8f, 0x71,
-	0x2e, 0xe2, 0xcb, 0x14, 0xc2, 0x36, 0xea, 0x22, 0xd7, 0x1a, 0xfc, 0xf1, 0xde, 0xbf, 0xc3, 0x1b,
-	0xbd, 0xa2, 0xc6, 0x29, 0x84, 0xb4, 0x99, 0x14, 0x9f, 0xe4, 0x2f, 0xb6, 0x12, 0x50, 0x17, 0x7c,
-	0xe2, 0xb3, 0x20, 0x81, 0x76, 0xb5, 0x8b, 0xdc, 0x26, 0xc5, 0x7a, 0x74, 0x12, 0x24, 0xe0, 0xdc,
-	0x56, 0xf1, 0xd7, 0xd2, 0x90, 0x82, 0xcc, 0x62, 0xf5, 0x41, 0x4b, 0x1f, 0xb7, 0xd6, 0xeb, 0xf3,
-	0x45, 0x2e, 0x9b, 0x9b, 0x5b, 0x03, 0xd7, 0x24, 0x74, 0xb8, 0x46, 0xd0, 0x31, 0x8e, 0x2a, 0xf4,
-	0x67, 0x68, 0x98, 0x93, 0x31, 0xfe, 0xbe, 0xaa, 0xad, 0x10, 0xaf, 0xe5, 0xe2, 0xff, 0x4d, 0xe2,
-	0xb4, 0x04, 0x97, 0xc2, 0xdf, 0xc4, 0xc6, 0x6c, 0xf8, 0x19, 0x37, 0xb4, 0x92, 0x73, 0x83, 0x70,
-	0x6b, 0x94, 0xc5, 0x2a, 0x7a, 0x53, 0xcb, 0x65, 0x06, 0x52, 0x91, 0x3d, 0x5c, 0x57, 0x81, 0x9c,
-	0xcb, 0x36, 0xea, 0xd6, 0x5c, 0x6b, 0xf0, 0xcf, 0x64, 0xb6, 0xf6, 0xf3, 0xa8, 0xc6, 0x93, 0x3e,
-	0xae, 0xe7, 0x87, 0xb2, 0xac, 0xe0, 0xb7, 0x99, 0x98, 0x66, 0x8a, 0x6a, 0x9c, 0x73, 0x86, 0x7f,
-	0x6d, 0x46, 0x90, 0x29, 0x67, 0x12, 0xc8, 0x01, 0xfe, 0xa4, 0x73, 0x16, 0x29, 0x7a, 0x5b, 0x53,
-	0xe8, 0xd7, 0xd1, 0x82, 0x33, 0xfc, 0x71, 0xbf, 0xb0, 0xd1, 0xc3, 0xc2, 0x46, 0x8f, 0x0b, 0x1b,
-	0xdd, 0x3d, 0xd9, 0x95, 0x67, 0x84, 0xce, 0x1b, 0xf9, 0xe9, 0xed, 0xbe, 0x04, 0x00, 0x00, 0xff,
-	0xff, 0x0e, 0xfa, 0xca, 0x0e, 0x42, 0x03, 0x00, 0x00,
-}

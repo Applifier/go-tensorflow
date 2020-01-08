@@ -3,16 +3,23 @@
 
 package framework
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
-import io "io"
+import (
+	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 type GraphTransferInfo_Destination int32
 
@@ -25,6 +32,7 @@ var GraphTransferInfo_Destination_name = map[int32]string{
 	0: "NOP",
 	1: "HEXAGON",
 }
+
 var GraphTransferInfo_Destination_value = map[string]int32{
 	"NOP":     0,
 	"HEXAGON": 1,
@@ -33,8 +41,9 @@ var GraphTransferInfo_Destination_value = map[string]int32{
 func (x GraphTransferInfo_Destination) String() string {
 	return proto.EnumName(GraphTransferInfo_Destination_name, int32(x))
 }
+
 func (GraphTransferInfo_Destination) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{7, 0}
+	return fileDescriptor_c3a1e773f26c9475, []int{7, 0}
 }
 
 type GraphTransferNodeInput struct {
@@ -46,8 +55,34 @@ func (m *GraphTransferNodeInput) Reset()         { *m = GraphTransferNodeInput{}
 func (m *GraphTransferNodeInput) String() string { return proto.CompactTextString(m) }
 func (*GraphTransferNodeInput) ProtoMessage()    {}
 func (*GraphTransferNodeInput) Descriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{0}
+	return fileDescriptor_c3a1e773f26c9475, []int{0}
 }
+func (m *GraphTransferNodeInput) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphTransferNodeInput) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphTransferNodeInput.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphTransferNodeInput) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphTransferNodeInput.Merge(m, src)
+}
+func (m *GraphTransferNodeInput) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphTransferNodeInput) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphTransferNodeInput.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphTransferNodeInput proto.InternalMessageInfo
 
 func (m *GraphTransferNodeInput) GetNodeId() int32 {
 	if m != nil {
@@ -77,8 +112,34 @@ func (m *GraphTransferNodeInfo) Reset()         { *m = GraphTransferNodeInfo{} }
 func (m *GraphTransferNodeInfo) String() string { return proto.CompactTextString(m) }
 func (*GraphTransferNodeInfo) ProtoMessage()    {}
 func (*GraphTransferNodeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{1}
+	return fileDescriptor_c3a1e773f26c9475, []int{1}
 }
+func (m *GraphTransferNodeInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphTransferNodeInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphTransferNodeInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphTransferNodeInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphTransferNodeInfo.Merge(m, src)
+}
+func (m *GraphTransferNodeInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphTransferNodeInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphTransferNodeInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphTransferNodeInfo proto.InternalMessageInfo
 
 func (m *GraphTransferNodeInfo) GetName() string {
 	if m != nil {
@@ -132,7 +193,7 @@ func (m *GraphTransferNodeInfo) GetOutputCount() int32 {
 type GraphTransferConstNodeInfo struct {
 	Name   string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	NodeId int32    `protobuf:"varint,2,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
-	Shape  []int64  `protobuf:"varint,3,rep,packed,name=shape" json:"shape,omitempty"`
+	Shape  []int64  `protobuf:"varint,3,rep,packed,name=shape,proto3" json:"shape,omitempty"`
 	Data   []byte   `protobuf:"bytes,4,opt,name=data,proto3" json:"data,omitempty"`
 	Dtype  DataType `protobuf:"varint,5,opt,name=dtype,proto3,enum=tensorflow.DataType" json:"dtype,omitempty"`
 }
@@ -141,8 +202,34 @@ func (m *GraphTransferConstNodeInfo) Reset()         { *m = GraphTransferConstNo
 func (m *GraphTransferConstNodeInfo) String() string { return proto.CompactTextString(m) }
 func (*GraphTransferConstNodeInfo) ProtoMessage()    {}
 func (*GraphTransferConstNodeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{2}
+	return fileDescriptor_c3a1e773f26c9475, []int{2}
 }
+func (m *GraphTransferConstNodeInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphTransferConstNodeInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphTransferConstNodeInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphTransferConstNodeInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphTransferConstNodeInfo.Merge(m, src)
+}
+func (m *GraphTransferConstNodeInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphTransferConstNodeInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphTransferConstNodeInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphTransferConstNodeInfo proto.InternalMessageInfo
 
 func (m *GraphTransferConstNodeInfo) GetName() string {
 	if m != nil {
@@ -181,15 +268,41 @@ func (m *GraphTransferConstNodeInfo) GetDtype() DataType {
 
 type GraphTransferNodeInputInfo struct {
 	NodeId    int32                     `protobuf:"varint,1,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
-	NodeInput []*GraphTransferNodeInput `protobuf:"bytes,2,rep,name=node_input,json=nodeInput" json:"node_input,omitempty"`
+	NodeInput []*GraphTransferNodeInput `protobuf:"bytes,2,rep,name=node_input,json=nodeInput,proto3" json:"node_input,omitempty"`
 }
 
 func (m *GraphTransferNodeInputInfo) Reset()         { *m = GraphTransferNodeInputInfo{} }
 func (m *GraphTransferNodeInputInfo) String() string { return proto.CompactTextString(m) }
 func (*GraphTransferNodeInputInfo) ProtoMessage()    {}
 func (*GraphTransferNodeInputInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{3}
+	return fileDescriptor_c3a1e773f26c9475, []int{3}
 }
+func (m *GraphTransferNodeInputInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphTransferNodeInputInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphTransferNodeInputInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphTransferNodeInputInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphTransferNodeInputInfo.Merge(m, src)
+}
+func (m *GraphTransferNodeInputInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphTransferNodeInputInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphTransferNodeInputInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphTransferNodeInputInfo proto.InternalMessageInfo
 
 func (m *GraphTransferNodeInputInfo) GetNodeId() int32 {
 	if m != nil {
@@ -207,15 +320,41 @@ func (m *GraphTransferNodeInputInfo) GetNodeInput() []*GraphTransferNodeInput {
 
 type GraphTransferNodeOutputInfo struct {
 	NodeId      int32   `protobuf:"varint,1,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
-	MaxByteSize []int32 `protobuf:"varint,2,rep,packed,name=max_byte_size,json=maxByteSize" json:"max_byte_size,omitempty"`
+	MaxByteSize []int32 `protobuf:"varint,2,rep,packed,name=max_byte_size,json=maxByteSize,proto3" json:"max_byte_size,omitempty"`
 }
 
 func (m *GraphTransferNodeOutputInfo) Reset()         { *m = GraphTransferNodeOutputInfo{} }
 func (m *GraphTransferNodeOutputInfo) String() string { return proto.CompactTextString(m) }
 func (*GraphTransferNodeOutputInfo) ProtoMessage()    {}
 func (*GraphTransferNodeOutputInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{4}
+	return fileDescriptor_c3a1e773f26c9475, []int{4}
 }
+func (m *GraphTransferNodeOutputInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphTransferNodeOutputInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphTransferNodeOutputInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphTransferNodeOutputInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphTransferNodeOutputInfo.Merge(m, src)
+}
+func (m *GraphTransferNodeOutputInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphTransferNodeOutputInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphTransferNodeOutputInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphTransferNodeOutputInfo proto.InternalMessageInfo
 
 func (m *GraphTransferNodeOutputInfo) GetNodeId() int32 {
 	if m != nil {
@@ -233,7 +372,7 @@ func (m *GraphTransferNodeOutputInfo) GetMaxByteSize() []int32 {
 
 type GraphTransferGraphInputNodeInfo struct {
 	Name  string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Shape []int64  `protobuf:"varint,2,rep,packed,name=shape" json:"shape,omitempty"`
+	Shape []int64  `protobuf:"varint,2,rep,packed,name=shape,proto3" json:"shape,omitempty"`
 	Dtype DataType `protobuf:"varint,3,opt,name=dtype,proto3,enum=tensorflow.DataType" json:"dtype,omitempty"`
 }
 
@@ -241,8 +380,34 @@ func (m *GraphTransferGraphInputNodeInfo) Reset()         { *m = GraphTransferGr
 func (m *GraphTransferGraphInputNodeInfo) String() string { return proto.CompactTextString(m) }
 func (*GraphTransferGraphInputNodeInfo) ProtoMessage()    {}
 func (*GraphTransferGraphInputNodeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{5}
+	return fileDescriptor_c3a1e773f26c9475, []int{5}
 }
+func (m *GraphTransferGraphInputNodeInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphTransferGraphInputNodeInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphTransferGraphInputNodeInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphTransferGraphInputNodeInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphTransferGraphInputNodeInfo.Merge(m, src)
+}
+func (m *GraphTransferGraphInputNodeInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphTransferGraphInputNodeInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphTransferGraphInputNodeInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphTransferGraphInputNodeInfo proto.InternalMessageInfo
 
 func (m *GraphTransferGraphInputNodeInfo) GetName() string {
 	if m != nil {
@@ -267,7 +432,7 @@ func (m *GraphTransferGraphInputNodeInfo) GetDtype() DataType {
 
 type GraphTransferGraphOutputNodeInfo struct {
 	Name  string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Shape []int64  `protobuf:"varint,2,rep,packed,name=shape" json:"shape,omitempty"`
+	Shape []int64  `protobuf:"varint,2,rep,packed,name=shape,proto3" json:"shape,omitempty"`
 	Dtype DataType `protobuf:"varint,3,opt,name=dtype,proto3,enum=tensorflow.DataType" json:"dtype,omitempty"`
 }
 
@@ -275,8 +440,34 @@ func (m *GraphTransferGraphOutputNodeInfo) Reset()         { *m = GraphTransferG
 func (m *GraphTransferGraphOutputNodeInfo) String() string { return proto.CompactTextString(m) }
 func (*GraphTransferGraphOutputNodeInfo) ProtoMessage()    {}
 func (*GraphTransferGraphOutputNodeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{6}
+	return fileDescriptor_c3a1e773f26c9475, []int{6}
 }
+func (m *GraphTransferGraphOutputNodeInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphTransferGraphOutputNodeInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphTransferGraphOutputNodeInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphTransferGraphOutputNodeInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphTransferGraphOutputNodeInfo.Merge(m, src)
+}
+func (m *GraphTransferGraphOutputNodeInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphTransferGraphOutputNodeInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphTransferGraphOutputNodeInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphTransferGraphOutputNodeInfo proto.InternalMessageInfo
 
 func (m *GraphTransferGraphOutputNodeInfo) GetName() string {
 	if m != nil {
@@ -303,13 +494,13 @@ func (m *GraphTransferGraphOutputNodeInfo) GetDtype() DataType {
 // not valid across executions, but can be serialized back and forth from within
 // a single run.
 type GraphTransferInfo struct {
-	NodeInfo       []*GraphTransferNodeInfo       `protobuf:"bytes,1,rep,name=node_info,json=nodeInfo" json:"node_info,omitempty"`
-	ConstNodeInfo  []*GraphTransferConstNodeInfo  `protobuf:"bytes,2,rep,name=const_node_info,json=constNodeInfo" json:"const_node_info,omitempty"`
-	NodeInputInfo  []*GraphTransferNodeInputInfo  `protobuf:"bytes,3,rep,name=node_input_info,json=nodeInputInfo" json:"node_input_info,omitempty"`
-	NodeOutputInfo []*GraphTransferNodeOutputInfo `protobuf:"bytes,4,rep,name=node_output_info,json=nodeOutputInfo" json:"node_output_info,omitempty"`
+	NodeInfo       []*GraphTransferNodeInfo       `protobuf:"bytes,1,rep,name=node_info,json=nodeInfo,proto3" json:"node_info,omitempty"`
+	ConstNodeInfo  []*GraphTransferConstNodeInfo  `protobuf:"bytes,2,rep,name=const_node_info,json=constNodeInfo,proto3" json:"const_node_info,omitempty"`
+	NodeInputInfo  []*GraphTransferNodeInputInfo  `protobuf:"bytes,3,rep,name=node_input_info,json=nodeInputInfo,proto3" json:"node_input_info,omitempty"`
+	NodeOutputInfo []*GraphTransferNodeOutputInfo `protobuf:"bytes,4,rep,name=node_output_info,json=nodeOutputInfo,proto3" json:"node_output_info,omitempty"`
 	// Input Node parameters of transferred graph
-	GraphInputNodeInfo  []*GraphTransferGraphInputNodeInfo  `protobuf:"bytes,5,rep,name=graph_input_node_info,json=graphInputNodeInfo" json:"graph_input_node_info,omitempty"`
-	GraphOutputNodeInfo []*GraphTransferGraphOutputNodeInfo `protobuf:"bytes,6,rep,name=graph_output_node_info,json=graphOutputNodeInfo" json:"graph_output_node_info,omitempty"`
+	GraphInputNodeInfo  []*GraphTransferGraphInputNodeInfo  `protobuf:"bytes,5,rep,name=graph_input_node_info,json=graphInputNodeInfo,proto3" json:"graph_input_node_info,omitempty"`
+	GraphOutputNodeInfo []*GraphTransferGraphOutputNodeInfo `protobuf:"bytes,6,rep,name=graph_output_node_info,json=graphOutputNodeInfo,proto3" json:"graph_output_node_info,omitempty"`
 	// Destination of graph transfer
 	Destination GraphTransferInfo_Destination `protobuf:"varint,7,opt,name=destination,proto3,enum=tensorflow.GraphTransferInfo_Destination" json:"destination,omitempty"`
 }
@@ -318,8 +509,34 @@ func (m *GraphTransferInfo) Reset()         { *m = GraphTransferInfo{} }
 func (m *GraphTransferInfo) String() string { return proto.CompactTextString(m) }
 func (*GraphTransferInfo) ProtoMessage()    {}
 func (*GraphTransferInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptorGraphTransferInfo, []int{7}
+	return fileDescriptor_c3a1e773f26c9475, []int{7}
 }
+func (m *GraphTransferInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphTransferInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphTransferInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphTransferInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphTransferInfo.Merge(m, src)
+}
+func (m *GraphTransferInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphTransferInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphTransferInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphTransferInfo proto.InternalMessageInfo
 
 func (m *GraphTransferInfo) GetNodeInfo() []*GraphTransferNodeInfo {
 	if m != nil {
@@ -371,6 +588,7 @@ func (m *GraphTransferInfo) GetDestination() GraphTransferInfo_Destination {
 }
 
 func init() {
+	proto.RegisterEnum("tensorflow.GraphTransferInfo_Destination", GraphTransferInfo_Destination_name, GraphTransferInfo_Destination_value)
 	proto.RegisterType((*GraphTransferNodeInput)(nil), "tensorflow.GraphTransferNodeInput")
 	proto.RegisterType((*GraphTransferNodeInfo)(nil), "tensorflow.GraphTransferNodeInfo")
 	proto.RegisterType((*GraphTransferConstNodeInfo)(nil), "tensorflow.GraphTransferConstNodeInfo")
@@ -379,8 +597,61 @@ func init() {
 	proto.RegisterType((*GraphTransferGraphInputNodeInfo)(nil), "tensorflow.GraphTransferGraphInputNodeInfo")
 	proto.RegisterType((*GraphTransferGraphOutputNodeInfo)(nil), "tensorflow.GraphTransferGraphOutputNodeInfo")
 	proto.RegisterType((*GraphTransferInfo)(nil), "tensorflow.GraphTransferInfo")
-	proto.RegisterEnum("tensorflow.GraphTransferInfo_Destination", GraphTransferInfo_Destination_name, GraphTransferInfo_Destination_value)
 }
+
+func init() {
+	proto.RegisterFile("tensorflow/core/framework/graph_transfer_info.proto", fileDescriptor_c3a1e773f26c9475)
+}
+
+var fileDescriptor_c3a1e773f26c9475 = []byte{
+	// 712 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x55, 0xdd, 0x4e, 0x13, 0x41,
+	0x14, 0xee, 0xf6, 0x97, 0x9e, 0xf2, 0xe7, 0x0a, 0xd8, 0x40, 0x2c, 0xb0, 0x46, 0xc5, 0xbf, 0x36,
+	0x81, 0x7b, 0x13, 0x0a, 0x06, 0x89, 0x49, 0x5b, 0x47, 0x2e, 0x0c, 0x17, 0x6e, 0x86, 0xee, 0x6c,
+	0xd9, 0x48, 0x67, 0x36, 0xbb, 0xd3, 0x40, 0x79, 0x0a, 0x13, 0x1f, 0xc0, 0xd7, 0xf1, 0x92, 0x4b,
+	0x2f, 0x09, 0xbc, 0x84, 0x89, 0x37, 0x66, 0xce, 0x94, 0xee, 0xae, 0xa5, 0xc5, 0x98, 0x78, 0x37,
+	0x33, 0xe7, 0x9c, 0xef, 0x3b, 0x3f, 0xdf, 0xee, 0x81, 0x2d, 0xc9, 0x78, 0x28, 0x02, 0xf7, 0x44,
+	0x9c, 0xd6, 0xda, 0x22, 0x60, 0x35, 0x37, 0xa0, 0x5d, 0x76, 0x2a, 0x82, 0xcf, 0xb5, 0x4e, 0x40,
+	0xfd, 0x63, 0x5b, 0x06, 0x94, 0x87, 0x2e, 0x0b, 0x6c, 0x8f, 0xbb, 0xa2, 0xea, 0x07, 0x42, 0x0a,
+	0x13, 0xa2, 0xa0, 0xe5, 0xc7, 0xe3, 0x01, 0x64, 0xdf, 0x67, 0xa1, 0x0e, 0xb1, 0x08, 0x2c, 0xed,
+	0x29, 0xbc, 0x83, 0x01, 0x5c, 0x43, 0x38, 0x6c, 0x9f, 0xfb, 0x3d, 0x69, 0x3e, 0x80, 0x02, 0x17,
+	0x0e, 0xb3, 0x3d, 0xa7, 0x6c, 0xac, 0x19, 0x1b, 0x39, 0x92, 0x57, 0xd7, 0x7d, 0xc7, 0x5c, 0x85,
+	0x92, 0xe8, 0x49, 0xbf, 0x27, 0x6d, 0x5f, 0x04, 0xb2, 0x9c, 0x46, 0x23, 0xe8, 0xa7, 0x96, 0x08,
+	0xa4, 0x75, 0x69, 0xc0, 0xe2, 0x2d, 0xa0, 0xae, 0x30, 0x4d, 0xc8, 0x72, 0xda, 0x65, 0x08, 0x58,
+	0x24, 0x78, 0x8e, 0xf3, 0xa4, 0x13, 0x3c, 0x2b, 0x50, 0x54, 0x99, 0xda, 0x18, 0x91, 0xc1, 0x88,
+	0x29, 0xf5, 0xd0, 0x50, 0x51, 0xcb, 0x50, 0x0c, 0x45, 0xdb, 0x16, 0xbe, 0x8a, 0xcb, 0x62, 0x5c,
+	0x21, 0x14, 0xed, 0xa6, 0xbf, 0xef, 0x98, 0x0f, 0x01, 0x7c, 0xea, 0x38, 0x1e, 0xef, 0x28, 0x63,
+	0x0e, 0x8d, 0xc5, 0xc1, 0x8b, 0xce, 0xdf, 0x53, 0x15, 0xda, 0x6d, 0xd1, 0xe3, 0xb2, 0x9c, 0xd7,
+	0xf9, 0xe3, 0xd3, 0x8e, 0x7a, 0x31, 0xd7, 0x61, 0x7a, 0x50, 0xa0, 0xf6, 0x28, 0xa0, 0xc7, 0xa0,
+	0x68, 0x74, 0xb1, 0xbe, 0x19, 0xb0, 0x9c, 0x28, 0x71, 0x47, 0xf0, 0x50, 0xfe, 0x5b, 0x9d, 0x0b,
+	0x90, 0x0b, 0x8f, 0xa9, 0xaf, 0x6a, 0xcc, 0x6c, 0x64, 0x88, 0xbe, 0x28, 0x08, 0x87, 0x4a, 0x8a,
+	0xb5, 0x4d, 0x13, 0x3c, 0x9b, 0xcf, 0x21, 0xe7, 0xa8, 0x0e, 0x60, 0x4d, 0xb3, 0x9b, 0x0b, 0xd5,
+	0x68, 0xc6, 0xd5, 0x5d, 0x2a, 0xe9, 0x41, 0xdf, 0x67, 0x44, 0xbb, 0x58, 0x67, 0x7f, 0x24, 0x38,
+	0x1c, 0x2c, 0x26, 0x38, 0x76, 0xb8, 0xdb, 0x00, 0xda, 0xa0, 0x5c, 0xcb, 0xe9, 0xb5, 0xcc, 0x46,
+	0x69, 0xd3, 0x8a, 0xf3, 0xdc, 0x0e, 0x4a, 0x8a, 0xfc, 0xe6, 0x68, 0x1d, 0xc2, 0xca, 0x88, 0x53,
+	0x13, 0x7b, 0x37, 0x99, 0xda, 0x82, 0x99, 0x2e, 0x3d, 0xb3, 0x8f, 0xfa, 0x92, 0xd9, 0xa1, 0x77,
+	0xce, 0x90, 0x3d, 0x47, 0x4a, 0x5d, 0x7a, 0x56, 0xef, 0x4b, 0xf6, 0xc1, 0x3b, 0x67, 0xd6, 0x29,
+	0xac, 0x26, 0xb0, 0xf1, 0x82, 0xb4, 0x13, 0x7b, 0x3f, 0x6c, 0x71, 0x3a, 0xde, 0xe2, 0x61, 0x3b,
+	0x33, 0x7f, 0xd3, 0xce, 0xb5, 0x51, 0x62, 0x5d, 0xd5, 0x7f, 0x66, 0xfe, 0x95, 0x85, 0x7b, 0x09,
+	0x6a, 0xe4, 0x7a, 0x0d, 0xc5, 0xc1, 0x9c, 0x5c, 0x51, 0x36, 0x70, 0x4c, 0xeb, 0x77, 0x8c, 0xc9,
+	0x15, 0x64, 0x8a, 0xdf, 0xe4, 0xda, 0x80, 0xb9, 0xb6, 0x92, 0xac, 0x1d, 0xa1, 0xe8, 0x61, 0x3f,
+	0x19, 0x8b, 0x92, 0x90, 0x38, 0x99, 0x69, 0x27, 0x14, 0xdf, 0x80, 0xb9, 0x48, 0x37, 0x1a, 0x2f,
+	0x73, 0x07, 0x5e, 0x42, 0x91, 0x64, 0x86, 0x27, 0x04, 0xfa, 0x1e, 0xe6, 0x11, 0x6f, 0xf0, 0x21,
+	0x22, 0x60, 0x16, 0x01, 0x9f, 0x4e, 0x04, 0x8c, 0x84, 0x46, 0x66, 0x79, 0x52, 0x78, 0x9f, 0x60,
+	0x51, 0xff, 0x3a, 0x75, 0x8e, 0x51, 0xe1, 0x39, 0xc4, 0x7d, 0x31, 0x16, 0x77, 0x54, 0x64, 0xc4,
+	0xec, 0x8c, 0x0a, 0x8f, 0xc2, 0x92, 0xc6, 0x1f, 0xe4, 0x1c, 0x11, 0xe4, 0x91, 0xe0, 0xe5, 0x64,
+	0x82, 0xa4, 0x98, 0xc8, 0xfd, 0xce, 0x2d, 0x0a, 0x7b, 0x07, 0x25, 0x87, 0x85, 0xd2, 0xe3, 0x54,
+	0x7a, 0x82, 0xe3, 0x8f, 0x69, 0x76, 0xf3, 0xd9, 0x58, 0x5c, 0x15, 0x53, 0xdd, 0x8d, 0x02, 0x48,
+	0x3c, 0xda, 0x7a, 0x04, 0xa5, 0x98, 0xcd, 0x2c, 0x40, 0xa6, 0xd1, 0x6c, 0xcd, 0xa7, 0xcc, 0x12,
+	0x14, 0xde, 0xbe, 0xf9, 0xb8, 0xbd, 0xd7, 0x6c, 0xcc, 0x1b, 0xf5, 0xaf, 0xc6, 0xf7, 0xab, 0x8a,
+	0x71, 0x71, 0x55, 0x31, 0x2e, 0xaf, 0x2a, 0xc6, 0x97, 0xeb, 0x4a, 0xea, 0xe2, 0xba, 0x92, 0xfa,
+	0x71, 0x5d, 0x49, 0x41, 0x59, 0x04, 0x9d, 0x38, 0xf5, 0x70, 0xc1, 0xd4, 0x97, 0x46, 0xb2, 0x68,
+	0xa9, 0x65, 0xd3, 0x32, 0x0e, 0xeb, 0x1d, 0x4f, 0x1e, 0xf7, 0x8e, 0xaa, 0x6d, 0xd1, 0xad, 0x6d,
+	0xfb, 0xfe, 0x89, 0xe7, 0x7a, 0x2c, 0xa8, 0x75, 0xc4, 0xab, 0xd8, 0xb6, 0xc2, 0xf5, 0x54, 0x1b,
+	0xbb, 0xbe, 0x7e, 0x1a, 0xc6, 0x51, 0x1e, 0x97, 0xd7, 0xd6, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff,
+	0x56, 0x5e, 0x8e, 0x16, 0x26, 0x07, 0x00, 0x00,
+}
+
 func (m *GraphTransferNodeInput) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -797,6 +1068,9 @@ func encodeVarintGraphTransferInfo(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *GraphTransferNodeInput) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.NodeId != 0 {
@@ -809,6 +1083,9 @@ func (m *GraphTransferNodeInput) Size() (n int) {
 }
 
 func (m *GraphTransferNodeInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -838,6 +1115,9 @@ func (m *GraphTransferNodeInfo) Size() (n int) {
 }
 
 func (m *GraphTransferConstNodeInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -865,6 +1145,9 @@ func (m *GraphTransferConstNodeInfo) Size() (n int) {
 }
 
 func (m *GraphTransferNodeInputInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.NodeId != 0 {
@@ -880,6 +1163,9 @@ func (m *GraphTransferNodeInputInfo) Size() (n int) {
 }
 
 func (m *GraphTransferNodeOutputInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.NodeId != 0 {
@@ -896,6 +1182,9 @@ func (m *GraphTransferNodeOutputInfo) Size() (n int) {
 }
 
 func (m *GraphTransferGraphInputNodeInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -916,6 +1205,9 @@ func (m *GraphTransferGraphInputNodeInfo) Size() (n int) {
 }
 
 func (m *GraphTransferGraphOutputNodeInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -936,6 +1228,9 @@ func (m *GraphTransferGraphOutputNodeInfo) Size() (n int) {
 }
 
 func (m *GraphTransferInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.NodeInfo) > 0 {
@@ -1402,6 +1697,17 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Shape) == 0 {
+					m.Shape = make([]int64, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v int64
 					for shift := uint(0); ; shift += 7 {
@@ -1683,6 +1989,17 @@ func (m *GraphTransferNodeOutputInfo) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.MaxByteSize) == 0 {
+					m.MaxByteSize = make([]int32, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v int32
 					for shift := uint(0); ; shift += 7 {
@@ -1823,6 +2140,17 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Shape) == 0 {
+					m.Shape = make([]int64, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int64
@@ -1983,6 +2311,17 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Shape) == 0 {
+					m.Shape = make([]int64, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int64
@@ -2404,56 +2743,3 @@ var (
 	ErrInvalidLengthGraphTransferInfo = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowGraphTransferInfo   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() {
-	proto.RegisterFile("tensorflow/core/framework/graph_transfer_info.proto", fileDescriptorGraphTransferInfo)
-}
-
-var fileDescriptorGraphTransferInfo = []byte{
-	// 705 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x55, 0xcd, 0x4e, 0xdb, 0x4a,
-	0x14, 0xc6, 0xf9, 0x25, 0x27, 0xfc, 0x5d, 0x5f, 0xe0, 0x46, 0xa0, 0x1b, 0xc0, 0x57, 0xb7, 0xa5,
-	0x7f, 0x89, 0x04, 0xfb, 0x4a, 0x04, 0x2a, 0x8a, 0x2a, 0x25, 0xe9, 0x94, 0x45, 0xc5, 0xa2, 0xd6,
-	0x10, 0x8f, 0x8d, 0x55, 0x32, 0x63, 0xd9, 0x13, 0x41, 0x78, 0x85, 0x6e, 0xfa, 0x06, 0x7d, 0x9d,
-	0x2e, 0xfb, 0x08, 0x88, 0xbe, 0x44, 0xa5, 0x6e, 0xaa, 0x39, 0x63, 0x62, 0xbb, 0x21, 0xa1, 0xaa,
-	0xd4, 0xdd, 0xcc, 0x9c, 0x73, 0xbe, 0xef, 0xfc, 0x7c, 0xf6, 0x81, 0x5d, 0xc9, 0x78, 0x24, 0x42,
-	0xf7, 0x5c, 0x5c, 0x34, 0x7b, 0x22, 0x64, 0x4d, 0x37, 0xa4, 0x7d, 0x76, 0x21, 0xc2, 0xf7, 0x4d,
-	0x2f, 0xa4, 0xc1, 0x99, 0x2d, 0x43, 0xca, 0x23, 0x97, 0x85, 0xb6, 0xcf, 0x5d, 0xd1, 0x08, 0x42,
-	0x21, 0x85, 0x09, 0x49, 0xd0, 0xda, 0xff, 0x93, 0x01, 0xe4, 0x30, 0x60, 0x91, 0x0e, 0xb1, 0x08,
-	0xac, 0x1e, 0x2a, 0xbc, 0xe3, 0x18, 0xae, 0x2d, 0x1c, 0x76, 0xc4, 0x83, 0x81, 0x34, 0xff, 0x81,
-	0x32, 0x17, 0x0e, 0xb3, 0x7d, 0xa7, 0x66, 0x6c, 0x1a, 0xdb, 0x45, 0x52, 0x52, 0xd7, 0x23, 0xc7,
-	0xdc, 0x80, 0xaa, 0x18, 0xc8, 0x60, 0x20, 0xed, 0x40, 0x84, 0xb2, 0x96, 0x43, 0x23, 0xe8, 0xa7,
-	0xae, 0x08, 0xa5, 0x75, 0x6d, 0xc0, 0xca, 0x1d, 0xa0, 0xae, 0x30, 0x4d, 0x28, 0x70, 0xda, 0x67,
-	0x08, 0x58, 0x21, 0x78, 0x4e, 0xf3, 0xe4, 0x32, 0x3c, 0xeb, 0x50, 0x51, 0x99, 0xda, 0x18, 0x91,
-	0xc7, 0x88, 0x59, 0xf5, 0xd0, 0x56, 0x51, 0x6b, 0x50, 0x89, 0x44, 0xcf, 0x16, 0x81, 0x8a, 0x2b,
-	0x60, 0x5c, 0x39, 0x12, 0xbd, 0x4e, 0x70, 0xe4, 0x98, 0xff, 0x02, 0x04, 0xd4, 0x71, 0x7c, 0xee,
-	0x29, 0x63, 0x11, 0x8d, 0x95, 0xf8, 0x45, 0xe7, 0xef, 0xab, 0x0a, 0xed, 0x9e, 0x18, 0x70, 0x59,
-	0x2b, 0xe9, 0xfc, 0xf1, 0x69, 0x5f, 0xbd, 0x98, 0x5b, 0x30, 0x17, 0x17, 0xa8, 0x3d, 0xca, 0xe8,
-	0x11, 0x17, 0x8d, 0x2e, 0xd6, 0x27, 0x03, 0xd6, 0x32, 0x25, 0xee, 0x0b, 0x1e, 0xc9, 0xdf, 0xab,
-	0x73, 0x19, 0x8a, 0xd1, 0x19, 0x0d, 0x54, 0x8d, 0xf9, 0xed, 0x3c, 0xd1, 0x17, 0x05, 0xe1, 0x50,
-	0x49, 0xb1, 0xb6, 0x39, 0x82, 0x67, 0xf3, 0x31, 0x14, 0x1d, 0xd5, 0x01, 0xac, 0x69, 0x61, 0x67,
-	0xb9, 0x91, 0xcc, 0xb8, 0x71, 0x40, 0x25, 0x3d, 0x1e, 0x06, 0x8c, 0x68, 0x17, 0xeb, 0xf2, 0xa7,
-	0x04, 0x47, 0x83, 0xc5, 0x04, 0x27, 0x0e, 0x77, 0x0f, 0x40, 0x1b, 0x94, 0x6b, 0x2d, 0xb7, 0x99,
-	0xdf, 0xae, 0xee, 0x58, 0x69, 0x9e, 0xbb, 0x41, 0x49, 0x85, 0xdf, 0x1e, 0xad, 0x13, 0x58, 0x1f,
-	0x73, 0xea, 0x60, 0xef, 0xa6, 0x53, 0x5b, 0x30, 0xdf, 0xa7, 0x97, 0xf6, 0xe9, 0x50, 0x32, 0x3b,
-	0xf2, 0xaf, 0x18, 0xb2, 0x17, 0x49, 0xb5, 0x4f, 0x2f, 0x5b, 0x43, 0xc9, 0xde, 0xf8, 0x57, 0xcc,
-	0xba, 0x80, 0x8d, 0x0c, 0x36, 0x5e, 0x90, 0x76, 0x6a, 0xef, 0x47, 0x2d, 0xce, 0xa5, 0x5b, 0x3c,
-	0x6a, 0x67, 0xfe, 0x57, 0xda, 0xb9, 0x39, 0x4e, 0xac, 0xab, 0xfa, 0xc3, 0xcc, 0xdf, 0x0b, 0xf0,
-	0x57, 0x86, 0x1a, 0xb9, 0x9e, 0x43, 0x25, 0x9e, 0x93, 0x2b, 0x6a, 0x06, 0x8e, 0x69, 0xeb, 0x9e,
-	0x31, 0xb9, 0x82, 0xcc, 0xf2, 0xdb, 0x5c, 0xdb, 0xb0, 0xd8, 0x53, 0x92, 0xb5, 0x13, 0x14, 0x3d,
-	0xec, 0x07, 0x13, 0x51, 0x32, 0x12, 0x27, 0xf3, 0xbd, 0x8c, 0xe2, 0xdb, 0xb0, 0x98, 0xe8, 0x46,
-	0xe3, 0xe5, 0xef, 0xc1, 0xcb, 0x28, 0x92, 0xcc, 0xf3, 0x8c, 0x40, 0x5f, 0xc3, 0x12, 0xe2, 0xc5,
-	0x1f, 0x22, 0x02, 0x16, 0x10, 0xf0, 0xe1, 0x54, 0xc0, 0x44, 0x68, 0x64, 0x81, 0x67, 0x85, 0xf7,
-	0x0e, 0x56, 0xf4, 0xaf, 0x53, 0xe7, 0x98, 0x14, 0x5e, 0x44, 0xdc, 0x27, 0x13, 0x71, 0xc7, 0x45,
-	0x46, 0x4c, 0x6f, 0x5c, 0x78, 0x14, 0x56, 0x35, 0x7e, 0x9c, 0x73, 0x42, 0x50, 0x42, 0x82, 0xa7,
-	0xd3, 0x09, 0xb2, 0x62, 0x22, 0x7f, 0x7b, 0x77, 0x28, 0xec, 0x15, 0x54, 0x1d, 0x16, 0x49, 0x9f,
-	0x53, 0xe9, 0x0b, 0x8e, 0x3f, 0xa6, 0x85, 0x9d, 0x47, 0x13, 0x71, 0x55, 0x4c, 0xe3, 0x20, 0x09,
-	0x20, 0xe9, 0x68, 0xeb, 0x3f, 0xa8, 0xa6, 0x6c, 0x66, 0x19, 0xf2, 0xed, 0x4e, 0x77, 0x69, 0xc6,
-	0xac, 0x42, 0xf9, 0xe5, 0x8b, 0xb7, 0x7b, 0x87, 0x9d, 0xf6, 0x92, 0xd1, 0xfa, 0x60, 0x7c, 0xbe,
-	0xa9, 0x1b, 0x5f, 0x6e, 0xea, 0xc6, 0xf5, 0x4d, 0xdd, 0xf8, 0xf8, 0xb5, 0x3e, 0x03, 0x35, 0x11,
-	0x7a, 0x69, 0xca, 0xd1, 0x62, 0x69, 0xad, 0x8e, 0xb1, 0x77, 0xd5, 0x92, 0xe9, 0x1a, 0x27, 0x2d,
-	0xcf, 0x97, 0x67, 0x83, 0xd3, 0x46, 0x4f, 0xf4, 0x9b, 0x7b, 0x41, 0x70, 0xee, 0xbb, 0x3e, 0x0b,
-	0x9b, 0x9e, 0x78, 0x96, 0xda, 0x52, 0xb8, 0x96, 0x9a, 0x13, 0xd7, 0xd6, 0x37, 0xc3, 0x38, 0x2d,
-	0xe1, 0xd2, 0xda, 0xfd, 0x11, 0x00, 0x00, 0xff, 0xff, 0x23, 0x64, 0x5a, 0xe4, 0x1e, 0x07, 0x00,
-	0x00,
-}

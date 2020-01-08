@@ -3,28 +3,62 @@
 
 package example
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
-import binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 // Containers to hold repeated fundamental values.
 type BytesList struct {
-	Value [][]byte `protobuf:"bytes,1,rep,name=value" json:"value,omitempty"`
+	Value [][]byte `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty"`
 }
 
-func (m *BytesList) Reset()                    { *m = BytesList{} }
-func (m *BytesList) String() string            { return proto.CompactTextString(m) }
-func (*BytesList) ProtoMessage()               {}
-func (*BytesList) Descriptor() ([]byte, []int) { return fileDescriptorFeature, []int{0} }
+func (m *BytesList) Reset()         { *m = BytesList{} }
+func (m *BytesList) String() string { return proto.CompactTextString(m) }
+func (*BytesList) ProtoMessage()    {}
+func (*BytesList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a52991187ca0172, []int{0}
+}
+func (m *BytesList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *BytesList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_BytesList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *BytesList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BytesList.Merge(m, src)
+}
+func (m *BytesList) XXX_Size() int {
+	return m.Size()
+}
+func (m *BytesList) XXX_DiscardUnknown() {
+	xxx_messageInfo_BytesList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BytesList proto.InternalMessageInfo
 
 func (m *BytesList) GetValue() [][]byte {
 	if m != nil {
@@ -34,13 +68,41 @@ func (m *BytesList) GetValue() [][]byte {
 }
 
 type FloatList struct {
-	Value []float32 `protobuf:"fixed32,1,rep,packed,name=value" json:"value,omitempty"`
+	Value []float32 `protobuf:"fixed32,1,rep,packed,name=value,proto3" json:"value,omitempty"`
 }
 
-func (m *FloatList) Reset()                    { *m = FloatList{} }
-func (m *FloatList) String() string            { return proto.CompactTextString(m) }
-func (*FloatList) ProtoMessage()               {}
-func (*FloatList) Descriptor() ([]byte, []int) { return fileDescriptorFeature, []int{1} }
+func (m *FloatList) Reset()         { *m = FloatList{} }
+func (m *FloatList) String() string { return proto.CompactTextString(m) }
+func (*FloatList) ProtoMessage()    {}
+func (*FloatList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a52991187ca0172, []int{1}
+}
+func (m *FloatList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FloatList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FloatList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FloatList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FloatList.Merge(m, src)
+}
+func (m *FloatList) XXX_Size() int {
+	return m.Size()
+}
+func (m *FloatList) XXX_DiscardUnknown() {
+	xxx_messageInfo_FloatList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FloatList proto.InternalMessageInfo
 
 func (m *FloatList) GetValue() []float32 {
 	if m != nil {
@@ -50,13 +112,41 @@ func (m *FloatList) GetValue() []float32 {
 }
 
 type Int64List struct {
-	Value []int64 `protobuf:"varint,1,rep,packed,name=value" json:"value,omitempty"`
+	Value []int64 `protobuf:"varint,1,rep,packed,name=value,proto3" json:"value,omitempty"`
 }
 
-func (m *Int64List) Reset()                    { *m = Int64List{} }
-func (m *Int64List) String() string            { return proto.CompactTextString(m) }
-func (*Int64List) ProtoMessage()               {}
-func (*Int64List) Descriptor() ([]byte, []int) { return fileDescriptorFeature, []int{2} }
+func (m *Int64List) Reset()         { *m = Int64List{} }
+func (m *Int64List) String() string { return proto.CompactTextString(m) }
+func (*Int64List) ProtoMessage()    {}
+func (*Int64List) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a52991187ca0172, []int{2}
+}
+func (m *Int64List) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Int64List) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Int64List.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Int64List) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Int64List.Merge(m, src)
+}
+func (m *Int64List) XXX_Size() int {
+	return m.Size()
+}
+func (m *Int64List) XXX_DiscardUnknown() {
+	xxx_messageInfo_Int64List.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Int64List proto.InternalMessageInfo
 
 func (m *Int64List) GetValue() []int64 {
 	if m != nil {
@@ -76,10 +166,38 @@ type Feature struct {
 	Kind isFeature_Kind `protobuf_oneof:"kind"`
 }
 
-func (m *Feature) Reset()                    { *m = Feature{} }
-func (m *Feature) String() string            { return proto.CompactTextString(m) }
-func (*Feature) ProtoMessage()               {}
-func (*Feature) Descriptor() ([]byte, []int) { return fileDescriptorFeature, []int{3} }
+func (m *Feature) Reset()         { *m = Feature{} }
+func (m *Feature) String() string { return proto.CompactTextString(m) }
+func (*Feature) ProtoMessage()    {}
+func (*Feature) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a52991187ca0172, []int{3}
+}
+func (m *Feature) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Feature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Feature.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Feature) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Feature.Merge(m, src)
+}
+func (m *Feature) XXX_Size() int {
+	return m.Size()
+}
+func (m *Feature) XXX_DiscardUnknown() {
+	xxx_messageInfo_Feature.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Feature proto.InternalMessageInfo
 
 type isFeature_Kind interface {
 	isFeature_Kind()
@@ -88,13 +206,13 @@ type isFeature_Kind interface {
 }
 
 type Feature_BytesList struct {
-	BytesList *BytesList `protobuf:"bytes,1,opt,name=bytes_list,json=bytesList,oneof"`
+	BytesList *BytesList `protobuf:"bytes,1,opt,name=bytes_list,json=bytesList,proto3,oneof"`
 }
 type Feature_FloatList struct {
-	FloatList *FloatList `protobuf:"bytes,2,opt,name=float_list,json=floatList,oneof"`
+	FloatList *FloatList `protobuf:"bytes,2,opt,name=float_list,json=floatList,proto3,oneof"`
 }
 type Feature_Int64List struct {
-	Int64List *Int64List `protobuf:"bytes,3,opt,name=int64_list,json=int64List,oneof"`
+	Int64List *Int64List `protobuf:"bytes,3,opt,name=int64_list,json=int64List,proto3,oneof"`
 }
 
 func (*Feature_BytesList) isFeature_Kind() {}
@@ -202,17 +320,17 @@ func _Feature_OneofSizer(msg proto.Message) (n int) {
 	switch x := m.Kind.(type) {
 	case *Feature_BytesList:
 		s := proto.Size(x.BytesList)
-		n += proto.SizeVarint(1<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *Feature_FloatList:
 		s := proto.Size(x.FloatList)
-		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *Feature_Int64List:
 		s := proto.Size(x.Int64List)
-		n += proto.SizeVarint(3<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case nil:
@@ -224,13 +342,41 @@ func _Feature_OneofSizer(msg proto.Message) (n int) {
 
 type Features struct {
 	// Map from feature name to feature.
-	Feature map[string]*Feature `protobuf:"bytes,1,rep,name=feature" json:"feature,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Feature map[string]*Feature `protobuf:"bytes,1,rep,name=feature,proto3" json:"feature,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
-func (m *Features) Reset()                    { *m = Features{} }
-func (m *Features) String() string            { return proto.CompactTextString(m) }
-func (*Features) ProtoMessage()               {}
-func (*Features) Descriptor() ([]byte, []int) { return fileDescriptorFeature, []int{4} }
+func (m *Features) Reset()         { *m = Features{} }
+func (m *Features) String() string { return proto.CompactTextString(m) }
+func (*Features) ProtoMessage()    {}
+func (*Features) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a52991187ca0172, []int{4}
+}
+func (m *Features) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Features) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Features.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Features) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Features.Merge(m, src)
+}
+func (m *Features) XXX_Size() int {
+	return m.Size()
+}
+func (m *Features) XXX_DiscardUnknown() {
+	xxx_messageInfo_Features.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Features proto.InternalMessageInfo
 
 func (m *Features) GetFeature() map[string]*Feature {
 	if m != nil {
@@ -248,13 +394,41 @@ func (m *Features) GetFeature() map[string]*Feature {
 // contains the mapping from name to FeatureList.
 //
 type FeatureList struct {
-	Feature []*Feature `protobuf:"bytes,1,rep,name=feature" json:"feature,omitempty"`
+	Feature []*Feature `protobuf:"bytes,1,rep,name=feature,proto3" json:"feature,omitempty"`
 }
 
-func (m *FeatureList) Reset()                    { *m = FeatureList{} }
-func (m *FeatureList) String() string            { return proto.CompactTextString(m) }
-func (*FeatureList) ProtoMessage()               {}
-func (*FeatureList) Descriptor() ([]byte, []int) { return fileDescriptorFeature, []int{5} }
+func (m *FeatureList) Reset()         { *m = FeatureList{} }
+func (m *FeatureList) String() string { return proto.CompactTextString(m) }
+func (*FeatureList) ProtoMessage()    {}
+func (*FeatureList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a52991187ca0172, []int{5}
+}
+func (m *FeatureList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FeatureList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FeatureList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FeatureList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FeatureList.Merge(m, src)
+}
+func (m *FeatureList) XXX_Size() int {
+	return m.Size()
+}
+func (m *FeatureList) XXX_DiscardUnknown() {
+	xxx_messageInfo_FeatureList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FeatureList proto.InternalMessageInfo
 
 func (m *FeatureList) GetFeature() []*Feature {
 	if m != nil {
@@ -265,13 +439,41 @@ func (m *FeatureList) GetFeature() []*Feature {
 
 type FeatureLists struct {
 	// Map from feature name to feature list.
-	FeatureList map[string]*FeatureList `protobuf:"bytes,1,rep,name=feature_list,json=featureList" json:"feature_list,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	FeatureList map[string]*FeatureList `protobuf:"bytes,1,rep,name=feature_list,json=featureList,proto3" json:"feature_list,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
-func (m *FeatureLists) Reset()                    { *m = FeatureLists{} }
-func (m *FeatureLists) String() string            { return proto.CompactTextString(m) }
-func (*FeatureLists) ProtoMessage()               {}
-func (*FeatureLists) Descriptor() ([]byte, []int) { return fileDescriptorFeature, []int{6} }
+func (m *FeatureLists) Reset()         { *m = FeatureLists{} }
+func (m *FeatureLists) String() string { return proto.CompactTextString(m) }
+func (*FeatureLists) ProtoMessage()    {}
+func (*FeatureLists) Descriptor() ([]byte, []int) {
+	return fileDescriptor_0a52991187ca0172, []int{6}
+}
+func (m *FeatureLists) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FeatureLists) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FeatureLists.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FeatureLists) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FeatureLists.Merge(m, src)
+}
+func (m *FeatureLists) XXX_Size() int {
+	return m.Size()
+}
+func (m *FeatureLists) XXX_DiscardUnknown() {
+	xxx_messageInfo_FeatureLists.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FeatureLists proto.InternalMessageInfo
 
 func (m *FeatureLists) GetFeatureList() map[string]*FeatureList {
 	if m != nil {
@@ -286,9 +488,48 @@ func init() {
 	proto.RegisterType((*Int64List)(nil), "tensorflow.Int64List")
 	proto.RegisterType((*Feature)(nil), "tensorflow.Feature")
 	proto.RegisterType((*Features)(nil), "tensorflow.Features")
+	proto.RegisterMapType((map[string]*Feature)(nil), "tensorflow.Features.FeatureEntry")
 	proto.RegisterType((*FeatureList)(nil), "tensorflow.FeatureList")
 	proto.RegisterType((*FeatureLists)(nil), "tensorflow.FeatureLists")
+	proto.RegisterMapType((map[string]*FeatureList)(nil), "tensorflow.FeatureLists.FeatureListEntry")
 }
+
+func init() {
+	proto.RegisterFile("tensorflow/core/example/feature.proto", fileDescriptor_0a52991187ca0172)
+}
+
+var fileDescriptor_0a52991187ca0172 = []byte{
+	// 443 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x93, 0x4f, 0x6b, 0xd4, 0x40,
+	0x18, 0xc6, 0x33, 0x89, 0xb6, 0xe6, 0xcd, 0x0a, 0x4b, 0xfc, 0xb7, 0xf4, 0x10, 0xda, 0x40, 0xa1,
+	0x3d, 0x6c, 0x02, 0x55, 0x82, 0xa8, 0x07, 0x0d, 0x58, 0x14, 0x0a, 0x96, 0x5c, 0x04, 0x2f, 0x92,
+	0xd4, 0xc9, 0x3a, 0x34, 0x9b, 0x09, 0x99, 0x59, 0x35, 0x5f, 0xc0, 0xb3, 0x47, 0xbf, 0x88, 0x07,
+	0xbf, 0x81, 0xc7, 0x3d, 0x7a, 0x94, 0xdd, 0x2f, 0xe1, 0xb1, 0x4c, 0x32, 0xc9, 0xce, 0xee, 0x66,
+	0x6f, 0x79, 0x67, 0x9e, 0xe7, 0x9d, 0xdf, 0xf3, 0x86, 0x17, 0x8e, 0x39, 0xce, 0x19, 0x2d, 0xd3,
+	0x8c, 0x7e, 0xf5, 0xaf, 0x68, 0x89, 0x7d, 0xfc, 0x2d, 0x9e, 0x16, 0x19, 0xf6, 0x53, 0x1c, 0xf3,
+	0x59, 0x89, 0xbd, 0xa2, 0xa4, 0x9c, 0xda, 0xb0, 0x92, 0xb9, 0x47, 0x60, 0x86, 0x15, 0xc7, 0xec,
+	0x82, 0x30, 0x6e, 0xdf, 0x87, 0xdb, 0x5f, 0xe2, 0x6c, 0x86, 0x47, 0xe8, 0xd0, 0x38, 0x19, 0x44,
+	0x4d, 0xe1, 0x1e, 0x83, 0x79, 0x9e, 0xd1, 0x98, 0xd7, 0x92, 0x91, 0x2a, 0xd1, 0x43, 0x7d, 0x88,
+	0x14, 0xd9, 0xdb, 0x9c, 0x07, 0x4f, 0xb6, 0x65, 0x86, 0x2a, 0xfb, 0x8d, 0x60, 0xff, 0xbc, 0xc1,
+	0xb1, 0x03, 0x80, 0x44, 0x3c, 0xfe, 0x31, 0x23, 0x8c, 0x8f, 0xd0, 0x21, 0x3a, 0xb1, 0xce, 0x1e,
+	0x78, 0x2b, 0x3a, 0xaf, 0x43, 0x7b, 0xa3, 0x45, 0x66, 0xd2, 0x71, 0x06, 0x00, 0xa9, 0x20, 0x6a,
+	0x7c, 0xfa, 0xb6, 0xaf, 0xe3, 0x15, 0xbe, 0xb4, 0x83, 0x0f, 0x00, 0x88, 0x40, 0x6c, 0x7c, 0xc6,
+	0xb6, 0xaf, 0x0b, 0x20, 0x7c, 0xa4, 0x2d, 0xc2, 0x3d, 0xb8, 0x75, 0x4d, 0xf2, 0x4f, 0xee, 0x4f,
+	0x04, 0x77, 0x24, 0x3b, 0xb3, 0x9f, 0xc3, 0xbe, 0x1c, 0x6b, 0x1d, 0xd2, 0x3a, 0x3b, 0x5a, 0x23,
+	0x90, 0xb2, 0xf6, 0xe3, 0x75, 0xce, 0xcb, 0x2a, 0x6a, 0x1d, 0x07, 0xef, 0x60, 0xa0, 0x5e, 0xd8,
+	0x43, 0x30, 0xae, 0x71, 0x55, 0x8f, 0xc0, 0x8c, 0xc4, 0xa7, 0x7d, 0xda, 0x4e, 0xb0, 0x89, 0x77,
+	0xaf, 0xa7, 0xb9, 0x1c, 0xe9, 0x33, 0xfd, 0x29, 0x72, 0x5f, 0x80, 0x25, 0x4f, 0xeb, 0xa4, 0xe3,
+	0x4d, 0xb8, 0x5e, 0x7f, 0xab, 0x71, 0x7f, 0xa1, 0x8e, 0x47, 0xd8, 0x99, 0x7d, 0x01, 0x03, 0x79,
+	0xd7, 0xfe, 0x1b, 0xd1, 0xe4, 0xb4, 0xa7, 0x49, 0xad, 0x57, 0x8b, 0x26, 0xa9, 0x95, 0xae, 0x4e,
+	0x0e, 0xde, 0xc3, 0x70, 0x53, 0xd0, 0x93, 0x78, 0xbc, 0x9e, 0xf8, 0xd1, 0x8e, 0xc7, 0x94, 0xd4,
+	0xe1, 0x77, 0xf4, 0x67, 0xe1, 0xa0, 0xf9, 0xc2, 0x41, 0xff, 0x16, 0x0e, 0xfa, 0xb1, 0x74, 0xb4,
+	0xf9, 0xd2, 0xd1, 0xfe, 0x2e, 0x1d, 0x0d, 0x1e, 0xd2, 0x72, 0xa2, 0x76, 0x90, 0xab, 0x10, 0xde,
+	0x95, 0xad, 0x2e, 0xc5, 0x2a, 0xb0, 0x4b, 0xf4, 0xe1, 0xe5, 0x84, 0xf0, 0xcf, 0xb3, 0xc4, 0xbb,
+	0xa2, 0x53, 0xff, 0x55, 0x51, 0x64, 0x24, 0x25, 0xb8, 0xf4, 0x27, 0x74, 0xac, 0x2c, 0x13, 0xaf,
+	0x0a, 0xcc, 0xfc, 0x1d, 0xdb, 0xf5, 0x1f, 0xa1, 0x64, 0xaf, 0xde, 0xac, 0xc7, 0x37, 0x01, 0x00,
+	0x00, 0xff, 0xff, 0x6b, 0xf2, 0xe5, 0x6d, 0x82, 0x03, 0x00, 0x00,
+}
+
 func (m *BytesList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -336,7 +577,7 @@ func (m *FloatList) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintFeature(dAtA, i, uint64(len(m.Value)*4))
 		for _, num := range m.Value {
 			f1 := math.Float32bits(float32(num))
-			binary.LittleEndian.PutUint32(dAtA[i:], uint32(f1))
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f1))
 			i += 4
 		}
 	}
@@ -578,6 +819,9 @@ func encodeVarintFeature(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *BytesList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
@@ -590,6 +834,9 @@ func (m *BytesList) Size() (n int) {
 }
 
 func (m *FloatList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
@@ -599,6 +846,9 @@ func (m *FloatList) Size() (n int) {
 }
 
 func (m *Int64List) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
@@ -612,6 +862,9 @@ func (m *Int64List) Size() (n int) {
 }
 
 func (m *Feature) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Kind != nil {
@@ -621,6 +874,9 @@ func (m *Feature) Size() (n int) {
 }
 
 func (m *Feature_BytesList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.BytesList != nil {
@@ -630,6 +886,9 @@ func (m *Feature_BytesList) Size() (n int) {
 	return n
 }
 func (m *Feature_FloatList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.FloatList != nil {
@@ -639,6 +898,9 @@ func (m *Feature_FloatList) Size() (n int) {
 	return n
 }
 func (m *Feature_Int64List) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Int64List != nil {
@@ -648,6 +910,9 @@ func (m *Feature_Int64List) Size() (n int) {
 	return n
 }
 func (m *Features) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Feature) > 0 {
@@ -667,6 +932,9 @@ func (m *Features) Size() (n int) {
 }
 
 func (m *FeatureList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Feature) > 0 {
@@ -679,6 +947,9 @@ func (m *FeatureList) Size() (n int) {
 }
 
 func (m *FeatureLists) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.FeatureList) > 0 {
@@ -824,7 +1095,7 @@ func (m *FloatList) Unmarshal(dAtA []byte) error {
 				if (iNdEx + 4) > l {
 					return io.ErrUnexpectedEOF
 				}
-				v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+				v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 				iNdEx += 4
 				v2 := float32(math.Float32frombits(v))
 				m.Value = append(m.Value, v2)
@@ -851,12 +1122,17 @@ func (m *FloatList) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen / 4
+				if elementCount != 0 && len(m.Value) == 0 {
+					m.Value = make([]float32, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint32
 					if (iNdEx + 4) > l {
 						return io.ErrUnexpectedEOF
 					}
-					v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+					v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 					iNdEx += 4
 					v2 := float32(math.Float32frombits(v))
 					m.Value = append(m.Value, v2)
@@ -954,6 +1230,17 @@ func (m *Int64List) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Value) == 0 {
+					m.Value = make([]int64, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int64
@@ -1674,37 +1961,3 @@ var (
 	ErrInvalidLengthFeature = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowFeature   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow/core/example/feature.proto", fileDescriptorFeature) }
-
-var fileDescriptorFeature = []byte{
-	// 433 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x93, 0xcf, 0xaa, 0xd3, 0x40,
-	0x14, 0xc6, 0xef, 0x24, 0x7a, 0xaf, 0x39, 0xa9, 0x50, 0xe2, 0xbf, 0x72, 0x17, 0xe1, 0xde, 0xc0,
-	0x85, 0xdb, 0x45, 0x13, 0xa8, 0x12, 0x44, 0x5d, 0x68, 0xc0, 0xa2, 0x50, 0xb0, 0x64, 0x23, 0xb8,
-	0x91, 0xa4, 0x4e, 0xea, 0xd0, 0x34, 0x13, 0x32, 0x53, 0x35, 0x1b, 0x9f, 0xc1, 0xa5, 0x2f, 0xe2,
-	0xc2, 0x37, 0x70, 0xe9, 0x23, 0x48, 0x7d, 0x09, 0x97, 0x32, 0xc9, 0x24, 0x9d, 0xb6, 0xe9, 0x2e,
-	0x67, 0xe6, 0xfb, 0xce, 0xfc, 0xbe, 0x13, 0x0e, 0x5c, 0x71, 0x9c, 0x31, 0x5a, 0x24, 0x29, 0xfd,
-	0xec, 0xcd, 0x69, 0x81, 0x3d, 0xfc, 0x25, 0x5a, 0xe5, 0x29, 0xf6, 0x12, 0x1c, 0xf1, 0x75, 0x81,
-	0xdd, 0xbc, 0xa0, 0x9c, 0x5a, 0xb0, 0x95, 0x39, 0x97, 0x60, 0x04, 0x25, 0xc7, 0x6c, 0x4a, 0x18,
-	0xb7, 0xee, 0xc2, 0xcd, 0x4f, 0x51, 0xba, 0xc6, 0x03, 0x74, 0xa1, 0x5f, 0xf7, 0xc2, 0xba, 0x70,
-	0xae, 0xc0, 0x98, 0xa4, 0x34, 0xe2, 0x95, 0x64, 0xa0, 0x4a, 0xb4, 0x40, 0xeb, 0x23, 0x45, 0xf6,
-	0x3a, 0xe3, 0xfe, 0xa3, 0x43, 0x99, 0xae, 0xca, 0x7e, 0x22, 0x38, 0x9b, 0xd4, 0x38, 0x96, 0x0f,
-	0x10, 0x8b, 0xc7, 0xdf, 0xa7, 0x84, 0xf1, 0x01, 0xba, 0x40, 0xd7, 0xe6, 0xf8, 0x9e, 0xbb, 0xa5,
-	0x73, 0x5b, 0xb4, 0x57, 0x27, 0xa1, 0x11, 0xb7, 0x9c, 0x3e, 0x40, 0x22, 0x88, 0x6a, 0x9f, 0x76,
-	0xe8, 0x6b, 0x79, 0x85, 0x2f, 0x69, 0xe1, 0x7d, 0x00, 0x22, 0x10, 0x6b, 0x9f, 0x7e, 0xe8, 0x6b,
-	0x03, 0x08, 0x1f, 0x69, 0x8a, 0xe0, 0x14, 0x6e, 0x2c, 0x49, 0xf6, 0xc1, 0xf9, 0x8e, 0xe0, 0x96,
-	0x64, 0x67, 0xd6, 0x53, 0x38, 0x93, 0x63, 0xad, 0x42, 0x9a, 0xe3, 0xcb, 0x1d, 0x02, 0x29, 0x6b,
-	0x3e, 0x5e, 0x66, 0xbc, 0x28, 0xc3, 0xc6, 0x71, 0xfe, 0x06, 0x7a, 0xea, 0x85, 0xd5, 0x07, 0x7d,
-	0x89, 0xcb, 0x6a, 0x04, 0x46, 0x28, 0x3e, 0xad, 0x61, 0x33, 0xc1, 0x3a, 0xde, 0x9d, 0x8e, 0xe6,
-	0x72, 0xa4, 0x4f, 0xb4, 0xc7, 0xc8, 0x79, 0x06, 0xa6, 0x3c, 0xad, 0x92, 0x8e, 0xf6, 0xe1, 0x3a,
-	0xfd, 0x8d, 0xc6, 0xf9, 0x81, 0x5a, 0x1e, 0x61, 0x67, 0xd6, 0x14, 0x7a, 0xf2, 0xae, 0xf9, 0x37,
-	0xa2, 0xc9, 0xb0, 0xa3, 0x49, 0xa5, 0x57, 0x8b, 0x3a, 0xa9, 0x99, 0x6c, 0x4f, 0xce, 0xdf, 0x42,
-	0x7f, 0x5f, 0xd0, 0x91, 0x78, 0xb4, 0x9b, 0xf8, 0xc1, 0x91, 0xc7, 0x94, 0xd4, 0xc1, 0xd7, 0x5f,
-	0x1b, 0x1b, 0xfd, 0xde, 0xd8, 0xe8, 0xcf, 0xc6, 0x46, 0xdf, 0xfe, 0xda, 0x27, 0x70, 0x9f, 0x16,
-	0x0b, 0xd5, 0x28, 0x37, 0x20, 0xb8, 0x2d, 0x3b, 0xcc, 0xc4, 0x06, 0xb0, 0x19, 0x7a, 0xf7, 0x7c,
-	0x41, 0xf8, 0xc7, 0x75, 0xec, 0xce, 0xe9, 0xca, 0x7b, 0x91, 0xe7, 0x29, 0x49, 0x08, 0x2e, 0xbc,
-	0x05, 0x1d, 0x29, 0x3b, 0xc4, 0xcb, 0x1c, 0x33, 0xef, 0xc8, 0x52, 0xfd, 0x43, 0x28, 0x3e, 0xad,
-	0x16, 0xea, 0xe1, 0xff, 0x00, 0x00, 0x00, 0xff, 0xff, 0x90, 0xa3, 0x09, 0xf0, 0x79, 0x03, 0x00,
-	0x00,
-}

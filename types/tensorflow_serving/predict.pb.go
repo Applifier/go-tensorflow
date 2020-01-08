@@ -3,17 +3,24 @@
 
 package tensorflow_serving
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import tensorflow5 "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
-
-import io "io"
+import (
+	fmt "fmt"
+	framework "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 // PredictRequest specifies which TensorFlow model to run, as well as
 // how inputs are mapped to tensors and how outputs are filtered before
@@ -21,12 +28,12 @@ var _ = math.Inf
 type PredictRequest struct {
 	// Model Specification. If version is not specified, will use the latest
 	// (numerical) version.
-	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec" json:"model_spec,omitempty"`
+	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// Input tensors.
 	// Names of input tensor are alias names. The mapping from aliases to real
 	// input tensor names is stored in the SavedModel export as a prediction
 	// SignatureDef under the 'inputs' field.
-	Inputs map[string]*tensorflow5.TensorProto `protobuf:"bytes,2,rep,name=inputs" json:"inputs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Inputs map[string]*framework.TensorProto `protobuf:"bytes,2,rep,name=inputs,proto3" json:"inputs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// Output filter.
 	// Names specified are alias names. The mapping from aliases to real output
 	// tensor names is stored in the SavedModel export as a prediction
@@ -34,13 +41,41 @@ type PredictRequest struct {
 	// Only tensors specified here will be run/fetched and returned, with the
 	// exception that when none is specified, all tensors specified in the
 	// named signature will be run/fetched and returned.
-	OutputFilter []string `protobuf:"bytes,3,rep,name=output_filter,json=outputFilter" json:"output_filter,omitempty"`
+	OutputFilter []string `protobuf:"bytes,3,rep,name=output_filter,json=outputFilter,proto3" json:"output_filter,omitempty"`
 }
 
-func (m *PredictRequest) Reset()                    { *m = PredictRequest{} }
-func (m *PredictRequest) String() string            { return proto.CompactTextString(m) }
-func (*PredictRequest) ProtoMessage()               {}
-func (*PredictRequest) Descriptor() ([]byte, []int) { return fileDescriptorPredict, []int{0} }
+func (m *PredictRequest) Reset()         { *m = PredictRequest{} }
+func (m *PredictRequest) String() string { return proto.CompactTextString(m) }
+func (*PredictRequest) ProtoMessage()    {}
+func (*PredictRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_30f9dfb075b4507b, []int{0}
+}
+func (m *PredictRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PredictRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PredictRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PredictRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PredictRequest.Merge(m, src)
+}
+func (m *PredictRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *PredictRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_PredictRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PredictRequest proto.InternalMessageInfo
 
 func (m *PredictRequest) GetModelSpec() *ModelSpec {
 	if m != nil {
@@ -49,7 +84,7 @@ func (m *PredictRequest) GetModelSpec() *ModelSpec {
 	return nil
 }
 
-func (m *PredictRequest) GetInputs() map[string]*tensorflow5.TensorProto {
+func (m *PredictRequest) GetInputs() map[string]*framework.TensorProto {
 	if m != nil {
 		return m.Inputs
 	}
@@ -66,15 +101,43 @@ func (m *PredictRequest) GetOutputFilter() []string {
 // Response for PredictRequest on successful run.
 type PredictResponse struct {
 	// Effective Model Specification used to process PredictRequest.
-	ModelSpec *ModelSpec `protobuf:"bytes,2,opt,name=model_spec,json=modelSpec" json:"model_spec,omitempty"`
+	ModelSpec *ModelSpec `protobuf:"bytes,2,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// Output tensors.
-	Outputs map[string]*tensorflow5.TensorProto `protobuf:"bytes,1,rep,name=outputs" json:"outputs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Outputs map[string]*framework.TensorProto `protobuf:"bytes,1,rep,name=outputs,proto3" json:"outputs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
-func (m *PredictResponse) Reset()                    { *m = PredictResponse{} }
-func (m *PredictResponse) String() string            { return proto.CompactTextString(m) }
-func (*PredictResponse) ProtoMessage()               {}
-func (*PredictResponse) Descriptor() ([]byte, []int) { return fileDescriptorPredict, []int{1} }
+func (m *PredictResponse) Reset()         { *m = PredictResponse{} }
+func (m *PredictResponse) String() string { return proto.CompactTextString(m) }
+func (*PredictResponse) ProtoMessage()    {}
+func (*PredictResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_30f9dfb075b4507b, []int{1}
+}
+func (m *PredictResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PredictResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PredictResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PredictResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PredictResponse.Merge(m, src)
+}
+func (m *PredictResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *PredictResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_PredictResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PredictResponse proto.InternalMessageInfo
 
 func (m *PredictResponse) GetModelSpec() *ModelSpec {
 	if m != nil {
@@ -83,7 +146,7 @@ func (m *PredictResponse) GetModelSpec() *ModelSpec {
 	return nil
 }
 
-func (m *PredictResponse) GetOutputs() map[string]*tensorflow5.TensorProto {
+func (m *PredictResponse) GetOutputs() map[string]*framework.TensorProto {
 	if m != nil {
 		return m.Outputs
 	}
@@ -92,8 +155,39 @@ func (m *PredictResponse) GetOutputs() map[string]*tensorflow5.TensorProto {
 
 func init() {
 	proto.RegisterType((*PredictRequest)(nil), "tensorflow.serving.PredictRequest")
+	proto.RegisterMapType((map[string]*framework.TensorProto)(nil), "tensorflow.serving.PredictRequest.InputsEntry")
 	proto.RegisterType((*PredictResponse)(nil), "tensorflow.serving.PredictResponse")
+	proto.RegisterMapType((map[string]*framework.TensorProto)(nil), "tensorflow.serving.PredictResponse.OutputsEntry")
 }
+
+func init() { proto.RegisterFile("tensorflow_serving/predict.proto", fileDescriptor_30f9dfb075b4507b) }
+
+var fileDescriptor_30f9dfb075b4507b = []byte{
+	// 350 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x92, 0xcf, 0x4b, 0x02, 0x41,
+	0x14, 0xc7, 0x9d, 0x5d, 0x32, 0x1c, 0xed, 0x07, 0x7b, 0x69, 0xd9, 0x68, 0x59, 0x0c, 0xc2, 0x4b,
+	0xb3, 0x61, 0x97, 0x88, 0x4e, 0x41, 0x42, 0x41, 0x24, 0x63, 0x77, 0xb1, 0xf5, 0x19, 0x8b, 0xeb,
+	0xce, 0x34, 0x33, 0xab, 0xf8, 0x57, 0xd4, 0x9f, 0xd5, 0xd1, 0x63, 0xc7, 0xd0, 0x7f, 0xa0, 0x63,
+	0xc7, 0x70, 0x46, 0xd3, 0x4a, 0x82, 0xa0, 0xdb, 0xe3, 0xbd, 0xef, 0x77, 0xde, 0xf7, 0x7d, 0x18,
+	0x1c, 0x28, 0x48, 0x25, 0x13, 0x9d, 0x84, 0x0d, 0x9a, 0x12, 0x44, 0x3f, 0x4e, 0xef, 0x43, 0x2e,
+	0xa0, 0x1d, 0x47, 0x8a, 0x70, 0xc1, 0x14, 0x73, 0x9c, 0x85, 0x82, 0xcc, 0x14, 0xde, 0xc1, 0xa2,
+	0x17, 0x46, 0x4c, 0x40, 0xd8, 0x11, 0xad, 0x1e, 0x0c, 0x98, 0xe8, 0x86, 0x66, 0x62, 0xbc, 0x9e,
+	0xbf, 0xe2, 0xf5, 0x1e, 0x6b, 0x43, 0x62, 0xe6, 0xe5, 0x47, 0x0b, 0x6f, 0xd6, 0xcd, 0x36, 0x0a,
+	0x0f, 0x19, 0x48, 0xe5, 0x9c, 0x61, 0xac, 0x15, 0x4d, 0xc9, 0x21, 0x72, 0x51, 0x80, 0x2a, 0xc5,
+	0xea, 0x1e, 0xf9, 0x99, 0x81, 0x5c, 0x4f, 0x55, 0x0d, 0x0e, 0x11, 0x2d, 0xf4, 0xe6, 0xa5, 0x53,
+	0xc3, 0xf9, 0x38, 0xe5, 0x99, 0x92, 0xae, 0x15, 0xd8, 0x95, 0x62, 0x95, 0xac, 0x72, 0x7e, 0xdd,
+	0x48, 0x2e, 0xb5, 0xe1, 0x22, 0x55, 0x62, 0x48, 0x67, 0x6e, 0x67, 0x1f, 0x6f, 0xb0, 0x4c, 0xf1,
+	0x4c, 0x35, 0x3b, 0x71, 0xa2, 0x40, 0xb8, 0x76, 0x60, 0x57, 0x0a, 0xb4, 0x64, 0x9a, 0x35, 0xdd,
+	0xf3, 0x28, 0x2e, 0x2e, 0x79, 0x9d, 0x6d, 0x6c, 0x77, 0x61, 0xa8, 0x23, 0x17, 0xe8, 0xb4, 0x74,
+	0x0e, 0xf1, 0x5a, 0xbf, 0x95, 0x64, 0xe0, 0x5a, 0xfa, 0x8c, 0x9d, 0xe5, 0x30, 0xb7, 0xba, 0xac,
+	0x4f, 0x31, 0x50, 0xa3, 0x3a, 0xb5, 0x4e, 0x50, 0xf9, 0x0d, 0xe1, 0xad, 0xcf, 0x7c, 0x92, 0xb3,
+	0x54, 0xc2, 0x37, 0x24, 0xd6, 0x1f, 0x91, 0x5c, 0xe1, 0x75, 0x93, 0x5a, 0xba, 0x48, 0x33, 0x39,
+	0xfa, 0x95, 0x89, 0xd9, 0x49, 0x6e, 0x8c, 0xc5, 0x50, 0x99, 0x3f, 0xe0, 0x35, 0x70, 0x69, 0x79,
+	0xf0, 0x2f, 0x27, 0x9f, 0xef, 0x3e, 0x8f, 0x7d, 0x34, 0x1a, 0xfb, 0xe8, 0x75, 0xec, 0xa3, 0xa7,
+	0x89, 0x9f, 0x1b, 0x4d, 0xfc, 0xdc, 0xcb, 0xc4, 0xcf, 0xbd, 0x23, 0x74, 0x97, 0xd7, 0x1f, 0xe5,
+	0xf8, 0x23, 0x00, 0x00, 0xff, 0xff, 0xdf, 0x59, 0xa0, 0x71, 0xa8, 0x02, 0x00, 0x00,
+}
+
 func (m *PredictRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -231,6 +325,9 @@ func encodeVarintPredict(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *PredictRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ModelSpec != nil {
@@ -260,6 +357,9 @@ func (m *PredictRequest) Size() (n int) {
 }
 
 func (m *PredictResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Outputs) > 0 {
@@ -384,10 +484,10 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Inputs == nil {
-				m.Inputs = make(map[string]*tensorflow5.TensorProto)
+				m.Inputs = make(map[string]*framework.TensorProto)
 			}
 			var mapkey string
-			var mapvalue *tensorflow5.TensorProto
+			var mapvalue *framework.TensorProto
 			for iNdEx < postIndex {
 				entryPreIndex := iNdEx
 				var wire uint64
@@ -458,7 +558,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 					if postmsgIndex > l {
 						return io.ErrUnexpectedEOF
 					}
-					mapvalue = &tensorflow5.TensorProto{}
+					mapvalue = &framework.TensorProto{}
 					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
 						return err
 					}
@@ -586,10 +686,10 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Outputs == nil {
-				m.Outputs = make(map[string]*tensorflow5.TensorProto)
+				m.Outputs = make(map[string]*framework.TensorProto)
 			}
 			var mapkey string
-			var mapvalue *tensorflow5.TensorProto
+			var mapvalue *framework.TensorProto
 			for iNdEx < postIndex {
 				entryPreIndex := iNdEx
 				var wire uint64
@@ -660,7 +760,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 					if postmsgIndex > l {
 						return io.ErrUnexpectedEOF
 					}
-					mapvalue = &tensorflow5.TensorProto{}
+					mapvalue = &framework.TensorProto{}
 					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
 						return err
 					}
@@ -840,31 +940,3 @@ var (
 	ErrInvalidLengthPredict = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowPredict   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow_serving/predict.proto", fileDescriptorPredict) }
-
-var fileDescriptorPredict = []byte{
-	// 343 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x92, 0xcf, 0x4a, 0x03, 0x31,
-	0x10, 0xc6, 0xcd, 0x2e, 0x56, 0x9a, 0xd6, 0x3f, 0xc4, 0x83, 0xcb, 0x82, 0xcb, 0x52, 0x41, 0x7a,
-	0x31, 0x2b, 0xf5, 0x22, 0xe2, 0x49, 0xb0, 0xa0, 0x20, 0x96, 0xd4, 0x7b, 0xa9, 0xdb, 0xa9, 0x2c,
-	0xdd, 0x6e, 0x62, 0x92, 0x6d, 0xe9, 0x53, 0xe8, 0x63, 0x79, 0xf4, 0x11, 0xa4, 0xbe, 0x80, 0x47,
-	0x8f, 0xd2, 0xa4, 0xb5, 0x55, 0x8b, 0x20, 0x78, 0x1b, 0x26, 0xdf, 0x6f, 0xe6, 0xfb, 0x86, 0xe0,
-	0x50, 0x43, 0xa6, 0xb8, 0xec, 0xa6, 0x7c, 0xd8, 0x52, 0x20, 0x07, 0x49, 0x76, 0x17, 0x09, 0x09,
-	0x9d, 0x24, 0xd6, 0x54, 0x48, 0xae, 0x39, 0x21, 0x73, 0x05, 0x9d, 0x2a, 0xfc, 0xfd, 0x79, 0x2f,
-	0x8a, 0xb9, 0x84, 0xa8, 0x2b, 0xdb, 0x7d, 0x18, 0x72, 0xd9, 0x8b, 0xec, 0x8b, 0x65, 0xfd, 0x60,
-	0xc9, 0xf4, 0x3e, 0xef, 0x40, 0x6a, 0xdf, 0x2b, 0x0f, 0x0e, 0xde, 0x68, 0xd8, 0x6d, 0x0c, 0xee,
-	0x73, 0x50, 0x9a, 0x9c, 0x62, 0x6c, 0x14, 0x2d, 0x25, 0x20, 0xf6, 0x50, 0x88, 0xaa, 0xa5, 0xda,
-	0x2e, 0xfd, 0xe9, 0x81, 0x5e, 0x4d, 0x54, 0x4d, 0x01, 0x31, 0x2b, 0xf6, 0x67, 0x25, 0xa9, 0xe3,
-	0x42, 0x92, 0x89, 0x5c, 0x2b, 0xcf, 0x09, 0xdd, 0x6a, 0xa9, 0x46, 0x97, 0x91, 0x5f, 0x37, 0xd2,
-	0x0b, 0x03, 0x9c, 0x67, 0x5a, 0x8e, 0xd8, 0x94, 0x26, 0x7b, 0x78, 0x9d, 0xe7, 0x5a, 0xe4, 0xba,
-	0xd5, 0x4d, 0x52, 0x0d, 0xd2, 0x73, 0x43, 0xb7, 0x5a, 0x64, 0x65, 0xdb, 0xac, 0x9b, 0x9e, 0xcf,
-	0x70, 0x69, 0x81, 0x25, 0x5b, 0xd8, 0xed, 0xc1, 0xc8, 0x58, 0x2e, 0xb2, 0x49, 0x49, 0x0e, 0xf0,
-	0xea, 0xa0, 0x9d, 0xe6, 0xe0, 0x39, 0x26, 0xc6, 0xce, 0xa2, 0x99, 0x1b, 0x53, 0x36, 0x26, 0x67,
-	0x60, 0x56, 0x75, 0xe2, 0x1c, 0xa3, 0xca, 0x1b, 0xc2, 0x9b, 0x9f, 0xfe, 0x94, 0xe0, 0x99, 0x02,
-	0x72, 0x89, 0xd7, 0xec, 0x5e, 0xe5, 0x21, 0x93, 0xea, 0xf0, 0xd7, 0x54, 0x96, 0xa2, 0xd7, 0x16,
-	0xb1, 0xb9, 0x66, 0x03, 0xbe, 0x9d, 0xd7, 0xf9, 0xdb, 0x79, 0xfd, 0x26, 0x2e, 0x2f, 0x8e, 0xfd,
-	0x97, 0xc8, 0x67, 0xdb, 0x4f, 0xe3, 0x00, 0x3d, 0x8f, 0x03, 0xf4, 0x32, 0x0e, 0xd0, 0xe3, 0x6b,
-	0xb0, 0xf2, 0x8e, 0xd0, 0x6d, 0xc1, 0x7c, 0x90, 0xa3, 0x8f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xbc,
-	0x71, 0x7c, 0xde, 0xa0, 0x02, 0x00, 0x00,
-}

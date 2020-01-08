@@ -3,43 +3,76 @@
 
 package tensorflow_serving
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import tensorflow21 "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
-import tensorflow22 "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
-
-import context "golang.org/x/net/context"
-import grpc "google.golang.org/grpc"
-
-import io "io"
+import (
+	context "context"
+	fmt "fmt"
+	protobuf "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
+	proto "github.com/gogo/protobuf/proto"
+	grpc "google.golang.org/grpc"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 type SessionRunRequest struct {
 	// Model Specification. If version is not specified, will use the latest
 	// (numerical) version.
-	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec" json:"model_spec,omitempty"`
+	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// Tensors to be fed in the step. Each feed is a named tensor.
-	Feed []*tensorflow22.NamedTensorProto `protobuf:"bytes,2,rep,name=feed" json:"feed,omitempty"`
+	Feed []*protobuf.NamedTensorProto `protobuf:"bytes,2,rep,name=feed,proto3" json:"feed,omitempty"`
 	// Fetches. A list of tensor names. The caller expects a tensor to
 	// be returned for each fetch[i] (see RunResponse.tensor). The
 	// order of specified fetches does not change the execution order.
-	Fetch []string `protobuf:"bytes,3,rep,name=fetch" json:"fetch,omitempty"`
+	Fetch []string `protobuf:"bytes,3,rep,name=fetch,proto3" json:"fetch,omitempty"`
 	// Target Nodes. A list of node names. The named nodes will be run
 	// to but their outputs will not be fetched.
-	Target []string `protobuf:"bytes,4,rep,name=target" json:"target,omitempty"`
+	Target []string `protobuf:"bytes,4,rep,name=target,proto3" json:"target,omitempty"`
 	// Options for the run call. **Currently ignored.**
-	Options *tensorflow21.RunOptions `protobuf:"bytes,5,opt,name=options" json:"options,omitempty"`
+	Options *protobuf.RunOptions `protobuf:"bytes,5,opt,name=options,proto3" json:"options,omitempty"`
 }
 
-func (m *SessionRunRequest) Reset()                    { *m = SessionRunRequest{} }
-func (m *SessionRunRequest) String() string            { return proto.CompactTextString(m) }
-func (*SessionRunRequest) ProtoMessage()               {}
-func (*SessionRunRequest) Descriptor() ([]byte, []int) { return fileDescriptorSessionService, []int{0} }
+func (m *SessionRunRequest) Reset()         { *m = SessionRunRequest{} }
+func (m *SessionRunRequest) String() string { return proto.CompactTextString(m) }
+func (*SessionRunRequest) ProtoMessage()    {}
+func (*SessionRunRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1d8e31ebd048a15d, []int{0}
+}
+func (m *SessionRunRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SessionRunRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SessionRunRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SessionRunRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SessionRunRequest.Merge(m, src)
+}
+func (m *SessionRunRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *SessionRunRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SessionRunRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SessionRunRequest proto.InternalMessageInfo
 
 func (m *SessionRunRequest) GetModelSpec() *ModelSpec {
 	if m != nil {
@@ -48,7 +81,7 @@ func (m *SessionRunRequest) GetModelSpec() *ModelSpec {
 	return nil
 }
 
-func (m *SessionRunRequest) GetFeed() []*tensorflow22.NamedTensorProto {
+func (m *SessionRunRequest) GetFeed() []*protobuf.NamedTensorProto {
 	if m != nil {
 		return m.Feed
 	}
@@ -69,7 +102,7 @@ func (m *SessionRunRequest) GetTarget() []string {
 	return nil
 }
 
-func (m *SessionRunRequest) GetOptions() *tensorflow21.RunOptions {
+func (m *SessionRunRequest) GetOptions() *protobuf.RunOptions {
 	if m != nil {
 		return m.Options
 	}
@@ -77,26 +110,63 @@ func (m *SessionRunRequest) GetOptions() *tensorflow21.RunOptions {
 }
 
 type SessionRunResponse struct {
+	// Effective Model Specification used for session run.
+	ModelSpec *ModelSpec `protobuf:"bytes,3,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// NOTE: The order of the returned tensors may or may not match
 	// the fetch order specified in RunRequest.
-	Tensor []*tensorflow22.NamedTensorProto `protobuf:"bytes,1,rep,name=tensor" json:"tensor,omitempty"`
+	Tensor []*protobuf.NamedTensorProto `protobuf:"bytes,1,rep,name=tensor,proto3" json:"tensor,omitempty"`
 	// Returned metadata if requested in the options.
-	Metadata *tensorflow21.RunMetadata `protobuf:"bytes,2,opt,name=metadata" json:"metadata,omitempty"`
+	Metadata *protobuf.RunMetadata `protobuf:"bytes,2,opt,name=metadata,proto3" json:"metadata,omitempty"`
 }
 
-func (m *SessionRunResponse) Reset()                    { *m = SessionRunResponse{} }
-func (m *SessionRunResponse) String() string            { return proto.CompactTextString(m) }
-func (*SessionRunResponse) ProtoMessage()               {}
-func (*SessionRunResponse) Descriptor() ([]byte, []int) { return fileDescriptorSessionService, []int{1} }
+func (m *SessionRunResponse) Reset()         { *m = SessionRunResponse{} }
+func (m *SessionRunResponse) String() string { return proto.CompactTextString(m) }
+func (*SessionRunResponse) ProtoMessage()    {}
+func (*SessionRunResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1d8e31ebd048a15d, []int{1}
+}
+func (m *SessionRunResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SessionRunResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SessionRunResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SessionRunResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SessionRunResponse.Merge(m, src)
+}
+func (m *SessionRunResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *SessionRunResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_SessionRunResponse.DiscardUnknown(m)
+}
 
-func (m *SessionRunResponse) GetTensor() []*tensorflow22.NamedTensorProto {
+var xxx_messageInfo_SessionRunResponse proto.InternalMessageInfo
+
+func (m *SessionRunResponse) GetModelSpec() *ModelSpec {
+	if m != nil {
+		return m.ModelSpec
+	}
+	return nil
+}
+
+func (m *SessionRunResponse) GetTensor() []*protobuf.NamedTensorProto {
 	if m != nil {
 		return m.Tensor
 	}
 	return nil
 }
 
-func (m *SessionRunResponse) GetMetadata() *tensorflow21.RunMetadata {
+func (m *SessionRunResponse) GetMetadata() *protobuf.RunMetadata {
 	if m != nil {
 		return m.Metadata
 	}
@@ -108,6 +178,38 @@ func init() {
 	proto.RegisterType((*SessionRunResponse)(nil), "tensorflow.serving.SessionRunResponse")
 }
 
+func init() {
+	proto.RegisterFile("tensorflow_serving/session_service.proto", fileDescriptor_1d8e31ebd048a15d)
+}
+
+var fileDescriptor_1d8e31ebd048a15d = []byte{
+	// 372 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xc1, 0x4e, 0xea, 0x40,
+	0x18, 0x85, 0x19, 0x0a, 0xdc, 0xcb, 0x90, 0xdc, 0xe4, 0x4e, 0x6e, 0xb8, 0x0d, 0x6a, 0x43, 0x48,
+	0x30, 0x4d, 0x4c, 0x5a, 0x02, 0x2e, 0x5d, 0xb9, 0x47, 0xcd, 0xe0, 0xce, 0x05, 0x29, 0xed, 0x5f,
+	0x6c, 0x42, 0x67, 0x6a, 0x67, 0xaa, 0xaf, 0xe1, 0x0b, 0xb9, 0x77, 0xc9, 0xd2, 0xa5, 0xa1, 0x2f,
+	0xe1, 0xd2, 0x30, 0x53, 0x84, 0x00, 0x46, 0xdd, 0xf5, 0x9f, 0xf3, 0xfd, 0x39, 0xe7, 0x74, 0x06,
+	0xdb, 0x12, 0x98, 0xe0, 0x69, 0x38, 0xe3, 0x0f, 0x63, 0x01, 0xe9, 0x7d, 0xc4, 0xa6, 0xae, 0x00,
+	0x21, 0x22, 0xce, 0xf4, 0xec, 0x83, 0x93, 0xa4, 0x5c, 0x72, 0x42, 0xd6, 0xa4, 0x53, 0x90, 0x2d,
+	0x6b, 0xcf, 0x76, 0xcc, 0x03, 0x98, 0xe9, 0x9d, 0x56, 0x77, 0xad, 0xbb, 0x3e, 0x4f, 0xc1, 0x55,
+	0xc7, 0x93, 0x2c, 0x74, 0x7d, 0xce, 0xc2, 0x68, 0x5a, 0x60, 0x27, 0x9f, 0x62, 0xcc, 0x8b, 0x21,
+	0x18, 0x6b, 0x59, 0xc3, 0x9d, 0x1c, 0xe1, 0xbf, 0x23, 0x9d, 0x90, 0x66, 0x8c, 0xc2, 0x5d, 0x06,
+	0x42, 0x92, 0x33, 0x8c, 0x95, 0xf1, 0x58, 0x24, 0xe0, 0x9b, 0xa8, 0x8d, 0xec, 0x46, 0xff, 0xc8,
+	0xd9, 0x8d, 0xec, 0x0c, 0x97, 0xd4, 0x28, 0x01, 0x9f, 0xd6, 0xe3, 0xd5, 0x27, 0xe9, 0xe1, 0x4a,
+	0x08, 0x10, 0x98, 0xe5, 0xb6, 0x61, 0x37, 0xfa, 0x87, 0x9b, 0x7b, 0x17, 0xcb, 0x04, 0xd7, 0x6a,
+	0xbe, 0x5a, 0xfa, 0x53, 0x45, 0x92, 0x7f, 0xb8, 0x1a, 0x82, 0xf4, 0x6f, 0x4d, 0xa3, 0x6d, 0xd8,
+	0x75, 0xaa, 0x07, 0xd2, 0xc4, 0x35, 0xe9, 0xa5, 0x53, 0x90, 0x66, 0x45, 0x1d, 0x17, 0x13, 0xe9,
+	0xe1, 0x5f, 0x3c, 0x91, 0x11, 0x67, 0xc2, 0xac, 0xaa, 0x68, 0xcd, 0x4d, 0x0b, 0x9a, 0xb1, 0x4b,
+	0xad, 0xd2, 0x15, 0xd6, 0x79, 0x42, 0x98, 0x6c, 0xb6, 0x14, 0x09, 0x67, 0x02, 0xb6, 0x6a, 0x1a,
+	0x3f, 0xac, 0x79, 0x8a, 0x6b, 0x1a, 0x35, 0xd1, 0x37, 0x8a, 0x16, 0x2c, 0x19, 0xe0, 0xdf, 0x31,
+	0x48, 0x2f, 0xf0, 0xa4, 0x67, 0x96, 0x95, 0xe3, 0xff, 0xad, 0xf4, 0xc3, 0x42, 0xa6, 0x1f, 0x60,
+	0x3f, 0xc6, 0x7f, 0x8a, 0xf8, 0x23, 0xfd, 0x8a, 0xc8, 0x0d, 0xc6, 0xeb, 0x42, 0xa4, 0xbb, 0x2f,
+	0xf4, 0xce, 0xb5, 0xb6, 0x8e, 0xbf, 0xc2, 0xf4, 0x7f, 0x39, 0x3f, 0x78, 0x5e, 0x58, 0x68, 0xbe,
+	0xb0, 0xd0, 0xeb, 0xc2, 0x42, 0x8f, 0xb9, 0x55, 0x9a, 0xe7, 0x56, 0xe9, 0x25, 0xb7, 0x4a, 0x6f,
+	0x08, 0x4d, 0x6a, 0xea, 0xe1, 0x0c, 0xde, 0x03, 0x00, 0x00, 0xff, 0xff, 0x34, 0x32, 0x83, 0xb1,
+	0xec, 0x02, 0x00, 0x00,
+}
+
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
 var _ grpc.ClientConn
@@ -116,8 +218,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for SessionService service
-
+// SessionServiceClient is the client API for SessionService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SessionServiceClient interface {
 	// Runs inference of a given model.
 	SessionRun(ctx context.Context, in *SessionRunRequest, opts ...grpc.CallOption) (*SessionRunResponse, error)
@@ -133,15 +236,14 @@ func NewSessionServiceClient(cc *grpc.ClientConn) SessionServiceClient {
 
 func (c *sessionServiceClient) SessionRun(ctx context.Context, in *SessionRunRequest, opts ...grpc.CallOption) (*SessionRunResponse, error) {
 	out := new(SessionRunResponse)
-	err := grpc.Invoke(ctx, "/tensorflow.serving.SessionService/SessionRun", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/tensorflow.serving.SessionService/SessionRun", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for SessionService service
-
+// SessionServiceServer is the server API for SessionService service.
 type SessionServiceServer interface {
 	// Runs inference of a given model.
 	SessionRun(context.Context, *SessionRunRequest) (*SessionRunResponse, error)
@@ -299,6 +401,16 @@ func (m *SessionRunResponse) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.ModelSpec != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintSessionService(dAtA, i, uint64(m.ModelSpec.Size()))
+		n4, err := m.ModelSpec.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n4
+	}
 	return i, nil
 }
 
@@ -312,6 +424,9 @@ func encodeVarintSessionService(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *SessionRunRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ModelSpec != nil {
@@ -344,6 +459,9 @@ func (m *SessionRunRequest) Size() (n int) {
 }
 
 func (m *SessionRunResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Tensor) > 0 {
@@ -354,6 +472,10 @@ func (m *SessionRunResponse) Size() (n int) {
 	}
 	if m.Metadata != nil {
 		l = m.Metadata.Size()
+		n += 1 + l + sovSessionService(uint64(l))
+	}
+	if m.ModelSpec != nil {
+		l = m.ModelSpec.Size()
 		n += 1 + l + sovSessionService(uint64(l))
 	}
 	return n
@@ -460,7 +582,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Feed = append(m.Feed, &tensorflow22.NamedTensorProto{})
+			m.Feed = append(m.Feed, &protobuf.NamedTensorProto{})
 			if err := m.Feed[len(m.Feed)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -550,7 +672,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Options == nil {
-				m.Options = &tensorflow21.RunOptions{}
+				m.Options = &protobuf.RunOptions{}
 			}
 			if err := m.Options.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -632,7 +754,7 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Tensor = append(m.Tensor, &tensorflow22.NamedTensorProto{})
+			m.Tensor = append(m.Tensor, &protobuf.NamedTensorProto{})
 			if err := m.Tensor[len(m.Tensor)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -664,9 +786,42 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Metadata == nil {
-				m.Metadata = &tensorflow21.RunMetadata{}
+				m.Metadata = &protobuf.RunMetadata{}
 			}
 			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ModelSpec", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSessionService
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthSessionService
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ModelSpec == nil {
+				m.ModelSpec = &ModelSpec{}
+			}
+			if err := m.ModelSpec.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -795,34 +950,3 @@ var (
 	ErrInvalidLengthSessionService = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowSessionService   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() {
-	proto.RegisterFile("tensorflow_serving/session_service.proto", fileDescriptorSessionService)
-}
-
-var fileDescriptorSessionService = []byte{
-	// 357 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xcf, 0x4a, 0xeb, 0x40,
-	0x14, 0xc6, 0xef, 0xf4, 0xdf, 0xbd, 0x3d, 0x85, 0x0b, 0x8e, 0x52, 0x43, 0xd1, 0x50, 0x0a, 0x95,
-	0x80, 0x90, 0x94, 0xd6, 0xa5, 0x2b, 0xf7, 0x55, 0x99, 0xba, 0x73, 0x51, 0xd2, 0xe4, 0xa4, 0x06,
-	0x9a, 0x99, 0x98, 0x99, 0xe8, 0xd2, 0x57, 0xf0, 0xb1, 0x5c, 0xfa, 0x08, 0xd2, 0xbe, 0x84, 0x4b,
-	0xe9, 0x4c, 0x6a, 0x8b, 0xad, 0xe8, 0x2e, 0x67, 0xbe, 0xdf, 0xc7, 0xf7, 0x4d, 0xce, 0x80, 0xa3,
-	0x90, 0x4b, 0x91, 0x45, 0x33, 0xf1, 0x38, 0x96, 0x98, 0x3d, 0xc4, 0x7c, 0xea, 0x49, 0x94, 0x32,
-	0x16, 0xdc, 0xcc, 0x01, 0xba, 0x69, 0x26, 0x94, 0xa0, 0x74, 0x4d, 0xba, 0x05, 0xd9, 0xb2, 0x77,
-	0xb8, 0x13, 0x11, 0xe2, 0xcc, 0x78, 0x5a, 0xdd, 0xb5, 0xee, 0x05, 0x22, 0x43, 0x4f, 0x1f, 0x4f,
-	0xf2, 0xc8, 0x0b, 0x04, 0x8f, 0xe2, 0x69, 0x81, 0x9d, 0x7e, 0x8b, 0x71, 0x3f, 0xc1, 0x70, 0x6c,
-	0x64, 0x03, 0x77, 0x16, 0x04, 0xf6, 0x46, 0xa6, 0x21, 0xcb, 0x39, 0xc3, 0xfb, 0x1c, 0xa5, 0xa2,
-	0xe7, 0x00, 0x3a, 0x78, 0x2c, 0x53, 0x0c, 0x2c, 0xd2, 0x26, 0x4e, 0xa3, 0x7f, 0xec, 0x6e, 0x57,
-	0x76, 0x87, 0x4b, 0x6a, 0x94, 0x62, 0xc0, 0xea, 0xc9, 0xea, 0x93, 0xf6, 0xa0, 0x12, 0x21, 0x86,
-	0x56, 0xa9, 0x5d, 0x76, 0x1a, 0xfd, 0xa3, 0x4d, 0xdf, 0xe5, 0xb2, 0xc1, 0x8d, 0x9e, 0xaf, 0x97,
-	0xf9, 0x4c, 0x93, 0xf4, 0x00, 0xaa, 0x11, 0xaa, 0xe0, 0xce, 0x2a, 0xb7, 0xcb, 0x4e, 0x9d, 0x99,
-	0x81, 0x36, 0xa1, 0xa6, 0xfc, 0x6c, 0x8a, 0xca, 0xaa, 0xe8, 0xe3, 0x62, 0xa2, 0x3d, 0xf8, 0x2b,
-	0x52, 0x15, 0x0b, 0x2e, 0xad, 0xaa, 0xae, 0xd6, 0xdc, 0x8c, 0x60, 0x39, 0xbf, 0x32, 0x2a, 0x5b,
-	0x61, 0x9d, 0x27, 0xa0, 0x9b, 0x97, 0x94, 0xa9, 0xe0, 0x12, 0xe9, 0x19, 0xd4, 0x8c, 0xcf, 0x22,
-	0xbf, 0x68, 0x5a, 0xb0, 0x74, 0x00, 0xff, 0x12, 0x54, 0x7e, 0xe8, 0x2b, 0xdf, 0x2a, 0xe9, 0xf8,
-	0xc3, 0x2f, 0xf1, 0xc3, 0x42, 0x66, 0x9f, 0x60, 0x3f, 0x81, 0xff, 0x45, 0x81, 0x91, 0x79, 0x06,
-	0xf4, 0x16, 0x60, 0x5d, 0x89, 0x76, 0x77, 0xfd, 0xdc, 0xad, 0xbd, 0xb4, 0x4e, 0x7e, 0xc2, 0xcc,
-	0xcd, 0x2e, 0xf6, 0x5f, 0xe6, 0x36, 0x79, 0x9d, 0xdb, 0xe4, 0x6d, 0x6e, 0x93, 0xe7, 0x85, 0xfd,
-	0xe7, 0x9d, 0x90, 0x49, 0x4d, 0x6f, 0x7c, 0xf0, 0x11, 0x00, 0x00, 0xff, 0xff, 0x55, 0xcb, 0xa0,
-	0x98, 0xa5, 0x02, 0x00, 0x00,
-}

@@ -3,18 +3,24 @@
 
 package framework
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
-import binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 // Protocol buffer representing the value for an attr used to configure an Op.
 // Comment indicates the corresponding attr type.  Only the field matching the
@@ -34,10 +40,38 @@ type AttrValue struct {
 	Value isAttrValue_Value `protobuf_oneof:"value"`
 }
 
-func (m *AttrValue) Reset()                    { *m = AttrValue{} }
-func (m *AttrValue) String() string            { return proto.CompactTextString(m) }
-func (*AttrValue) ProtoMessage()               {}
-func (*AttrValue) Descriptor() ([]byte, []int) { return fileDescriptorAttrValue, []int{0} }
+func (m *AttrValue) Reset()         { *m = AttrValue{} }
+func (m *AttrValue) String() string { return proto.CompactTextString(m) }
+func (*AttrValue) ProtoMessage()    {}
+func (*AttrValue) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06e758bf81984406, []int{0}
+}
+func (m *AttrValue) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AttrValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AttrValue.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AttrValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AttrValue.Merge(m, src)
+}
+func (m *AttrValue) XXX_Size() int {
+	return m.Size()
+}
+func (m *AttrValue) XXX_DiscardUnknown() {
+	xxx_messageInfo_AttrValue.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AttrValue proto.InternalMessageInfo
 
 type isAttrValue_Value interface {
 	isAttrValue_Value()
@@ -61,16 +95,16 @@ type AttrValue_Type struct {
 	Type DataType `protobuf:"varint,6,opt,name=type,proto3,enum=tensorflow.DataType,oneof"`
 }
 type AttrValue_Shape struct {
-	Shape *TensorShapeProto `protobuf:"bytes,7,opt,name=shape,oneof"`
+	Shape *TensorShapeProto `protobuf:"bytes,7,opt,name=shape,proto3,oneof"`
 }
 type AttrValue_Tensor struct {
-	Tensor *TensorProto `protobuf:"bytes,8,opt,name=tensor,oneof"`
+	Tensor *TensorProto `protobuf:"bytes,8,opt,name=tensor,proto3,oneof"`
 }
 type AttrValue_List struct {
-	List *AttrValue_ListValue `protobuf:"bytes,1,opt,name=list,oneof"`
+	List *AttrValue_ListValue `protobuf:"bytes,1,opt,name=list,proto3,oneof"`
 }
 type AttrValue_Func struct {
-	Func *NameAttrList `protobuf:"bytes,10,opt,name=func,oneof"`
+	Func *NameAttrList `protobuf:"bytes,10,opt,name=func,proto3,oneof"`
 }
 type AttrValue_Placeholder struct {
 	Placeholder string `protobuf:"bytes,9,opt,name=placeholder,proto3,oneof"`
@@ -320,43 +354,43 @@ func _AttrValue_OneofSizer(msg proto.Message) (n int) {
 	// value
 	switch x := m.Value.(type) {
 	case *AttrValue_S:
-		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(len(x.S)))
 		n += len(x.S)
 	case *AttrValue_I:
-		n += proto.SizeVarint(3<<3 | proto.WireVarint)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(x.I))
 	case *AttrValue_F:
-		n += proto.SizeVarint(4<<3 | proto.WireFixed32)
+		n += 1 // tag and wire
 		n += 4
 	case *AttrValue_B:
-		n += proto.SizeVarint(5<<3 | proto.WireVarint)
+		n += 1 // tag and wire
 		n += 1
 	case *AttrValue_Type:
-		n += proto.SizeVarint(6<<3 | proto.WireVarint)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(x.Type))
 	case *AttrValue_Shape:
 		s := proto.Size(x.Shape)
-		n += proto.SizeVarint(7<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *AttrValue_Tensor:
 		s := proto.Size(x.Tensor)
-		n += proto.SizeVarint(8<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *AttrValue_List:
 		s := proto.Size(x.List)
-		n += proto.SizeVarint(1<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *AttrValue_Func:
 		s := proto.Size(x.Func)
-		n += proto.SizeVarint(10<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *AttrValue_Placeholder:
-		n += proto.SizeVarint(9<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(len(x.Placeholder)))
 		n += len(x.Placeholder)
 	case nil:
@@ -368,20 +402,48 @@ func _AttrValue_OneofSizer(msg proto.Message) (n int) {
 
 // LINT.IfChange
 type AttrValue_ListValue struct {
-	S      [][]byte            `protobuf:"bytes,2,rep,name=s" json:"s,omitempty"`
-	I      []int64             `protobuf:"varint,3,rep,packed,name=i" json:"i,omitempty"`
-	F      []float32           `protobuf:"fixed32,4,rep,packed,name=f" json:"f,omitempty"`
-	B      []bool              `protobuf:"varint,5,rep,packed,name=b" json:"b,omitempty"`
-	Type   []DataType          `protobuf:"varint,6,rep,packed,name=type,enum=tensorflow.DataType" json:"type,omitempty"`
-	Shape  []*TensorShapeProto `protobuf:"bytes,7,rep,name=shape" json:"shape,omitempty"`
-	Tensor []*TensorProto      `protobuf:"bytes,8,rep,name=tensor" json:"tensor,omitempty"`
-	Func   []*NameAttrList     `protobuf:"bytes,9,rep,name=func" json:"func,omitempty"`
+	S      [][]byte            `protobuf:"bytes,2,rep,name=s,proto3" json:"s,omitempty"`
+	I      []int64             `protobuf:"varint,3,rep,packed,name=i,proto3" json:"i,omitempty"`
+	F      []float32           `protobuf:"fixed32,4,rep,packed,name=f,proto3" json:"f,omitempty"`
+	B      []bool              `protobuf:"varint,5,rep,packed,name=b,proto3" json:"b,omitempty"`
+	Type   []DataType          `protobuf:"varint,6,rep,packed,name=type,proto3,enum=tensorflow.DataType" json:"type,omitempty"`
+	Shape  []*TensorShapeProto `protobuf:"bytes,7,rep,name=shape,proto3" json:"shape,omitempty"`
+	Tensor []*TensorProto      `protobuf:"bytes,8,rep,name=tensor,proto3" json:"tensor,omitempty"`
+	Func   []*NameAttrList     `protobuf:"bytes,9,rep,name=func,proto3" json:"func,omitempty"`
 }
 
-func (m *AttrValue_ListValue) Reset()                    { *m = AttrValue_ListValue{} }
-func (m *AttrValue_ListValue) String() string            { return proto.CompactTextString(m) }
-func (*AttrValue_ListValue) ProtoMessage()               {}
-func (*AttrValue_ListValue) Descriptor() ([]byte, []int) { return fileDescriptorAttrValue, []int{0, 0} }
+func (m *AttrValue_ListValue) Reset()         { *m = AttrValue_ListValue{} }
+func (m *AttrValue_ListValue) String() string { return proto.CompactTextString(m) }
+func (*AttrValue_ListValue) ProtoMessage()    {}
+func (*AttrValue_ListValue) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06e758bf81984406, []int{0, 0}
+}
+func (m *AttrValue_ListValue) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AttrValue_ListValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AttrValue_ListValue.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AttrValue_ListValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AttrValue_ListValue.Merge(m, src)
+}
+func (m *AttrValue_ListValue) XXX_Size() int {
+	return m.Size()
+}
+func (m *AttrValue_ListValue) XXX_DiscardUnknown() {
+	xxx_messageInfo_AttrValue_ListValue.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AttrValue_ListValue proto.InternalMessageInfo
 
 func (m *AttrValue_ListValue) GetS() [][]byte {
 	if m != nil {
@@ -443,13 +505,41 @@ func (m *AttrValue_ListValue) GetFunc() []*NameAttrList {
 // with a string name.  E.g., MatMul[T=float].
 type NameAttrList struct {
 	Name string                `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Attr map[string]*AttrValue `protobuf:"bytes,2,rep,name=attr" json:"attr,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Attr map[string]*AttrValue `protobuf:"bytes,2,rep,name=attr,proto3" json:"attr,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
-func (m *NameAttrList) Reset()                    { *m = NameAttrList{} }
-func (m *NameAttrList) String() string            { return proto.CompactTextString(m) }
-func (*NameAttrList) ProtoMessage()               {}
-func (*NameAttrList) Descriptor() ([]byte, []int) { return fileDescriptorAttrValue, []int{1} }
+func (m *NameAttrList) Reset()         { *m = NameAttrList{} }
+func (m *NameAttrList) String() string { return proto.CompactTextString(m) }
+func (*NameAttrList) ProtoMessage()    {}
+func (*NameAttrList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_06e758bf81984406, []int{1}
+}
+func (m *NameAttrList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *NameAttrList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_NameAttrList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *NameAttrList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NameAttrList.Merge(m, src)
+}
+func (m *NameAttrList) XXX_Size() int {
+	return m.Size()
+}
+func (m *NameAttrList) XXX_DiscardUnknown() {
+	xxx_messageInfo_NameAttrList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NameAttrList proto.InternalMessageInfo
 
 func (m *NameAttrList) GetName() string {
 	if m != nil {
@@ -469,7 +559,53 @@ func init() {
 	proto.RegisterType((*AttrValue)(nil), "tensorflow.AttrValue")
 	proto.RegisterType((*AttrValue_ListValue)(nil), "tensorflow.AttrValue.ListValue")
 	proto.RegisterType((*NameAttrList)(nil), "tensorflow.NameAttrList")
+	proto.RegisterMapType((map[string]*AttrValue)(nil), "tensorflow.NameAttrList.AttrEntry")
 }
+
+func init() {
+	proto.RegisterFile("tensorflow/core/framework/attr_value.proto", fileDescriptor_06e758bf81984406)
+}
+
+var fileDescriptor_06e758bf81984406 = []byte{
+	// 562 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x93, 0xcf, 0x6e, 0xd3, 0x4e,
+	0x10, 0xc7, 0xbd, 0x5e, 0xa7, 0xad, 0x37, 0x51, 0x7f, 0xd1, 0xea, 0x87, 0x58, 0x45, 0xc8, 0x58,
+	0x91, 0x40, 0xab, 0x12, 0x6c, 0x11, 0xfe, 0x08, 0x71, 0x6b, 0x04, 0x52, 0x0e, 0xa8, 0xaa, 0x4c,
+	0xc5, 0x81, 0x4b, 0xe5, 0x84, 0x75, 0x62, 0xd5, 0x89, 0xad, 0xf5, 0x86, 0x2a, 0x4f, 0xc0, 0x85,
+	0x43, 0x9f, 0x83, 0x27, 0xe1, 0xd8, 0x23, 0x47, 0x94, 0xbc, 0x04, 0x47, 0x34, 0xbb, 0xa9, 0x63,
+	0x09, 0xd2, 0xde, 0x66, 0x66, 0xbf, 0xdf, 0xf1, 0xf8, 0xb3, 0x3b, 0xe4, 0x48, 0x89, 0x79, 0x99,
+	0xcb, 0x24, 0xcb, 0x2f, 0xc3, 0x71, 0x2e, 0x45, 0x98, 0xc8, 0x78, 0x26, 0x2e, 0x73, 0x79, 0x11,
+	0xc6, 0x4a, 0xc9, 0xf3, 0x2f, 0x71, 0xb6, 0x10, 0x41, 0x21, 0x73, 0x95, 0x53, 0xb2, 0xd5, 0x76,
+	0x1e, 0xef, 0xf6, 0x99, 0x13, 0xe3, 0xe9, 0xf4, 0xee, 0xd2, 0x9d, 0x97, 0xd3, 0xb8, 0xd8, 0x7c,
+	0xa1, 0xf3, 0xe8, 0x16, 0xf5, 0xb2, 0x10, 0xa5, 0x91, 0x75, 0xbf, 0x36, 0x88, 0x7b, 0xac, 0x94,
+	0xfc, 0x08, 0xc3, 0xd1, 0x43, 0x82, 0x4a, 0x66, 0xfb, 0x88, 0xb7, 0x86, 0x56, 0x84, 0x4a, 0xc8,
+	0x53, 0x86, 0x7d, 0xc4, 0x31, 0xe4, 0x29, 0xe4, 0x09, 0x73, 0x7c, 0xc4, 0x6d, 0xc8, 0x13, 0xc8,
+	0x47, 0xac, 0xe1, 0x23, 0x7e, 0x00, 0xf9, 0x88, 0x1e, 0x11, 0x07, 0x9a, 0xb3, 0x3d, 0x1f, 0xf1,
+	0xc3, 0xfe, 0xff, 0xc1, 0x76, 0x86, 0xe0, 0x6d, 0xac, 0xe2, 0xb3, 0x65, 0x21, 0x86, 0x56, 0xa4,
+	0x35, 0xf4, 0x05, 0x69, 0xe8, 0x79, 0xd9, 0xbe, 0x8f, 0x78, 0xb3, 0xff, 0xa0, 0x2e, 0x3e, 0xd3,
+	0xe1, 0x07, 0x38, 0x3e, 0x85, 0x31, 0x87, 0x56, 0x64, 0xc4, 0xf4, 0x19, 0xd9, 0x33, 0x3a, 0x76,
+	0xa0, 0x6d, 0xf7, 0xff, 0xb6, 0xdd, 0x38, 0x36, 0x42, 0xfa, 0x92, 0x38, 0x59, 0x5a, 0x2a, 0x86,
+	0xb4, 0xe1, 0x61, 0xdd, 0x50, 0xfd, 0x79, 0xf0, 0x3e, 0x2d, 0x95, 0x8e, 0x60, 0x3e, 0x90, 0xd3,
+	0x80, 0x38, 0xc9, 0x62, 0x3e, 0x66, 0x44, 0xdb, 0x58, 0xdd, 0x76, 0x12, 0xcf, 0x04, 0x58, 0xc1,
+	0x04, 0x7a, 0xd0, 0xd1, 0x2e, 0x69, 0x16, 0x59, 0x3c, 0x16, 0xd3, 0x3c, 0xfb, 0x2c, 0x24, 0x73,
+	0x7d, 0xc4, 0xdd, 0xa1, 0x15, 0xd5, 0x8b, 0x9d, 0x2b, 0x9b, 0xb8, 0xd5, 0x97, 0x68, 0xcb, 0xd0,
+	0xc6, 0xbc, 0x05, 0xac, 0xdb, 0x86, 0x35, 0xe6, 0x78, 0x60, 0xb7, 0x11, 0xd0, 0x6e, 0x1b, 0xda,
+	0x98, 0xdb, 0xa6, 0x92, 0x40, 0x05, 0x78, 0x63, 0x7e, 0x60, 0x2a, 0x23, 0xda, 0xab, 0x88, 0xe3,
+	0x5d, 0xc4, 0xb5, 0xd4, 0x30, 0xef, 0x6f, 0x99, 0xe3, 0xbb, 0x98, 0xdf, 0x10, 0x0f, 0x6b, 0xc4,
+	0xf1, 0x2d, 0xc4, 0x2b, 0xde, 0xbd, 0x0d, 0x38, 0x57, 0xcb, 0x77, 0x82, 0x33, 0xd8, 0x06, 0xfb,
+	0xa4, 0xa1, 0x17, 0xa3, 0xfb, 0x1d, 0x91, 0x56, 0xfd, 0x9c, 0x52, 0xe2, 0xcc, 0xe3, 0x99, 0xd0,
+	0xf7, 0xe6, 0x46, 0x3a, 0xa6, 0xaf, 0x88, 0x03, 0xbb, 0xa4, 0xa9, 0x35, 0xfb, 0xdd, 0x5d, 0xbd,
+	0xf5, 0xc5, 0xbe, 0x9b, 0x2b, 0xb9, 0x8c, 0xb4, 0xbe, 0x73, 0x62, 0x5e, 0xb9, 0x2e, 0xd1, 0x36,
+	0xc1, 0x17, 0x62, 0xb9, 0xe9, 0x0b, 0x21, 0x7d, 0xb2, 0x19, 0x42, 0xbf, 0xfd, 0x66, 0xff, 0xde,
+	0x3f, 0xdf, 0x48, 0x64, 0x34, 0x6f, 0xec, 0xd7, 0x68, 0xf0, 0x0d, 0xfd, 0x58, 0x79, 0xe8, 0x7a,
+	0xe5, 0xa1, 0x5f, 0x2b, 0x0f, 0x5d, 0xad, 0x3d, 0xeb, 0x7a, 0xed, 0x59, 0x3f, 0xd7, 0x9e, 0x45,
+	0x58, 0x2e, 0x27, 0x75, 0x7f, 0xb5, 0x77, 0x83, 0xff, 0xaa, 0x56, 0x1a, 0x58, 0x79, 0x8a, 0x3e,
+	0x0d, 0x26, 0xa9, 0x9a, 0x2e, 0x46, 0xc1, 0x38, 0x9f, 0x85, 0xc7, 0x45, 0x91, 0xa5, 0x49, 0x2a,
+	0x64, 0x38, 0xc9, 0x9f, 0xd6, 0xb6, 0x57, 0xaf, 0x6b, 0xb8, 0x73, 0x9d, 0x7f, 0x23, 0x34, 0xda,
+	0xd3, 0xcb, 0xfc, 0xfc, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xd9, 0x06, 0xcd, 0x1b, 0x83, 0x04,
+	0x00, 0x00,
+}
+
 func (m *AttrValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -530,7 +666,7 @@ func (m *AttrValue_F) MarshalTo(dAtA []byte) (int, error) {
 	i := 0
 	dAtA[i] = 0x25
 	i++
-	binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.F))))
+	encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.F))))
 	i += 4
 	return i, nil
 }
@@ -650,7 +786,7 @@ func (m *AttrValue_ListValue) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintAttrValue(dAtA, i, uint64(len(m.F)*4))
 		for _, num := range m.F {
 			f8 := math.Float32bits(float32(num))
-			binary.LittleEndian.PutUint32(dAtA[i:], uint32(f8))
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f8))
 			i += 4
 		}
 	}
@@ -785,6 +921,9 @@ func encodeVarintAttrValue(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *AttrValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Value != nil {
@@ -794,6 +933,9 @@ func (m *AttrValue) Size() (n int) {
 }
 
 func (m *AttrValue_List) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.List != nil {
@@ -803,6 +945,9 @@ func (m *AttrValue_List) Size() (n int) {
 	return n
 }
 func (m *AttrValue_S) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.S != nil {
@@ -812,30 +957,45 @@ func (m *AttrValue_S) Size() (n int) {
 	return n
 }
 func (m *AttrValue_I) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	n += 1 + sovAttrValue(uint64(m.I))
 	return n
 }
 func (m *AttrValue_F) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	n += 5
 	return n
 }
 func (m *AttrValue_B) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	n += 2
 	return n
 }
 func (m *AttrValue_Type) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	n += 1 + sovAttrValue(uint64(m.Type))
 	return n
 }
 func (m *AttrValue_Shape) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Shape != nil {
@@ -845,6 +1005,9 @@ func (m *AttrValue_Shape) Size() (n int) {
 	return n
 }
 func (m *AttrValue_Tensor) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Tensor != nil {
@@ -854,6 +1017,9 @@ func (m *AttrValue_Tensor) Size() (n int) {
 	return n
 }
 func (m *AttrValue_Placeholder) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Placeholder)
@@ -861,6 +1027,9 @@ func (m *AttrValue_Placeholder) Size() (n int) {
 	return n
 }
 func (m *AttrValue_Func) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Func != nil {
@@ -870,6 +1039,9 @@ func (m *AttrValue_Func) Size() (n int) {
 	return n
 }
 func (m *AttrValue_ListValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.S) > 0 {
@@ -920,6 +1092,9 @@ func (m *AttrValue_ListValue) Size() (n int) {
 }
 
 func (m *NameAttrList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -1074,7 +1249,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 			if (iNdEx + 4) > l {
 				return io.ErrUnexpectedEOF
 			}
-			v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+			v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 			iNdEx += 4
 			m.Value = &AttrValue_F{float32(math.Float32frombits(v))}
 		case 5:
@@ -1363,6 +1538,17 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.I) == 0 {
+					m.I = make([]int64, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v int64
 					for shift := uint(0); ; shift += 7 {
@@ -1390,7 +1576,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				if (iNdEx + 4) > l {
 					return io.ErrUnexpectedEOF
 				}
-				v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+				v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 				iNdEx += 4
 				v2 := float32(math.Float32frombits(v))
 				m.F = append(m.F, v2)
@@ -1417,12 +1603,17 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen / 4
+				if elementCount != 0 && len(m.F) == 0 {
+					m.F = make([]float32, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint32
 					if (iNdEx + 4) > l {
 						return io.ErrUnexpectedEOF
 					}
-					v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+					v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 					iNdEx += 4
 					v2 := float32(math.Float32frombits(v))
 					m.F = append(m.F, v2)
@@ -1470,6 +1661,11 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				elementCount = packedLen
+				if elementCount != 0 && len(m.B) == 0 {
+					m.B = make([]bool, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int
@@ -1532,6 +1728,10 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				if elementCount != 0 && len(m.Type) == 0 {
+					m.Type = make([]DataType, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v DataType
@@ -1974,44 +2174,3 @@ var (
 	ErrInvalidLengthAttrValue = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowAttrValue   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow/core/framework/attr_value.proto", fileDescriptorAttrValue) }
-
-var fileDescriptorAttrValue = []byte{
-	// 552 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x93, 0xdf, 0x8a, 0xd3, 0x40,
-	0x14, 0xc6, 0x3b, 0x49, 0xda, 0x6d, 0xa6, 0x65, 0x2d, 0x83, 0xe2, 0x50, 0xa4, 0x86, 0x82, 0x32,
-	0xac, 0x35, 0xc1, 0xfa, 0x07, 0xf1, 0x6e, 0x8b, 0x42, 0x2f, 0x64, 0x59, 0xe2, 0xe2, 0x85, 0x37,
-	0x4b, 0x5a, 0x27, 0x6d, 0xd8, 0xb4, 0x09, 0x93, 0xa9, 0x4b, 0xef, 0x05, 0x6f, 0xf7, 0x39, 0x7c,
-	0x12, 0x2f, 0x7d, 0x04, 0xa9, 0x2f, 0xe1, 0xa5, 0x9c, 0x33, 0xdd, 0x34, 0xa0, 0xdd, 0xbd, 0x9b,
-	0x73, 0xe6, 0x3b, 0x67, 0xce, 0xfc, 0x38, 0x1f, 0x3d, 0xd2, 0x72, 0x59, 0x64, 0x2a, 0x4e, 0xb3,
-	0xcb, 0x60, 0x9a, 0x29, 0x19, 0xc4, 0x2a, 0x5a, 0xc8, 0xcb, 0x4c, 0x5d, 0x04, 0x91, 0xd6, 0xea,
-	0xfc, 0x4b, 0x94, 0xae, 0xa4, 0x9f, 0xab, 0x4c, 0x67, 0x8c, 0xee, 0xb4, 0xdd, 0xc7, 0xfb, 0xeb,
-	0xcc, 0x8d, 0xa9, 0xe9, 0x0e, 0x6e, 0xd3, 0x9d, 0x17, 0xf3, 0x28, 0xdf, 0xbe, 0xd0, 0x7d, 0x74,
-	0x83, 0x7a, 0x9d, 0xcb, 0xc2, 0xc8, 0xfa, 0xdf, 0xea, 0xd4, 0x3d, 0xd6, 0x5a, 0x7d, 0x84, 0xe1,
-	0xd8, 0x4b, 0xea, 0xa4, 0x49, 0xa1, 0x39, 0xf1, 0x88, 0x68, 0x0d, 0x1f, 0xfa, 0xbb, 0x1e, 0x7e,
-	0x29, 0xf2, 0xdf, 0x27, 0x85, 0xc6, 0xd3, 0xb8, 0x16, 0xa2, 0x9c, 0x1d, 0x52, 0x52, 0x70, 0xcb,
-	0x23, 0xa2, 0x3d, 0xae, 0x85, 0xa4, 0x80, 0x38, 0xe1, 0xb6, 0x47, 0x84, 0x0d, 0x71, 0x02, 0x71,
-	0xcc, 0x1d, 0x8f, 0x08, 0x0b, 0xe2, 0x18, 0xe2, 0x09, 0xaf, 0x7b, 0x44, 0x34, 0x21, 0x9e, 0xb0,
-	0x23, 0xea, 0xc0, 0x4c, 0xbc, 0xe1, 0x11, 0x71, 0x38, 0xbc, 0x5b, 0x7d, 0xf6, 0x6d, 0xa4, 0xa3,
-	0xb3, 0x75, 0x8e, 0x6f, 0x81, 0x86, 0xbd, 0xa0, 0x75, 0xfc, 0x26, 0x3f, 0xc0, 0x19, 0x1f, 0x54,
-	0xc5, 0x67, 0x78, 0xfc, 0x00, 0xd7, 0xa7, 0xf0, 0xbb, 0x71, 0x2d, 0x34, 0x62, 0xf6, 0x8c, 0x36,
-	0x8c, 0x8e, 0x37, 0xb1, 0xec, 0xfe, 0xbf, 0x65, 0xd7, 0x15, 0x5b, 0x21, 0xeb, 0xd3, 0x56, 0x9e,
-	0x46, 0x53, 0x39, 0xcf, 0xd2, 0xcf, 0x52, 0x71, 0xd7, 0x23, 0xc2, 0x1d, 0xd7, 0xc2, 0x6a, 0x92,
-	0xf9, 0xd4, 0x89, 0x57, 0xcb, 0x29, 0xa7, 0xd8, 0x94, 0x57, 0x9b, 0x9e, 0x44, 0x0b, 0x09, 0xcc,
-	0x80, 0x16, 0x0c, 0x0f, 0xba, 0xee, 0x95, 0x45, 0xdd, 0x12, 0x1f, 0x6b, 0x1b, 0x6c, 0xb6, 0x68,
-	0x03, 0xb4, 0x8e, 0x81, 0x66, 0x0b, 0x7b, 0x64, 0x75, 0x08, 0x60, 0xeb, 0x18, 0x6c, 0xb6, 0xb0,
-	0x4c, 0x26, 0x86, 0x0c, 0x80, 0xb3, 0x45, 0xd3, 0x64, 0x26, 0x6c, 0x50, 0xa2, 0xb3, 0xf7, 0xa1,
-	0x43, 0xa9, 0x81, 0x37, 0xdc, 0xc1, 0xb3, 0x6f, 0x83, 0x77, 0x8d, 0x2e, 0xa8, 0xa0, 0xb3, 0x6f,
-	0x40, 0x57, 0x82, 0x1b, 0x6c, 0xa1, 0xb8, 0x28, 0xdf, 0x0b, 0xc5, 0x20, 0x19, 0x1d, 0xd0, 0x3a,
-	0x1a, 0xa3, 0xff, 0x9d, 0xd0, 0x76, 0xf5, 0x9e, 0x31, 0xea, 0x2c, 0xa3, 0x85, 0xc4, 0x65, 0x74,
-	0x43, 0x3c, 0xb3, 0x57, 0xd4, 0x01, 0x2f, 0x21, 0xb5, 0xd6, 0xb0, 0xbf, 0xaf, 0x37, 0x6e, 0xeb,
-	0xbb, 0xa5, 0x56, 0xeb, 0x10, 0xf5, 0xdd, 0x13, 0xb3, 0xe5, 0x98, 0x62, 0x1d, 0x6a, 0x5f, 0xc8,
-	0xf5, 0xb6, 0x2f, 0x1c, 0xd9, 0x93, 0xed, 0x10, 0xb8, 0xc4, 0xad, 0xe1, 0xbd, 0xff, 0x2e, 0x7e,
-	0x68, 0x34, 0x6f, 0xac, 0xd7, 0x64, 0xf4, 0x95, 0xfc, 0xd8, 0xf4, 0xc8, 0xcf, 0x4d, 0x8f, 0xfc,
-	0xda, 0xf4, 0xc8, 0xd5, 0xef, 0x5e, 0x8d, 0xf2, 0x4c, 0xcd, 0xaa, 0x75, 0xa5, 0xdf, 0x46, 0x77,
-	0xca, 0x16, 0x08, 0xaa, 0x38, 0x25, 0x9f, 0x46, 0xb3, 0x44, 0xcf, 0x57, 0x13, 0x7f, 0x9a, 0x2d,
-	0x82, 0xe3, 0x3c, 0x4f, 0x93, 0x38, 0x91, 0x2a, 0x98, 0x65, 0x4f, 0x2b, 0xae, 0x45, 0x9b, 0x06,
-	0x7b, 0x6d, 0xfc, 0x87, 0x90, 0x49, 0x03, 0x4d, 0xfc, 0xfc, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0xe4, 0x2b, 0x52, 0x57, 0x7b, 0x04, 0x00, 0x00,
-}

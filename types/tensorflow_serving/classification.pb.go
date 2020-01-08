@@ -3,32 +3,67 @@
 
 package tensorflow_serving
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
-import binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 // A single class.
 type Class struct {
 	// Label or name of the class.
 	Label string `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
 	// Score for this class (e.g., the probability the item belongs to this
-	// class).
+	// class). As per the proto3 default-value semantics, if the score is missing,
+	// it should be treated as 0.
 	Score float32 `protobuf:"fixed32,2,opt,name=score,proto3" json:"score,omitempty"`
 }
 
-func (m *Class) Reset()                    { *m = Class{} }
-func (m *Class) String() string            { return proto.CompactTextString(m) }
-func (*Class) ProtoMessage()               {}
-func (*Class) Descriptor() ([]byte, []int) { return fileDescriptorClassification, []int{0} }
+func (m *Class) Reset()         { *m = Class{} }
+func (m *Class) String() string { return proto.CompactTextString(m) }
+func (*Class) ProtoMessage()    {}
+func (*Class) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ac3bbf3e73b9cce0, []int{0}
+}
+func (m *Class) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Class) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Class.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Class) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Class.Merge(m, src)
+}
+func (m *Class) XXX_Size() int {
+	return m.Size()
+}
+func (m *Class) XXX_DiscardUnknown() {
+	xxx_messageInfo_Class.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Class proto.InternalMessageInfo
 
 func (m *Class) GetLabel() string {
 	if m != nil {
@@ -46,13 +81,41 @@ func (m *Class) GetScore() float32 {
 
 // List of classes for a single item (tensorflow.Example).
 type Classifications struct {
-	Classes []*Class `protobuf:"bytes,1,rep,name=classes" json:"classes,omitempty"`
+	Classes []*Class `protobuf:"bytes,1,rep,name=classes,proto3" json:"classes,omitempty"`
 }
 
-func (m *Classifications) Reset()                    { *m = Classifications{} }
-func (m *Classifications) String() string            { return proto.CompactTextString(m) }
-func (*Classifications) ProtoMessage()               {}
-func (*Classifications) Descriptor() ([]byte, []int) { return fileDescriptorClassification, []int{1} }
+func (m *Classifications) Reset()         { *m = Classifications{} }
+func (m *Classifications) String() string { return proto.CompactTextString(m) }
+func (*Classifications) ProtoMessage()    {}
+func (*Classifications) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ac3bbf3e73b9cce0, []int{1}
+}
+func (m *Classifications) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Classifications) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Classifications.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Classifications) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Classifications.Merge(m, src)
+}
+func (m *Classifications) XXX_Size() int {
+	return m.Size()
+}
+func (m *Classifications) XXX_DiscardUnknown() {
+	xxx_messageInfo_Classifications.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Classifications proto.InternalMessageInfo
 
 func (m *Classifications) GetClasses() []*Class {
 	if m != nil {
@@ -64,15 +127,41 @@ func (m *Classifications) GetClasses() []*Class {
 // Contains one result per input example, in the same order as the input in
 // ClassificationRequest.
 type ClassificationResult struct {
-	Classifications []*Classifications `protobuf:"bytes,1,rep,name=classifications" json:"classifications,omitempty"`
+	Classifications []*Classifications `protobuf:"bytes,1,rep,name=classifications,proto3" json:"classifications,omitempty"`
 }
 
 func (m *ClassificationResult) Reset()         { *m = ClassificationResult{} }
 func (m *ClassificationResult) String() string { return proto.CompactTextString(m) }
 func (*ClassificationResult) ProtoMessage()    {}
 func (*ClassificationResult) Descriptor() ([]byte, []int) {
-	return fileDescriptorClassification, []int{2}
+	return fileDescriptor_ac3bbf3e73b9cce0, []int{2}
 }
+func (m *ClassificationResult) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ClassificationResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ClassificationResult.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ClassificationResult) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClassificationResult.Merge(m, src)
+}
+func (m *ClassificationResult) XXX_Size() int {
+	return m.Size()
+}
+func (m *ClassificationResult) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClassificationResult.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ClassificationResult proto.InternalMessageInfo
 
 func (m *ClassificationResult) GetClassifications() []*Classifications {
 	if m != nil {
@@ -84,17 +173,43 @@ func (m *ClassificationResult) GetClassifications() []*Classifications {
 type ClassificationRequest struct {
 	// Model Specification. If version is not specified, will use the latest
 	// (numerical) version.
-	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec" json:"model_spec,omitempty"`
+	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// Input data.
-	Input *Input `protobuf:"bytes,2,opt,name=input" json:"input,omitempty"`
+	Input *Input `protobuf:"bytes,2,opt,name=input,proto3" json:"input,omitempty"`
 }
 
 func (m *ClassificationRequest) Reset()         { *m = ClassificationRequest{} }
 func (m *ClassificationRequest) String() string { return proto.CompactTextString(m) }
 func (*ClassificationRequest) ProtoMessage()    {}
 func (*ClassificationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptorClassification, []int{3}
+	return fileDescriptor_ac3bbf3e73b9cce0, []int{3}
 }
+func (m *ClassificationRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ClassificationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ClassificationRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ClassificationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClassificationRequest.Merge(m, src)
+}
+func (m *ClassificationRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *ClassificationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClassificationRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ClassificationRequest proto.InternalMessageInfo
 
 func (m *ClassificationRequest) GetModelSpec() *ModelSpec {
 	if m != nil {
@@ -112,17 +227,43 @@ func (m *ClassificationRequest) GetInput() *Input {
 
 type ClassificationResponse struct {
 	// Effective Model Specification used for classification.
-	ModelSpec *ModelSpec `protobuf:"bytes,2,opt,name=model_spec,json=modelSpec" json:"model_spec,omitempty"`
+	ModelSpec *ModelSpec `protobuf:"bytes,2,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// Result of the classification.
-	Result *ClassificationResult `protobuf:"bytes,1,opt,name=result" json:"result,omitempty"`
+	Result *ClassificationResult `protobuf:"bytes,1,opt,name=result,proto3" json:"result,omitempty"`
 }
 
 func (m *ClassificationResponse) Reset()         { *m = ClassificationResponse{} }
 func (m *ClassificationResponse) String() string { return proto.CompactTextString(m) }
 func (*ClassificationResponse) ProtoMessage()    {}
 func (*ClassificationResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptorClassification, []int{4}
+	return fileDescriptor_ac3bbf3e73b9cce0, []int{4}
 }
+func (m *ClassificationResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ClassificationResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ClassificationResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ClassificationResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ClassificationResponse.Merge(m, src)
+}
+func (m *ClassificationResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *ClassificationResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ClassificationResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ClassificationResponse proto.InternalMessageInfo
 
 func (m *ClassificationResponse) GetModelSpec() *ModelSpec {
 	if m != nil {
@@ -145,6 +286,36 @@ func init() {
 	proto.RegisterType((*ClassificationRequest)(nil), "tensorflow.serving.ClassificationRequest")
 	proto.RegisterType((*ClassificationResponse)(nil), "tensorflow.serving.ClassificationResponse")
 }
+
+func init() {
+	proto.RegisterFile("tensorflow_serving/classification.proto", fileDescriptor_ac3bbf3e73b9cce0)
+}
+
+var fileDescriptor_ac3bbf3e73b9cce0 = []byte{
+	// 329 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x2f, 0x49, 0xcd, 0x2b,
+	0xce, 0x2f, 0x4a, 0xcb, 0xc9, 0x2f, 0x8f, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0xcc, 0x4b, 0xd7, 0x4f,
+	0xce, 0x49, 0x2c, 0x2e, 0xce, 0x4c, 0xcb, 0x4c, 0x4e, 0x2c, 0xc9, 0xcc, 0xcf, 0xd3, 0x2b, 0x28,
+	0xca, 0x2f, 0xc9, 0x17, 0x12, 0x42, 0x28, 0xd4, 0x83, 0x2a, 0x94, 0x92, 0xc3, 0xa2, 0x39, 0x33,
+	0xaf, 0xa0, 0xb4, 0x04, 0xa2, 0x07, 0xab, 0x7c, 0x6e, 0x7e, 0x4a, 0x6a, 0x0e, 0x44, 0x5e, 0xc9,
+	0x98, 0x8b, 0xd5, 0x19, 0x64, 0x97, 0x90, 0x08, 0x17, 0x6b, 0x4e, 0x62, 0x52, 0x6a, 0x8e, 0x04,
+	0xa3, 0x02, 0xa3, 0x06, 0x67, 0x10, 0x84, 0x03, 0x12, 0x2d, 0x4e, 0xce, 0x2f, 0x4a, 0x95, 0x60,
+	0x52, 0x60, 0xd4, 0x60, 0x0a, 0x82, 0x70, 0x94, 0xdc, 0xb8, 0xf8, 0x9d, 0x51, 0x1c, 0x58, 0x2c,
+	0x64, 0xcc, 0xc5, 0x0e, 0x76, 0x73, 0x6a, 0xb1, 0x04, 0xa3, 0x02, 0xb3, 0x06, 0xb7, 0x91, 0xa4,
+	0x1e, 0xa6, 0x6b, 0xf5, 0xc0, 0xba, 0x82, 0x60, 0x2a, 0x95, 0x52, 0xb9, 0x44, 0x50, 0xcd, 0x09,
+	0x4a, 0x2d, 0x2e, 0xcd, 0x29, 0x11, 0xf2, 0xe5, 0xe2, 0x47, 0x0d, 0x00, 0x98, 0xa1, 0xca, 0x38,
+	0x0d, 0x45, 0x28, 0x0d, 0x42, 0xd7, 0xab, 0xd4, 0xc6, 0xc8, 0x25, 0x8a, 0x6e, 0x4f, 0x61, 0x69,
+	0x6a, 0x71, 0x89, 0x90, 0x0d, 0x17, 0x17, 0x38, 0x30, 0xe2, 0x8b, 0x0b, 0x52, 0x93, 0xc1, 0x3e,
+	0xe7, 0x36, 0x92, 0xc5, 0x66, 0x87, 0x2f, 0x48, 0x55, 0x70, 0x41, 0x6a, 0x72, 0x10, 0x67, 0x2e,
+	0x8c, 0x29, 0xa4, 0xcf, 0xc5, 0x0a, 0x0e, 0x6a, 0x70, 0xe0, 0xe0, 0xf0, 0xb1, 0x27, 0x48, 0x41,
+	0x10, 0x44, 0x9d, 0xd2, 0x0c, 0x46, 0x2e, 0x31, 0x0c, 0x0f, 0x17, 0xe4, 0xe7, 0x15, 0xa7, 0xa2,
+	0xb9, 0x84, 0x89, 0x44, 0x97, 0x38, 0x70, 0xb1, 0x15, 0x81, 0x83, 0x0e, 0xea, 0x07, 0x0d, 0xc2,
+	0xe1, 0x04, 0x09, 0xea, 0x20, 0xa8, 0x3e, 0x27, 0xe9, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92,
+	0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc2, 0x63, 0x39, 0x86, 0x0b, 0x8f, 0xe5, 0x18, 0x6e, 0x3c,
+	0x96, 0x63, 0xf8, 0xc1, 0xc8, 0x98, 0xc4, 0x06, 0x4e, 0x2b, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0xa7, 0x72, 0xa5, 0x64, 0xaa, 0x02, 0x00, 0x00,
+}
+
 func (m *Class) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -169,7 +340,7 @@ func (m *Class) MarshalTo(dAtA []byte) (int, error) {
 	if m.Score != 0 {
 		dAtA[i] = 0x15
 		i++
-		binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Score))))
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Score))))
 		i += 4
 	}
 	return i, nil
@@ -321,6 +492,9 @@ func encodeVarintClassification(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *Class) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Label)
@@ -334,6 +508,9 @@ func (m *Class) Size() (n int) {
 }
 
 func (m *Classifications) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Classes) > 0 {
@@ -346,6 +523,9 @@ func (m *Classifications) Size() (n int) {
 }
 
 func (m *ClassificationResult) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Classifications) > 0 {
@@ -358,6 +538,9 @@ func (m *ClassificationResult) Size() (n int) {
 }
 
 func (m *ClassificationRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ModelSpec != nil {
@@ -372,6 +555,9 @@ func (m *ClassificationRequest) Size() (n int) {
 }
 
 func (m *ClassificationResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Result != nil {
@@ -464,7 +650,7 @@ func (m *Class) Unmarshal(dAtA []byte) error {
 			if (iNdEx + 4) > l {
 				return io.ErrUnexpectedEOF
 			}
-			v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+			v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 			iNdEx += 4
 			m.Score = float32(math.Float32frombits(v))
 		default:
@@ -986,32 +1172,3 @@ var (
 	ErrInvalidLengthClassification = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowClassification   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() {
-	proto.RegisterFile("tensorflow_serving/classification.proto", fileDescriptorClassification)
-}
-
-var fileDescriptorClassification = []byte{
-	// 321 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x52, 0x2f, 0x49, 0xcd, 0x2b,
-	0xce, 0x2f, 0x4a, 0xcb, 0xc9, 0x2f, 0x8f, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0xcc, 0x4b, 0xd7, 0x4f,
-	0xce, 0x49, 0x2c, 0x2e, 0xce, 0x4c, 0xcb, 0x4c, 0x4e, 0x2c, 0xc9, 0xcc, 0xcf, 0xd3, 0x2b, 0x28,
-	0xca, 0x2f, 0xc9, 0x17, 0x12, 0x42, 0x28, 0xd4, 0x83, 0x2a, 0x94, 0x92, 0xc3, 0xa2, 0x39, 0x33,
-	0xaf, 0xa0, 0xb4, 0x04, 0xa2, 0x07, 0xab, 0x7c, 0x6e, 0x7e, 0x4a, 0x6a, 0x0e, 0x44, 0x5e, 0xc9,
-	0x98, 0x8b, 0xd5, 0x19, 0x64, 0x97, 0x90, 0x08, 0x17, 0x6b, 0x4e, 0x62, 0x52, 0x6a, 0x8e, 0x04,
-	0xa3, 0x02, 0xa3, 0x06, 0x67, 0x10, 0x84, 0x03, 0x12, 0x2d, 0x4e, 0xce, 0x2f, 0x4a, 0x95, 0x60,
-	0x52, 0x60, 0xd4, 0x60, 0x0a, 0x82, 0x70, 0x94, 0xdc, 0xb8, 0xf8, 0x9d, 0x51, 0x1c, 0x58, 0x2c,
-	0x64, 0xcc, 0xc5, 0x0e, 0x76, 0x73, 0x6a, 0xb1, 0x04, 0xa3, 0x02, 0xb3, 0x06, 0xb7, 0x91, 0xa4,
-	0x1e, 0xa6, 0x6b, 0xf5, 0xc0, 0xba, 0x82, 0x60, 0x2a, 0x95, 0x52, 0xb9, 0x44, 0x50, 0xcd, 0x09,
-	0x4a, 0x2d, 0x2e, 0xcd, 0x29, 0x11, 0xf2, 0xe5, 0xe2, 0x47, 0x0d, 0x00, 0x98, 0xa1, 0xca, 0x38,
-	0x0d, 0x45, 0x28, 0x0d, 0x42, 0xd7, 0xab, 0xd4, 0xc6, 0xc8, 0x25, 0x8a, 0x6e, 0x4f, 0x61, 0x69,
-	0x6a, 0x71, 0x89, 0x90, 0x0d, 0x17, 0x17, 0x38, 0x30, 0xe2, 0x8b, 0x0b, 0x52, 0x93, 0xc1, 0x3e,
-	0xe7, 0x36, 0x92, 0xc5, 0x66, 0x87, 0x2f, 0x48, 0x55, 0x70, 0x41, 0x6a, 0x72, 0x10, 0x67, 0x2e,
-	0x8c, 0x29, 0xa4, 0xcf, 0xc5, 0x0a, 0x0e, 0x6a, 0x70, 0xe0, 0xe0, 0xf0, 0xb1, 0x27, 0x48, 0x41,
-	0x10, 0x44, 0x9d, 0xd2, 0x0c, 0x46, 0x2e, 0x31, 0x0c, 0x0f, 0x17, 0xe4, 0xe7, 0x15, 0xa7, 0x0a,
-	0x39, 0x70, 0xb1, 0x15, 0x81, 0x3d, 0x0f, 0x75, 0x85, 0x06, 0x61, 0x9f, 0x42, 0x02, 0x2b, 0x08,
-	0xaa, 0x0f, 0xcd, 0x2f, 0x4c, 0xa4, 0xf9, 0xc5, 0x49, 0xf8, 0xc4, 0x23, 0x39, 0xc6, 0x0b, 0x8f,
-	0xe4, 0x18, 0x1f, 0x3c, 0x92, 0x63, 0x9c, 0xf0, 0x58, 0x8e, 0xe1, 0x07, 0x23, 0x63, 0x12, 0x1b,
-	0x38, 0x8d, 0x18, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0x1c, 0x32, 0x77, 0xeb, 0xa2, 0x02, 0x00,
-	0x00,
-}

@@ -3,27 +3,62 @@
 
 package framework
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
-import io "io"
+import (
+	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 // A library is a set of named functions.
 type FunctionDefLibrary struct {
-	Function []*FunctionDef `protobuf:"bytes,1,rep,name=function" json:"function,omitempty"`
-	Gradient []*GradientDef `protobuf:"bytes,2,rep,name=gradient" json:"gradient,omitempty"`
+	Function []*FunctionDef `protobuf:"bytes,1,rep,name=function,proto3" json:"function,omitempty"`
+	Gradient []*GradientDef `protobuf:"bytes,2,rep,name=gradient,proto3" json:"gradient,omitempty"`
 }
 
-func (m *FunctionDefLibrary) Reset()                    { *m = FunctionDefLibrary{} }
-func (m *FunctionDefLibrary) String() string            { return proto.CompactTextString(m) }
-func (*FunctionDefLibrary) ProtoMessage()               {}
-func (*FunctionDefLibrary) Descriptor() ([]byte, []int) { return fileDescriptorFunction, []int{0} }
+func (m *FunctionDefLibrary) Reset()         { *m = FunctionDefLibrary{} }
+func (m *FunctionDefLibrary) String() string { return proto.CompactTextString(m) }
+func (*FunctionDefLibrary) ProtoMessage()    {}
+func (*FunctionDefLibrary) Descriptor() ([]byte, []int) {
+	return fileDescriptor_507748d6812c5f14, []int{0}
+}
+func (m *FunctionDefLibrary) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FunctionDefLibrary) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FunctionDefLibrary.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FunctionDefLibrary) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FunctionDefLibrary.Merge(m, src)
+}
+func (m *FunctionDefLibrary) XXX_Size() int {
+	return m.Size()
+}
+func (m *FunctionDefLibrary) XXX_DiscardUnknown() {
+	xxx_messageInfo_FunctionDefLibrary.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FunctionDefLibrary proto.InternalMessageInfo
 
 func (m *FunctionDefLibrary) GetFunction() []*FunctionDef {
 	if m != nil {
@@ -48,22 +83,64 @@ func (m *FunctionDefLibrary) GetGradient() []*GradientDef {
 type FunctionDef struct {
 	// The definition of the function's name, arguments, return values,
 	// attrs etc.
-	Signature *OpDef `protobuf:"bytes,1,opt,name=signature" json:"signature,omitempty"`
+	Signature *OpDef `protobuf:"bytes,1,opt,name=signature,proto3" json:"signature,omitempty"`
 	// Attributes specific to this function definition.
-	Attr map[string]*AttrValue `protobuf:"bytes,5,rep,name=attr" json:"attr,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Attr    map[string]*AttrValue            `protobuf:"bytes,5,rep,name=attr,proto3" json:"attr,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	ArgAttr map[uint32]*FunctionDef_ArgAttrs `protobuf:"bytes,7,rep,name=arg_attr,json=argAttr,proto3" json:"arg_attr,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// Unique IDs for each resource argument, used to track aliasing resources. If
+	// Argument A and Argument B alias each other, then
+	// resource_arg_unique_ids[A.index] == resource_arg_unique_ids[B.index].
+	//
+	// If this field is empty, none of the arguments could alias; otherwise, every
+	// resource argument should have an entry in this field.
+	//
+	// When instantiated, the unique IDs will be attached to the _Arg nodes'
+	// "_resource_arg_unique_id" attribute.
+	ResourceArgUniqueId map[uint32]uint32 `protobuf:"bytes,8,rep,name=resource_arg_unique_id,json=resourceArgUniqueId,proto3" json:"resource_arg_unique_id,omitempty" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	// By convention, "op" in node_def is resolved by consulting with a
 	// user-defined library first. If not resolved, "func" is assumed to
 	// be a builtin op.
-	NodeDef []*NodeDef `protobuf:"bytes,3,rep,name=node_def,json=nodeDef" json:"node_def,omitempty"`
+	NodeDef []*NodeDef `protobuf:"bytes,3,rep,name=node_def,json=nodeDef,proto3" json:"node_def,omitempty"`
 	// A mapping from the output arg names from `signature` to the
 	// outputs from `node_def` that should be returned by the function.
-	Ret map[string]string `protobuf:"bytes,4,rep,name=ret" json:"ret,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Ret map[string]string `protobuf:"bytes,4,rep,name=ret,proto3" json:"ret,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// A mapping from control output names from `signature` to node names in
+	// `node_def` which should be control outputs of this function.
+	ControlRet map[string]string `protobuf:"bytes,6,rep,name=control_ret,json=controlRet,proto3" json:"control_ret,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
-func (m *FunctionDef) Reset()                    { *m = FunctionDef{} }
-func (m *FunctionDef) String() string            { return proto.CompactTextString(m) }
-func (*FunctionDef) ProtoMessage()               {}
-func (*FunctionDef) Descriptor() ([]byte, []int) { return fileDescriptorFunction, []int{1} }
+func (m *FunctionDef) Reset()         { *m = FunctionDef{} }
+func (m *FunctionDef) String() string { return proto.CompactTextString(m) }
+func (*FunctionDef) ProtoMessage()    {}
+func (*FunctionDef) Descriptor() ([]byte, []int) {
+	return fileDescriptor_507748d6812c5f14, []int{1}
+}
+func (m *FunctionDef) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FunctionDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FunctionDef.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FunctionDef) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FunctionDef.Merge(m, src)
+}
+func (m *FunctionDef) XXX_Size() int {
+	return m.Size()
+}
+func (m *FunctionDef) XXX_DiscardUnknown() {
+	xxx_messageInfo_FunctionDef.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FunctionDef proto.InternalMessageInfo
 
 func (m *FunctionDef) GetSignature() *OpDef {
 	if m != nil {
@@ -79,6 +156,20 @@ func (m *FunctionDef) GetAttr() map[string]*AttrValue {
 	return nil
 }
 
+func (m *FunctionDef) GetArgAttr() map[uint32]*FunctionDef_ArgAttrs {
+	if m != nil {
+		return m.ArgAttr
+	}
+	return nil
+}
+
+func (m *FunctionDef) GetResourceArgUniqueId() map[uint32]uint32 {
+	if m != nil {
+		return m.ResourceArgUniqueId
+	}
+	return nil
+}
+
 func (m *FunctionDef) GetNodeDef() []*NodeDef {
 	if m != nil {
 		return m.NodeDef
@@ -89,6 +180,59 @@ func (m *FunctionDef) GetNodeDef() []*NodeDef {
 func (m *FunctionDef) GetRet() map[string]string {
 	if m != nil {
 		return m.Ret
+	}
+	return nil
+}
+
+func (m *FunctionDef) GetControlRet() map[string]string {
+	if m != nil {
+		return m.ControlRet
+	}
+	return nil
+}
+
+// Attributes for function arguments. These attributes are the same set of
+// valid attributes as to _Arg nodes.
+type FunctionDef_ArgAttrs struct {
+	Attr map[string]*AttrValue `protobuf:"bytes,1,rep,name=attr,proto3" json:"attr,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (m *FunctionDef_ArgAttrs) Reset()         { *m = FunctionDef_ArgAttrs{} }
+func (m *FunctionDef_ArgAttrs) String() string { return proto.CompactTextString(m) }
+func (*FunctionDef_ArgAttrs) ProtoMessage()    {}
+func (*FunctionDef_ArgAttrs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_507748d6812c5f14, []int{1, 1}
+}
+func (m *FunctionDef_ArgAttrs) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *FunctionDef_ArgAttrs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_FunctionDef_ArgAttrs.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *FunctionDef_ArgAttrs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FunctionDef_ArgAttrs.Merge(m, src)
+}
+func (m *FunctionDef_ArgAttrs) XXX_Size() int {
+	return m.Size()
+}
+func (m *FunctionDef_ArgAttrs) XXX_DiscardUnknown() {
+	xxx_messageInfo_FunctionDef_ArgAttrs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FunctionDef_ArgAttrs proto.InternalMessageInfo
+
+func (m *FunctionDef_ArgAttrs) GetAttr() map[string]*AttrValue {
+	if m != nil {
+		return m.Attr
 	}
 	return nil
 }
@@ -116,10 +260,38 @@ type GradientDef struct {
 	GradientFunc string `protobuf:"bytes,2,opt,name=gradient_func,json=gradientFunc,proto3" json:"gradient_func,omitempty"`
 }
 
-func (m *GradientDef) Reset()                    { *m = GradientDef{} }
-func (m *GradientDef) String() string            { return proto.CompactTextString(m) }
-func (*GradientDef) ProtoMessage()               {}
-func (*GradientDef) Descriptor() ([]byte, []int) { return fileDescriptorFunction, []int{2} }
+func (m *GradientDef) Reset()         { *m = GradientDef{} }
+func (m *GradientDef) String() string { return proto.CompactTextString(m) }
+func (*GradientDef) ProtoMessage()    {}
+func (*GradientDef) Descriptor() ([]byte, []int) {
+	return fileDescriptor_507748d6812c5f14, []int{2}
+}
+func (m *GradientDef) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GradientDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GradientDef.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GradientDef) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GradientDef.Merge(m, src)
+}
+func (m *GradientDef) XXX_Size() int {
+	return m.Size()
+}
+func (m *GradientDef) XXX_DiscardUnknown() {
+	xxx_messageInfo_GradientDef.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GradientDef proto.InternalMessageInfo
 
 func (m *GradientDef) GetFunctionName() string {
 	if m != nil {
@@ -138,8 +310,63 @@ func (m *GradientDef) GetGradientFunc() string {
 func init() {
 	proto.RegisterType((*FunctionDefLibrary)(nil), "tensorflow.FunctionDefLibrary")
 	proto.RegisterType((*FunctionDef)(nil), "tensorflow.FunctionDef")
+	proto.RegisterMapType((map[uint32]*FunctionDef_ArgAttrs)(nil), "tensorflow.FunctionDef.ArgAttrEntry")
+	proto.RegisterMapType((map[string]*AttrValue)(nil), "tensorflow.FunctionDef.AttrEntry")
+	proto.RegisterMapType((map[string]string)(nil), "tensorflow.FunctionDef.ControlRetEntry")
+	proto.RegisterMapType((map[uint32]uint32)(nil), "tensorflow.FunctionDef.ResourceArgUniqueIdEntry")
+	proto.RegisterMapType((map[string]string)(nil), "tensorflow.FunctionDef.RetEntry")
+	proto.RegisterType((*FunctionDef_ArgAttrs)(nil), "tensorflow.FunctionDef.ArgAttrs")
+	proto.RegisterMapType((map[string]*AttrValue)(nil), "tensorflow.FunctionDef.ArgAttrs.AttrEntry")
 	proto.RegisterType((*GradientDef)(nil), "tensorflow.GradientDef")
 }
+
+func init() {
+	proto.RegisterFile("tensorflow/core/framework/function.proto", fileDescriptor_507748d6812c5f14)
+}
+
+var fileDescriptor_507748d6812c5f14 = []byte{
+	// 617 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x94, 0x4d, 0x6f, 0xd3, 0x4c,
+	0x10, 0xc7, 0xbb, 0x49, 0xdb, 0x38, 0x93, 0xf6, 0x79, 0xca, 0x96, 0x17, 0x2b, 0x07, 0x2b, 0x14,
+	0x04, 0x55, 0x11, 0x36, 0x4a, 0x45, 0x85, 0x90, 0x00, 0x25, 0x40, 0x79, 0x11, 0x0a, 0x55, 0x24,
+	0x40, 0x42, 0x48, 0x96, 0x63, 0xaf, 0x8d, 0xd5, 0xc4, 0x6b, 0xd6, 0x6b, 0xaa, 0x5c, 0xf8, 0x02,
+	0x5c, 0x38, 0xf3, 0x89, 0x38, 0xf6, 0x88, 0xc4, 0x05, 0x25, 0x5f, 0x82, 0x23, 0xda, 0xb5, 0x9d,
+	0x6c, 0x5f, 0x4c, 0x85, 0xc4, 0x6d, 0xb3, 0xfb, 0xff, 0xfd, 0x67, 0x32, 0x33, 0x1e, 0xd8, 0xe4,
+	0x24, 0x4a, 0x28, 0xf3, 0x87, 0xf4, 0xc0, 0x72, 0x29, 0x23, 0x96, 0xcf, 0x9c, 0x11, 0x39, 0xa0,
+	0x6c, 0xdf, 0xf2, 0xd3, 0xc8, 0xe5, 0x21, 0x8d, 0xcc, 0x98, 0x51, 0x4e, 0x31, 0xcc, 0x95, 0xcd,
+	0xad, 0x72, 0xca, 0xe1, 0x9c, 0xd9, 0x1f, 0x9d, 0x61, 0x4a, 0x32, 0xae, 0xf9, 0x87, 0x08, 0x11,
+	0xf5, 0x88, 0xed, 0x11, 0x3f, 0x57, 0x5e, 0x2b, 0x57, 0xd2, 0x78, 0xae, 0xdb, 0xf8, 0x04, 0x78,
+	0x37, 0xcf, 0xed, 0x11, 0xf1, 0x5f, 0x84, 0x03, 0xe6, 0xb0, 0x31, 0xde, 0x06, 0xad, 0xc8, 0x58,
+	0x47, 0xad, 0xea, 0x66, 0xa3, 0x7d, 0xc9, 0x9c, 0x1b, 0x9a, 0x0a, 0xd1, 0x9f, 0x09, 0x05, 0x14,
+	0x30, 0xc7, 0x0b, 0x49, 0xc4, 0xf5, 0xca, 0x49, 0xe8, 0x49, 0xfe, 0x26, 0xa1, 0x42, 0xb8, 0xf1,
+	0xa3, 0x06, 0x0d, 0xc5, 0x0e, 0x5b, 0x50, 0x4f, 0xc2, 0x20, 0x72, 0x78, 0xca, 0x88, 0x8e, 0x5a,
+	0x68, 0xb3, 0xd1, 0x3e, 0xa7, 0xba, 0xbc, 0x8c, 0x05, 0x3f, 0xd7, 0xe0, 0xdb, 0xb0, 0x28, 0xca,
+	0xa4, 0x2f, 0xc9, 0x88, 0x97, 0x4b, 0xd2, 0x34, 0x3b, 0x9c, 0xb3, 0xc7, 0x11, 0x67, 0xe3, 0xbe,
+	0x94, 0xe3, 0x07, 0xa0, 0x39, 0x2c, 0xb0, 0x25, 0x5a, 0x93, 0xe8, 0xd5, 0x52, 0x94, 0x05, 0x73,
+	0xba, 0xe6, 0x64, 0xbf, 0x30, 0x81, 0x8b, 0x8c, 0x24, 0x34, 0x65, 0x2e, 0xb1, 0x85, 0x53, 0x1a,
+	0x85, 0x1f, 0x52, 0x62, 0x87, 0x9e, 0xae, 0x49, 0xbb, 0x5b, 0x65, 0x76, 0xfd, 0x9c, 0xea, 0xb0,
+	0xe0, 0x95, 0x64, 0x9e, 0x79, 0x99, 0xf5, 0x3a, 0x3b, 0xf9, 0x82, 0x4d, 0xd0, 0x8a, 0xce, 0xea,
+	0x55, 0x69, 0xbc, 0xae, 0x1a, 0xf7, 0xa8, 0x47, 0x44, 0x41, 0x6a, 0x51, 0x76, 0xc0, 0x6d, 0xa8,
+	0x32, 0xc2, 0xf5, 0x45, 0x29, 0x6d, 0x95, 0xe7, 0xc0, 0xb3, 0x98, 0x42, 0x8c, 0x9f, 0x42, 0xc3,
+	0xa5, 0x11, 0x67, 0x74, 0x68, 0x0b, 0x76, 0x59, 0xb2, 0xd7, 0xcb, 0xd8, 0x87, 0x99, 0x74, 0x66,
+	0x01, 0xee, 0xec, 0xa2, 0xd9, 0x83, 0xfa, 0xac, 0x54, 0x78, 0x0d, 0xaa, 0xfb, 0x64, 0x2c, 0x9b,
+	0x58, 0xef, 0x8b, 0x23, 0xbe, 0x01, 0x4b, 0x72, 0x9a, 0xf5, 0x8a, 0x6c, 0xec, 0x05, 0x35, 0x84,
+	0xe0, 0x5e, 0x8b, 0xc7, 0x7e, 0xa6, 0xb9, 0x5b, 0xb9, 0x83, 0x9a, 0x5f, 0x11, 0x68, 0x79, 0xf9,
+	0x13, 0x7c, 0x3f, 0xef, 0x74, 0x36, 0x90, 0x5b, 0x67, 0xb4, 0x2b, 0x39, 0xde, 0xf2, 0x7f, 0x9e,
+	0xdc, 0x3b, 0x58, 0x51, 0x47, 0x43, 0xb5, 0x5c, 0xcd, 0x2c, 0x77, 0x8e, 0x5a, 0xb6, 0xce, 0x4a,
+	0x59, 0x75, 0xdf, 0x05, 0xbd, 0x6c, 0x52, 0x4e, 0x89, 0x74, 0x5e, 0x8d, 0xb4, 0xaa, 0xfa, 0xec,
+	0x80, 0x56, 0xb4, 0xea, 0x94, 0x3f, 0x7d, 0x84, 0xab, 0xab, 0xdc, 0x3d, 0xf8, 0xff, 0x58, 0xa7,
+	0xff, 0x06, 0x7f, 0xbe, 0xa8, 0x55, 0xd6, 0xaa, 0x1b, 0x6f, 0xa0, 0xa1, 0x7c, 0xf6, 0xf8, 0x0a,
+	0xac, 0x16, 0xdb, 0xc2, 0x8e, 0x9c, 0x11, 0xc9, 0xad, 0x56, 0x8a, 0xcb, 0x9e, 0x33, 0x22, 0x42,
+	0x54, 0x6c, 0x07, 0x5b, 0x3c, 0xe4, 0xde, 0x2b, 0xc5, 0xa5, 0x28, 0x5c, 0xf7, 0x33, 0xfa, 0x36,
+	0x31, 0xd0, 0xe1, 0xc4, 0x40, 0x3f, 0x27, 0x06, 0xfa, 0x32, 0x35, 0x16, 0x0e, 0xa7, 0xc6, 0xc2,
+	0xf7, 0xa9, 0xb1, 0x00, 0x3a, 0x65, 0x81, 0x5a, 0xe8, 0xd9, 0xe2, 0xeb, 0xfe, 0x57, 0xd4, 0x7c,
+	0x4f, 0xac, 0xbe, 0x64, 0x0f, 0xbd, 0xed, 0x06, 0x21, 0x7f, 0x9f, 0x0e, 0x4c, 0x97, 0x8e, 0xac,
+	0x4e, 0x1c, 0x0f, 0x43, 0x3f, 0x24, 0xcc, 0x0a, 0xe8, 0x4d, 0x65, 0x7b, 0xf2, 0x71, 0x4c, 0x12,
+	0xab, 0x74, 0x9d, 0xfe, 0x42, 0x68, 0xb0, 0x2c, 0x77, 0xe9, 0xf6, 0xef, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0xb3, 0x42, 0x70, 0x3f, 0x01, 0x06, 0x00, 0x00,
+}
+
 func (m *FunctionDefLibrary) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -264,6 +491,111 @@ func (m *FunctionDef) MarshalTo(dAtA []byte) (int, error) {
 			}
 		}
 	}
+	if len(m.ControlRet) > 0 {
+		for k, _ := range m.ControlRet {
+			dAtA[i] = 0x32
+			i++
+			v := m.ControlRet[k]
+			mapSize := 1 + len(k) + sovFunction(uint64(len(k))) + 1 + len(v) + sovFunction(uint64(len(v)))
+			i = encodeVarintFunction(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintFunction(dAtA, i, uint64(len(k)))
+			i += copy(dAtA[i:], k)
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintFunction(dAtA, i, uint64(len(v)))
+			i += copy(dAtA[i:], v)
+		}
+	}
+	if len(m.ArgAttr) > 0 {
+		for k, _ := range m.ArgAttr {
+			dAtA[i] = 0x3a
+			i++
+			v := m.ArgAttr[k]
+			msgSize := 0
+			if v != nil {
+				msgSize = v.Size()
+				msgSize += 1 + sovFunction(uint64(msgSize))
+			}
+			mapSize := 1 + sovFunction(uint64(k)) + msgSize
+			i = encodeVarintFunction(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0x8
+			i++
+			i = encodeVarintFunction(dAtA, i, uint64(k))
+			if v != nil {
+				dAtA[i] = 0x12
+				i++
+				i = encodeVarintFunction(dAtA, i, uint64(v.Size()))
+				n3, err := v.MarshalTo(dAtA[i:])
+				if err != nil {
+					return 0, err
+				}
+				i += n3
+			}
+		}
+	}
+	if len(m.ResourceArgUniqueId) > 0 {
+		for k, _ := range m.ResourceArgUniqueId {
+			dAtA[i] = 0x42
+			i++
+			v := m.ResourceArgUniqueId[k]
+			mapSize := 1 + sovFunction(uint64(k)) + 1 + sovFunction(uint64(v))
+			i = encodeVarintFunction(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0x8
+			i++
+			i = encodeVarintFunction(dAtA, i, uint64(k))
+			dAtA[i] = 0x10
+			i++
+			i = encodeVarintFunction(dAtA, i, uint64(v))
+		}
+	}
+	return i, nil
+}
+
+func (m *FunctionDef_ArgAttrs) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *FunctionDef_ArgAttrs) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Attr) > 0 {
+		for k, _ := range m.Attr {
+			dAtA[i] = 0xa
+			i++
+			v := m.Attr[k]
+			msgSize := 0
+			if v != nil {
+				msgSize = v.Size()
+				msgSize += 1 + sovFunction(uint64(msgSize))
+			}
+			mapSize := 1 + len(k) + sovFunction(uint64(len(k))) + msgSize
+			i = encodeVarintFunction(dAtA, i, uint64(mapSize))
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintFunction(dAtA, i, uint64(len(k)))
+			i += copy(dAtA[i:], k)
+			if v != nil {
+				dAtA[i] = 0x12
+				i++
+				i = encodeVarintFunction(dAtA, i, uint64(v.Size()))
+				n4, err := v.MarshalTo(dAtA[i:])
+				if err != nil {
+					return 0, err
+				}
+				i += n4
+			}
+		}
+	}
 	return i, nil
 }
 
@@ -307,6 +639,9 @@ func encodeVarintFunction(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *FunctionDefLibrary) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Function) > 0 {
@@ -325,6 +660,9 @@ func (m *FunctionDefLibrary) Size() (n int) {
 }
 
 func (m *FunctionDef) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Signature != nil {
@@ -358,10 +696,64 @@ func (m *FunctionDef) Size() (n int) {
 			n += mapEntrySize + 1 + sovFunction(uint64(mapEntrySize))
 		}
 	}
+	if len(m.ControlRet) > 0 {
+		for k, v := range m.ControlRet {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovFunction(uint64(len(k))) + 1 + len(v) + sovFunction(uint64(len(v)))
+			n += mapEntrySize + 1 + sovFunction(uint64(mapEntrySize))
+		}
+	}
+	if len(m.ArgAttr) > 0 {
+		for k, v := range m.ArgAttr {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovFunction(uint64(l))
+			}
+			mapEntrySize := 1 + sovFunction(uint64(k)) + l
+			n += mapEntrySize + 1 + sovFunction(uint64(mapEntrySize))
+		}
+	}
+	if len(m.ResourceArgUniqueId) > 0 {
+		for k, v := range m.ResourceArgUniqueId {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + sovFunction(uint64(k)) + 1 + sovFunction(uint64(v))
+			n += mapEntrySize + 1 + sovFunction(uint64(mapEntrySize))
+		}
+	}
+	return n
+}
+
+func (m *FunctionDef_ArgAttrs) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Attr) > 0 {
+		for k, v := range m.Attr {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovFunction(uint64(l))
+			}
+			mapEntrySize := 1 + len(k) + sovFunction(uint64(len(k))) + l
+			n += mapEntrySize + 1 + sovFunction(uint64(mapEntrySize))
+		}
+	}
 	return n
 }
 
 func (m *GradientDef) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.FunctionName)
@@ -834,6 +1226,505 @@ func (m *FunctionDef) Unmarshal(dAtA []byte) error {
 			}
 			m.Attr[mapkey] = mapvalue
 			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ControlRet", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFunction
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthFunction
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ControlRet == nil {
+				m.ControlRet = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowFunction
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowFunction
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthFunction
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowFunction
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthFunction
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipFunction(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthFunction
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.ControlRet[mapkey] = mapvalue
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ArgAttr", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFunction
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthFunction
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ArgAttr == nil {
+				m.ArgAttr = make(map[uint32]*FunctionDef_ArgAttrs)
+			}
+			var mapkey uint32
+			var mapvalue *FunctionDef_ArgAttrs
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowFunction
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowFunction
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapkey |= (uint32(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowFunction
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= (int(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthFunction
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if mapmsglen < 0 {
+						return ErrInvalidLengthFunction
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &FunctionDef_ArgAttrs{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipFunction(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthFunction
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.ArgAttr[mapkey] = mapvalue
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ResourceArgUniqueId", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFunction
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthFunction
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ResourceArgUniqueId == nil {
+				m.ResourceArgUniqueId = make(map[uint32]uint32)
+			}
+			var mapkey uint32
+			var mapvalue uint32
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowFunction
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowFunction
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapkey |= (uint32(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+				} else if fieldNum == 2 {
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowFunction
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapvalue |= (uint32(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipFunction(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthFunction
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.ResourceArgUniqueId[mapkey] = mapvalue
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipFunction(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthFunction
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *FunctionDef_ArgAttrs) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowFunction
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ArgAttrs: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ArgAttrs: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Attr", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFunction
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthFunction
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Attr == nil {
+				m.Attr = make(map[string]*AttrValue)
+			}
+			var mapkey string
+			var mapvalue *AttrValue
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowFunction
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= (uint64(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowFunction
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthFunction
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowFunction
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= (int(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthFunction
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if mapmsglen < 0 {
+						return ErrInvalidLengthFunction
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &AttrValue{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipFunction(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthFunction
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.Attr[mapkey] = mapvalue
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipFunction(dAtA[iNdEx:])
@@ -1067,38 +1958,3 @@ var (
 	ErrInvalidLengthFunction = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowFunction   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow/core/framework/function.proto", fileDescriptorFunction) }
-
-var fileDescriptorFunction = []byte{
-	// 452 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xcf, 0xaa, 0x13, 0x31,
-	0x14, 0x87, 0xcd, 0x4c, 0xaf, 0xb6, 0xa7, 0x57, 0xb9, 0x46, 0xc5, 0xd0, 0x45, 0xa9, 0x15, 0xa4,
-	0x28, 0xce, 0x40, 0x2f, 0x8a, 0xb8, 0xbb, 0xc5, 0x3f, 0x20, 0x52, 0x2f, 0xb3, 0x50, 0x70, 0x53,
-	0xd2, 0xf6, 0xcc, 0x38, 0xdc, 0x36, 0x19, 0xd2, 0xd4, 0xd2, 0x8d, 0x1b, 0x5f, 0xc0, 0xc7, 0x72,
-	0xe9, 0x23, 0x48, 0x5d, 0xf8, 0x0a, 0x2e, 0x25, 0xe9, 0xa4, 0x13, 0xd0, 0xb9, 0xbb, 0x21, 0xf9,
-	0xbe, 0x5f, 0xce, 0x99, 0x73, 0x60, 0xa0, 0x51, 0xac, 0xa4, 0x4a, 0x17, 0x72, 0x13, 0xcf, 0xa4,
-	0xc2, 0x38, 0x55, 0x7c, 0x89, 0x1b, 0xa9, 0x2e, 0xe2, 0x74, 0x2d, 0x66, 0x3a, 0x97, 0x22, 0x2a,
-	0x94, 0xd4, 0x92, 0x42, 0x45, 0x76, 0x1e, 0xd6, 0x5b, 0x5c, 0x6b, 0x35, 0xf9, 0xcc, 0x17, 0x6b,
-	0xdc, 0x7b, 0x9d, 0x4b, 0x5e, 0x10, 0x72, 0x8e, 0x93, 0x39, 0xa6, 0x25, 0xf9, 0xa0, 0x9e, 0x94,
-	0x45, 0xc5, 0xf5, 0xbf, 0x00, 0x7d, 0x55, 0xd6, 0xf6, 0x02, 0xd3, 0xb7, 0xf9, 0x54, 0x71, 0xb5,
-	0xa5, 0xa7, 0xd0, 0x74, 0x15, 0x33, 0xd2, 0x0b, 0x07, 0xed, 0xe1, 0xdd, 0xa8, 0x0a, 0x8c, 0x3c,
-	0x23, 0x39, 0x80, 0x46, 0xca, 0x14, 0x9f, 0xe7, 0x28, 0x34, 0x0b, 0xfe, 0x95, 0x5e, 0x97, 0x77,
-	0x56, 0x72, 0x60, 0xff, 0x77, 0x00, 0x6d, 0x2f, 0x8e, 0xc6, 0xd0, 0x5a, 0xe5, 0x99, 0xe0, 0x7a,
-	0xad, 0x90, 0x91, 0x1e, 0x19, 0xb4, 0x87, 0x37, 0xfd, 0x94, 0x77, 0x85, 0xf1, 0x2b, 0x86, 0x46,
-	0xd0, 0x74, 0xad, 0xb3, 0xd0, 0xbe, 0x7a, 0xcb, 0xe7, 0xc7, 0x72, 0x8e, 0xc6, 0xb8, 0x26, 0xf6,
-	0x1f, 0x74, 0x08, 0xa1, 0x42, 0xcd, 0x1a, 0x16, 0xed, 0xd5, 0x74, 0x15, 0x25, 0xa8, 0x5f, 0x0a,
-	0xad, 0xb6, 0x89, 0x81, 0xe9, 0x13, 0x68, 0x98, 0x51, 0xb0, 0x23, 0x2b, 0xdd, 0xab, 0x93, 0xce,
-	0xb4, 0x56, 0x7b, 0xcb, 0xe2, 0x9d, 0x31, 0xb4, 0x0e, 0x47, 0xf4, 0x04, 0xc2, 0x0b, 0xdc, 0xda,
-	0x96, 0x5a, 0x89, 0xf9, 0xa4, 0x8f, 0xe0, 0xc8, 0xce, 0x96, 0x05, 0xb6, 0xcd, 0x3b, 0x7e, 0xac,
-	0xf1, 0xde, 0x9b, 0xcb, 0x64, 0xcf, 0x3c, 0x0f, 0x9e, 0x91, 0xce, 0x53, 0x68, 0xba, 0xba, 0xfe,
-	0x13, 0x77, 0xdb, 0x8f, 0x6b, 0x79, 0xde, 0x9b, 0x46, 0x33, 0x38, 0x09, 0xfb, 0x1f, 0xa0, 0xed,
-	0x8d, 0x80, 0xde, 0x87, 0xeb, 0x6e, 0x72, 0x13, 0xc1, 0x97, 0x58, 0x46, 0x1d, 0xbb, 0xc3, 0x31,
-	0x5f, 0xa2, 0x81, 0xdc, 0xa4, 0x26, 0xe6, 0xa2, 0xcc, 0x3e, 0x76, 0x87, 0xa6, 0xfb, 0xd1, 0x57,
-	0xf2, 0x7d, 0xd7, 0x25, 0x3f, 0x76, 0x5d, 0xf2, 0x73, 0xd7, 0x25, 0xdf, 0x7e, 0x75, 0xaf, 0x00,
-	0x93, 0x2a, 0xf3, 0xdb, 0x39, 0x2c, 0xdf, 0xe8, 0x86, 0xfb, 0x61, 0xe7, 0x66, 0xfd, 0x56, 0xe7,
-	0xe4, 0xe3, 0x28, 0xcb, 0xf5, 0xa7, 0xf5, 0x34, 0x9a, 0xc9, 0x65, 0x7c, 0x56, 0x14, 0x8b, 0x3c,
-	0xcd, 0x51, 0xc5, 0x99, 0x7c, 0xec, 0x6d, 0xb0, 0xde, 0x16, 0xb8, 0x8a, 0x6b, 0x57, 0xfa, 0x0f,
-	0x21, 0xd3, 0xab, 0x76, 0x9f, 0x4f, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x84, 0x29, 0x70, 0x36,
-	0x85, 0x03, 0x00, 0x00,
-}
