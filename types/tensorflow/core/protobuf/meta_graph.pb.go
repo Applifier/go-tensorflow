@@ -3,23 +3,26 @@
 
 package protobuf
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import google_protobuf "github.com/gogo/protobuf/types"
-import tensorflow10 "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
-import tensorflow7 "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
-import tensorflow "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
-import tensorflow1 "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
-
-import binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	framework "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
+	proto "github.com/gogo/protobuf/proto"
+	types "github.com/gogo/protobuf/types"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 // NOTE: This protocol buffer is evolving, and will go through revisions in the
 // coming months.
@@ -36,25 +39,55 @@ var _ = math.Inf
 //   TensorInfo
 //   SignatureDef
 type MetaGraphDef struct {
-	MetaInfoDef *MetaGraphDef_MetaInfoDef `protobuf:"bytes,1,opt,name=meta_info_def,json=metaInfoDef" json:"meta_info_def,omitempty"`
+	MetaInfoDef *MetaGraphDef_MetaInfoDef `protobuf:"bytes,1,opt,name=meta_info_def,json=metaInfoDef,proto3" json:"meta_info_def,omitempty"`
 	// GraphDef.
-	GraphDef *tensorflow10.GraphDef `protobuf:"bytes,2,opt,name=graph_def,json=graphDef" json:"graph_def,omitempty"`
+	GraphDef *framework.GraphDef `protobuf:"bytes,2,opt,name=graph_def,json=graphDef,proto3" json:"graph_def,omitempty"`
 	// SaverDef.
-	SaverDef *SaverDef `protobuf:"bytes,3,opt,name=saver_def,json=saverDef" json:"saver_def,omitempty"`
+	SaverDef *SaverDef `protobuf:"bytes,3,opt,name=saver_def,json=saverDef,proto3" json:"saver_def,omitempty"`
 	// collection_def: Map from collection name to collections.
 	// See CollectionDef section for details.
-	CollectionDef map[string]*CollectionDef `protobuf:"bytes,4,rep,name=collection_def,json=collectionDef" json:"collection_def,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	CollectionDef map[string]*CollectionDef `protobuf:"bytes,4,rep,name=collection_def,json=collectionDef,proto3" json:"collection_def,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// signature_def: Map from user supplied key for a signature to a single
 	// SignatureDef.
-	SignatureDef map[string]*SignatureDef `protobuf:"bytes,5,rep,name=signature_def,json=signatureDef" json:"signature_def,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	SignatureDef map[string]*SignatureDef `protobuf:"bytes,5,rep,name=signature_def,json=signatureDef,proto3" json:"signature_def,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// Asset file def to be used with the defined graph.
-	AssetFileDef []*AssetFileDef `protobuf:"bytes,6,rep,name=asset_file_def,json=assetFileDef" json:"asset_file_def,omitempty"`
+	AssetFileDef []*AssetFileDef `protobuf:"bytes,6,rep,name=asset_file_def,json=assetFileDef,proto3" json:"asset_file_def,omitempty"`
+	// Extra information about the structure of functions and stateful objects.
+	ObjectGraphDef *SavedObjectGraph `protobuf:"bytes,7,opt,name=object_graph_def,json=objectGraphDef,proto3" json:"object_graph_def,omitempty"`
 }
 
-func (m *MetaGraphDef) Reset()                    { *m = MetaGraphDef{} }
-func (m *MetaGraphDef) String() string            { return proto.CompactTextString(m) }
-func (*MetaGraphDef) ProtoMessage()               {}
-func (*MetaGraphDef) Descriptor() ([]byte, []int) { return fileDescriptorMetaGraph, []int{0} }
+func (m *MetaGraphDef) Reset()         { *m = MetaGraphDef{} }
+func (m *MetaGraphDef) String() string { return proto.CompactTextString(m) }
+func (*MetaGraphDef) ProtoMessage()    {}
+func (*MetaGraphDef) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e94adf32e895c059, []int{0}
+}
+func (m *MetaGraphDef) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MetaGraphDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MetaGraphDef.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MetaGraphDef) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MetaGraphDef.Merge(m, src)
+}
+func (m *MetaGraphDef) XXX_Size() int {
+	return m.Size()
+}
+func (m *MetaGraphDef) XXX_DiscardUnknown() {
+	xxx_messageInfo_MetaGraphDef.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MetaGraphDef proto.InternalMessageInfo
 
 func (m *MetaGraphDef) GetMetaInfoDef() *MetaGraphDef_MetaInfoDef {
 	if m != nil {
@@ -63,7 +96,7 @@ func (m *MetaGraphDef) GetMetaInfoDef() *MetaGraphDef_MetaInfoDef {
 	return nil
 }
 
-func (m *MetaGraphDef) GetGraphDef() *tensorflow10.GraphDef {
+func (m *MetaGraphDef) GetGraphDef() *framework.GraphDef {
 	if m != nil {
 		return m.GraphDef
 	}
@@ -98,6 +131,13 @@ func (m *MetaGraphDef) GetAssetFileDef() []*AssetFileDef {
 	return nil
 }
 
+func (m *MetaGraphDef) GetObjectGraphDef() *SavedObjectGraph {
+	if m != nil {
+		return m.ObjectGraphDef
+	}
+	return nil
+}
+
 // Meta information regarding the graph to be exported.  To be used by users
 // of this protocol buffer to encode information regarding their meta graph.
 type MetaGraphDef_MetaInfoDef struct {
@@ -106,17 +146,17 @@ type MetaGraphDef_MetaInfoDef struct {
 	MetaGraphVersion string `protobuf:"bytes,1,opt,name=meta_graph_version,json=metaGraphVersion,proto3" json:"meta_graph_version,omitempty"`
 	// A copy of the OpDefs used by the producer of this graph_def.
 	// Descriptions and Ops not used in graph_def are stripped out.
-	StrippedOpList *tensorflow7.OpList `protobuf:"bytes,2,opt,name=stripped_op_list,json=strippedOpList" json:"stripped_op_list,omitempty"`
+	StrippedOpList *framework.OpList `protobuf:"bytes,2,opt,name=stripped_op_list,json=strippedOpList,proto3" json:"stripped_op_list,omitempty"`
 	// A serialized protobuf. Can be the time this meta graph is created, or
 	// modified, or name of the model.
-	AnyInfo *google_protobuf.Any `protobuf:"bytes,3,opt,name=any_info,json=anyInfo" json:"any_info,omitempty"`
+	AnyInfo *types.Any `protobuf:"bytes,3,opt,name=any_info,json=anyInfo,proto3" json:"any_info,omitempty"`
 	// User supplied tag(s) on the meta_graph and included graph_def.
 	//
 	// MetaGraphDefs should be tagged with their capabilities or use-cases.
 	// Examples: "train", "serve", "gpu", "tpu", etc.
 	// These tags enable loaders to access the MetaGraph(s) appropriate for a
 	// specific use-case or runtime environment.
-	Tags []string `protobuf:"bytes,4,rep,name=tags" json:"tags,omitempty"`
+	Tags []string `protobuf:"bytes,4,rep,name=tags,proto3" json:"tags,omitempty"`
 	// The __version__ string of the tensorflow build used to write this graph.
 	// This will be populated by the framework, which will overwrite any user
 	// supplied value.
@@ -134,8 +174,34 @@ func (m *MetaGraphDef_MetaInfoDef) Reset()         { *m = MetaGraphDef_MetaInfoD
 func (m *MetaGraphDef_MetaInfoDef) String() string { return proto.CompactTextString(m) }
 func (*MetaGraphDef_MetaInfoDef) ProtoMessage()    {}
 func (*MetaGraphDef_MetaInfoDef) Descriptor() ([]byte, []int) {
-	return fileDescriptorMetaGraph, []int{0, 0}
+	return fileDescriptor_e94adf32e895c059, []int{0, 0}
 }
+func (m *MetaGraphDef_MetaInfoDef) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MetaGraphDef_MetaInfoDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MetaGraphDef_MetaInfoDef.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MetaGraphDef_MetaInfoDef) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MetaGraphDef_MetaInfoDef.Merge(m, src)
+}
+func (m *MetaGraphDef_MetaInfoDef) XXX_Size() int {
+	return m.Size()
+}
+func (m *MetaGraphDef_MetaInfoDef) XXX_DiscardUnknown() {
+	xxx_messageInfo_MetaGraphDef_MetaInfoDef.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MetaGraphDef_MetaInfoDef proto.InternalMessageInfo
 
 func (m *MetaGraphDef_MetaInfoDef) GetMetaGraphVersion() string {
 	if m != nil {
@@ -144,14 +210,14 @@ func (m *MetaGraphDef_MetaInfoDef) GetMetaGraphVersion() string {
 	return ""
 }
 
-func (m *MetaGraphDef_MetaInfoDef) GetStrippedOpList() *tensorflow7.OpList {
+func (m *MetaGraphDef_MetaInfoDef) GetStrippedOpList() *framework.OpList {
 	if m != nil {
 		return m.StrippedOpList
 	}
 	return nil
 }
 
-func (m *MetaGraphDef_MetaInfoDef) GetAnyInfo() *google_protobuf.Any {
+func (m *MetaGraphDef_MetaInfoDef) GetAnyInfo() *types.Any {
 	if m != nil {
 		return m.AnyInfo
 	}
@@ -258,10 +324,38 @@ type CollectionDef struct {
 	Kind isCollectionDef_Kind `protobuf_oneof:"kind"`
 }
 
-func (m *CollectionDef) Reset()                    { *m = CollectionDef{} }
-func (m *CollectionDef) String() string            { return proto.CompactTextString(m) }
-func (*CollectionDef) ProtoMessage()               {}
-func (*CollectionDef) Descriptor() ([]byte, []int) { return fileDescriptorMetaGraph, []int{1} }
+func (m *CollectionDef) Reset()         { *m = CollectionDef{} }
+func (m *CollectionDef) String() string { return proto.CompactTextString(m) }
+func (*CollectionDef) ProtoMessage()    {}
+func (*CollectionDef) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e94adf32e895c059, []int{1}
+}
+func (m *CollectionDef) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CollectionDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CollectionDef.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CollectionDef) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CollectionDef.Merge(m, src)
+}
+func (m *CollectionDef) XXX_Size() int {
+	return m.Size()
+}
+func (m *CollectionDef) XXX_DiscardUnknown() {
+	xxx_messageInfo_CollectionDef.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CollectionDef proto.InternalMessageInfo
 
 type isCollectionDef_Kind interface {
 	isCollectionDef_Kind()
@@ -270,19 +364,19 @@ type isCollectionDef_Kind interface {
 }
 
 type CollectionDef_NodeList_ struct {
-	NodeList *CollectionDef_NodeList `protobuf:"bytes,1,opt,name=node_list,json=nodeList,oneof"`
+	NodeList *CollectionDef_NodeList `protobuf:"bytes,1,opt,name=node_list,json=nodeList,proto3,oneof"`
 }
 type CollectionDef_BytesList_ struct {
-	BytesList *CollectionDef_BytesList `protobuf:"bytes,2,opt,name=bytes_list,json=bytesList,oneof"`
+	BytesList *CollectionDef_BytesList `protobuf:"bytes,2,opt,name=bytes_list,json=bytesList,proto3,oneof"`
 }
 type CollectionDef_Int64List_ struct {
-	Int64List *CollectionDef_Int64List `protobuf:"bytes,3,opt,name=int64_list,json=int64List,oneof"`
+	Int64List *CollectionDef_Int64List `protobuf:"bytes,3,opt,name=int64_list,json=int64List,proto3,oneof"`
 }
 type CollectionDef_FloatList_ struct {
-	FloatList *CollectionDef_FloatList `protobuf:"bytes,4,opt,name=float_list,json=floatList,oneof"`
+	FloatList *CollectionDef_FloatList `protobuf:"bytes,4,opt,name=float_list,json=floatList,proto3,oneof"`
 }
 type CollectionDef_AnyList_ struct {
-	AnyList *CollectionDef_AnyList `protobuf:"bytes,5,opt,name=any_list,json=anyList,oneof"`
+	AnyList *CollectionDef_AnyList `protobuf:"bytes,5,opt,name=any_list,json=anyList,proto3,oneof"`
 }
 
 func (*CollectionDef_NodeList_) isCollectionDef_Kind()  {}
@@ -434,27 +528,27 @@ func _CollectionDef_OneofSizer(msg proto.Message) (n int) {
 	switch x := m.Kind.(type) {
 	case *CollectionDef_NodeList_:
 		s := proto.Size(x.NodeList)
-		n += proto.SizeVarint(1<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *CollectionDef_BytesList_:
 		s := proto.Size(x.BytesList)
-		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *CollectionDef_Int64List_:
 		s := proto.Size(x.Int64List)
-		n += proto.SizeVarint(3<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *CollectionDef_FloatList_:
 		s := proto.Size(x.FloatList)
-		n += proto.SizeVarint(4<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *CollectionDef_AnyList_:
 		s := proto.Size(x.AnyList)
-		n += proto.SizeVarint(5<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case nil:
@@ -475,15 +569,41 @@ func _CollectionDef_OneofSizer(msg proto.Message) (n int) {
 //     }
 //   }
 type CollectionDef_NodeList struct {
-	Value []string `protobuf:"bytes,1,rep,name=value" json:"value,omitempty"`
+	Value []string `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty"`
 }
 
 func (m *CollectionDef_NodeList) Reset()         { *m = CollectionDef_NodeList{} }
 func (m *CollectionDef_NodeList) String() string { return proto.CompactTextString(m) }
 func (*CollectionDef_NodeList) ProtoMessage()    {}
 func (*CollectionDef_NodeList) Descriptor() ([]byte, []int) {
-	return fileDescriptorMetaGraph, []int{1, 0}
+	return fileDescriptor_e94adf32e895c059, []int{1, 0}
 }
+func (m *CollectionDef_NodeList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CollectionDef_NodeList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CollectionDef_NodeList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CollectionDef_NodeList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CollectionDef_NodeList.Merge(m, src)
+}
+func (m *CollectionDef_NodeList) XXX_Size() int {
+	return m.Size()
+}
+func (m *CollectionDef_NodeList) XXX_DiscardUnknown() {
+	xxx_messageInfo_CollectionDef_NodeList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CollectionDef_NodeList proto.InternalMessageInfo
 
 func (m *CollectionDef_NodeList) GetValue() []string {
 	if m != nil {
@@ -506,15 +626,41 @@ func (m *CollectionDef_NodeList) GetValue() []string {
 //   }
 // }
 type CollectionDef_BytesList struct {
-	Value [][]byte `protobuf:"bytes,1,rep,name=value" json:"value,omitempty"`
+	Value [][]byte `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty"`
 }
 
 func (m *CollectionDef_BytesList) Reset()         { *m = CollectionDef_BytesList{} }
 func (m *CollectionDef_BytesList) String() string { return proto.CompactTextString(m) }
 func (*CollectionDef_BytesList) ProtoMessage()    {}
 func (*CollectionDef_BytesList) Descriptor() ([]byte, []int) {
-	return fileDescriptorMetaGraph, []int{1, 1}
+	return fileDescriptor_e94adf32e895c059, []int{1, 1}
 }
+func (m *CollectionDef_BytesList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CollectionDef_BytesList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CollectionDef_BytesList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CollectionDef_BytesList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CollectionDef_BytesList.Merge(m, src)
+}
+func (m *CollectionDef_BytesList) XXX_Size() int {
+	return m.Size()
+}
+func (m *CollectionDef_BytesList) XXX_DiscardUnknown() {
+	xxx_messageInfo_CollectionDef_BytesList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CollectionDef_BytesList proto.InternalMessageInfo
 
 func (m *CollectionDef_BytesList) GetValue() [][]byte {
 	if m != nil {
@@ -525,15 +671,41 @@ func (m *CollectionDef_BytesList) GetValue() [][]byte {
 
 // Int64List is used for collecting int, int64 and long values.
 type CollectionDef_Int64List struct {
-	Value []int64 `protobuf:"varint,1,rep,packed,name=value" json:"value,omitempty"`
+	Value []int64 `protobuf:"varint,1,rep,packed,name=value,proto3" json:"value,omitempty"`
 }
 
 func (m *CollectionDef_Int64List) Reset()         { *m = CollectionDef_Int64List{} }
 func (m *CollectionDef_Int64List) String() string { return proto.CompactTextString(m) }
 func (*CollectionDef_Int64List) ProtoMessage()    {}
 func (*CollectionDef_Int64List) Descriptor() ([]byte, []int) {
-	return fileDescriptorMetaGraph, []int{1, 2}
+	return fileDescriptor_e94adf32e895c059, []int{1, 2}
 }
+func (m *CollectionDef_Int64List) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CollectionDef_Int64List) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CollectionDef_Int64List.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CollectionDef_Int64List) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CollectionDef_Int64List.Merge(m, src)
+}
+func (m *CollectionDef_Int64List) XXX_Size() int {
+	return m.Size()
+}
+func (m *CollectionDef_Int64List) XXX_DiscardUnknown() {
+	xxx_messageInfo_CollectionDef_Int64List.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CollectionDef_Int64List proto.InternalMessageInfo
 
 func (m *CollectionDef_Int64List) GetValue() []int64 {
 	if m != nil {
@@ -544,15 +716,41 @@ func (m *CollectionDef_Int64List) GetValue() []int64 {
 
 // FloatList is used for collecting float values.
 type CollectionDef_FloatList struct {
-	Value []float32 `protobuf:"fixed32,1,rep,packed,name=value" json:"value,omitempty"`
+	Value []float32 `protobuf:"fixed32,1,rep,packed,name=value,proto3" json:"value,omitempty"`
 }
 
 func (m *CollectionDef_FloatList) Reset()         { *m = CollectionDef_FloatList{} }
 func (m *CollectionDef_FloatList) String() string { return proto.CompactTextString(m) }
 func (*CollectionDef_FloatList) ProtoMessage()    {}
 func (*CollectionDef_FloatList) Descriptor() ([]byte, []int) {
-	return fileDescriptorMetaGraph, []int{1, 3}
+	return fileDescriptor_e94adf32e895c059, []int{1, 3}
 }
+func (m *CollectionDef_FloatList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CollectionDef_FloatList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CollectionDef_FloatList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CollectionDef_FloatList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CollectionDef_FloatList.Merge(m, src)
+}
+func (m *CollectionDef_FloatList) XXX_Size() int {
+	return m.Size()
+}
+func (m *CollectionDef_FloatList) XXX_DiscardUnknown() {
+	xxx_messageInfo_CollectionDef_FloatList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CollectionDef_FloatList proto.InternalMessageInfo
 
 func (m *CollectionDef_FloatList) GetValue() []float32 {
 	if m != nil {
@@ -563,17 +761,43 @@ func (m *CollectionDef_FloatList) GetValue() []float32 {
 
 // AnyList is used for collecting Any protos.
 type CollectionDef_AnyList struct {
-	Value []*google_protobuf.Any `protobuf:"bytes,1,rep,name=value" json:"value,omitempty"`
+	Value []*types.Any `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty"`
 }
 
 func (m *CollectionDef_AnyList) Reset()         { *m = CollectionDef_AnyList{} }
 func (m *CollectionDef_AnyList) String() string { return proto.CompactTextString(m) }
 func (*CollectionDef_AnyList) ProtoMessage()    {}
 func (*CollectionDef_AnyList) Descriptor() ([]byte, []int) {
-	return fileDescriptorMetaGraph, []int{1, 4}
+	return fileDescriptor_e94adf32e895c059, []int{1, 4}
+}
+func (m *CollectionDef_AnyList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CollectionDef_AnyList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CollectionDef_AnyList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CollectionDef_AnyList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CollectionDef_AnyList.Merge(m, src)
+}
+func (m *CollectionDef_AnyList) XXX_Size() int {
+	return m.Size()
+}
+func (m *CollectionDef_AnyList) XXX_DiscardUnknown() {
+	xxx_messageInfo_CollectionDef_AnyList.DiscardUnknown(m)
 }
 
-func (m *CollectionDef_AnyList) GetValue() []*google_protobuf.Any {
+var xxx_messageInfo_CollectionDef_AnyList proto.InternalMessageInfo
+
+func (m *CollectionDef_AnyList) GetValue() []*types.Any {
 	if m != nil {
 		return m.Value
 	}
@@ -585,18 +809,47 @@ type TensorInfo struct {
 	// Types that are valid to be assigned to Encoding:
 	//	*TensorInfo_Name
 	//	*TensorInfo_CooSparse_
+	//	*TensorInfo_CompositeTensor_
 	Encoding isTensorInfo_Encoding `protobuf_oneof:"encoding"`
-	Dtype    tensorflow1.DataType  `protobuf:"varint,2,opt,name=dtype,proto3,enum=tensorflow.DataType" json:"dtype,omitempty"`
+	Dtype    framework.DataType    `protobuf:"varint,2,opt,name=dtype,proto3,enum=tensorflow.DataType" json:"dtype,omitempty"`
 	// The static shape should be recorded here, to the extent that it can
 	// be known in advance.  In the case of a SparseTensor, this field describes
 	// the logical shape of the represented tensor (aka dense_shape).
-	TensorShape *tensorflow.TensorShapeProto `protobuf:"bytes,3,opt,name=tensor_shape,json=tensorShape" json:"tensor_shape,omitempty"`
+	TensorShape *framework.TensorShapeProto `protobuf:"bytes,3,opt,name=tensor_shape,json=tensorShape,proto3" json:"tensor_shape,omitempty"`
 }
 
-func (m *TensorInfo) Reset()                    { *m = TensorInfo{} }
-func (m *TensorInfo) String() string            { return proto.CompactTextString(m) }
-func (*TensorInfo) ProtoMessage()               {}
-func (*TensorInfo) Descriptor() ([]byte, []int) { return fileDescriptorMetaGraph, []int{2} }
+func (m *TensorInfo) Reset()         { *m = TensorInfo{} }
+func (m *TensorInfo) String() string { return proto.CompactTextString(m) }
+func (*TensorInfo) ProtoMessage()    {}
+func (*TensorInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e94adf32e895c059, []int{2}
+}
+func (m *TensorInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TensorInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TensorInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TensorInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TensorInfo.Merge(m, src)
+}
+func (m *TensorInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *TensorInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_TensorInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TensorInfo proto.InternalMessageInfo
 
 type isTensorInfo_Encoding interface {
 	isTensorInfo_Encoding()
@@ -608,11 +861,15 @@ type TensorInfo_Name struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3,oneof"`
 }
 type TensorInfo_CooSparse_ struct {
-	CooSparse *TensorInfo_CooSparse `protobuf:"bytes,4,opt,name=coo_sparse,json=cooSparse,oneof"`
+	CooSparse *TensorInfo_CooSparse `protobuf:"bytes,4,opt,name=coo_sparse,json=cooSparse,proto3,oneof"`
+}
+type TensorInfo_CompositeTensor_ struct {
+	CompositeTensor *TensorInfo_CompositeTensor `protobuf:"bytes,5,opt,name=composite_tensor,json=compositeTensor,proto3,oneof"`
 }
 
-func (*TensorInfo_Name) isTensorInfo_Encoding()       {}
-func (*TensorInfo_CooSparse_) isTensorInfo_Encoding() {}
+func (*TensorInfo_Name) isTensorInfo_Encoding()             {}
+func (*TensorInfo_CooSparse_) isTensorInfo_Encoding()       {}
+func (*TensorInfo_CompositeTensor_) isTensorInfo_Encoding() {}
 
 func (m *TensorInfo) GetEncoding() isTensorInfo_Encoding {
 	if m != nil {
@@ -635,14 +892,21 @@ func (m *TensorInfo) GetCooSparse() *TensorInfo_CooSparse {
 	return nil
 }
 
-func (m *TensorInfo) GetDtype() tensorflow1.DataType {
+func (m *TensorInfo) GetCompositeTensor() *TensorInfo_CompositeTensor {
+	if x, ok := m.GetEncoding().(*TensorInfo_CompositeTensor_); ok {
+		return x.CompositeTensor
+	}
+	return nil
+}
+
+func (m *TensorInfo) GetDtype() framework.DataType {
 	if m != nil {
 		return m.Dtype
 	}
-	return tensorflow1.DataType_DT_INVALID
+	return framework.DataType_DT_INVALID
 }
 
-func (m *TensorInfo) GetTensorShape() *tensorflow.TensorShapeProto {
+func (m *TensorInfo) GetTensorShape() *framework.TensorShapeProto {
 	if m != nil {
 		return m.TensorShape
 	}
@@ -654,6 +918,7 @@ func (*TensorInfo) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) er
 	return _TensorInfo_OneofMarshaler, _TensorInfo_OneofUnmarshaler, _TensorInfo_OneofSizer, []interface{}{
 		(*TensorInfo_Name)(nil),
 		(*TensorInfo_CooSparse_)(nil),
+		(*TensorInfo_CompositeTensor_)(nil),
 	}
 }
 
@@ -667,6 +932,11 @@ func _TensorInfo_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
 	case *TensorInfo_CooSparse_:
 		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.CooSparse); err != nil {
+			return err
+		}
+	case *TensorInfo_CompositeTensor_:
+		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.CompositeTensor); err != nil {
 			return err
 		}
 	case nil:
@@ -694,6 +964,14 @@ func _TensorInfo_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buf
 		err := b.DecodeMessage(msg)
 		m.Encoding = &TensorInfo_CooSparse_{msg}
 		return true, err
+	case 5: // encoding.composite_tensor
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(TensorInfo_CompositeTensor)
+		err := b.DecodeMessage(msg)
+		m.Encoding = &TensorInfo_CompositeTensor_{msg}
+		return true, err
 	default:
 		return false, nil
 	}
@@ -704,12 +982,17 @@ func _TensorInfo_OneofSizer(msg proto.Message) (n int) {
 	// encoding
 	switch x := m.Encoding.(type) {
 	case *TensorInfo_Name:
-		n += proto.SizeVarint(1<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(len(x.Name)))
 		n += len(x.Name)
 	case *TensorInfo_CooSparse_:
 		s := proto.Size(x.CooSparse)
-		n += proto.SizeVarint(4<<3 | proto.WireBytes)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *TensorInfo_CompositeTensor_:
+		s := proto.Size(x.CompositeTensor)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case nil:
@@ -732,10 +1015,38 @@ type TensorInfo_CooSparse struct {
 	DenseShapeTensorName string `protobuf:"bytes,3,opt,name=dense_shape_tensor_name,json=denseShapeTensorName,proto3" json:"dense_shape_tensor_name,omitempty"`
 }
 
-func (m *TensorInfo_CooSparse) Reset()                    { *m = TensorInfo_CooSparse{} }
-func (m *TensorInfo_CooSparse) String() string            { return proto.CompactTextString(m) }
-func (*TensorInfo_CooSparse) ProtoMessage()               {}
-func (*TensorInfo_CooSparse) Descriptor() ([]byte, []int) { return fileDescriptorMetaGraph, []int{2, 0} }
+func (m *TensorInfo_CooSparse) Reset()         { *m = TensorInfo_CooSparse{} }
+func (m *TensorInfo_CooSparse) String() string { return proto.CompactTextString(m) }
+func (*TensorInfo_CooSparse) ProtoMessage()    {}
+func (*TensorInfo_CooSparse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e94adf32e895c059, []int{2, 0}
+}
+func (m *TensorInfo_CooSparse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TensorInfo_CooSparse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TensorInfo_CooSparse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TensorInfo_CooSparse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TensorInfo_CooSparse.Merge(m, src)
+}
+func (m *TensorInfo_CooSparse) XXX_Size() int {
+	return m.Size()
+}
+func (m *TensorInfo_CooSparse) XXX_DiscardUnknown() {
+	xxx_messageInfo_TensorInfo_CooSparse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TensorInfo_CooSparse proto.InternalMessageInfo
 
 func (m *TensorInfo_CooSparse) GetValuesTensorName() string {
 	if m != nil {
@@ -756,6 +1067,61 @@ func (m *TensorInfo_CooSparse) GetDenseShapeTensorName() string {
 		return m.DenseShapeTensorName
 	}
 	return ""
+}
+
+// Generic encoding for composite tensors.
+type TensorInfo_CompositeTensor struct {
+	// The serialized TypeSpec for the composite tensor.
+	TypeSpec *TypeSpecProto `protobuf:"bytes,1,opt,name=type_spec,json=typeSpec,proto3" json:"type_spec,omitempty"`
+	// A TensorInfo for each flattened component tensor.
+	Components []*TensorInfo `protobuf:"bytes,2,rep,name=components,proto3" json:"components,omitempty"`
+}
+
+func (m *TensorInfo_CompositeTensor) Reset()         { *m = TensorInfo_CompositeTensor{} }
+func (m *TensorInfo_CompositeTensor) String() string { return proto.CompactTextString(m) }
+func (*TensorInfo_CompositeTensor) ProtoMessage()    {}
+func (*TensorInfo_CompositeTensor) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e94adf32e895c059, []int{2, 1}
+}
+func (m *TensorInfo_CompositeTensor) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TensorInfo_CompositeTensor) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TensorInfo_CompositeTensor.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TensorInfo_CompositeTensor) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TensorInfo_CompositeTensor.Merge(m, src)
+}
+func (m *TensorInfo_CompositeTensor) XXX_Size() int {
+	return m.Size()
+}
+func (m *TensorInfo_CompositeTensor) XXX_DiscardUnknown() {
+	xxx_messageInfo_TensorInfo_CompositeTensor.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TensorInfo_CompositeTensor proto.InternalMessageInfo
+
+func (m *TensorInfo_CompositeTensor) GetTypeSpec() *TypeSpecProto {
+	if m != nil {
+		return m.TypeSpec
+	}
+	return nil
+}
+
+func (m *TensorInfo_CompositeTensor) GetComponents() []*TensorInfo {
+	if m != nil {
+		return m.Components
+	}
+	return nil
 }
 
 // SignatureDef defines the signature of a computation supported by a TensorFlow
@@ -817,9 +1183,9 @@ func (m *TensorInfo_CooSparse) GetDenseShapeTensorName() string {
 // }
 type SignatureDef struct {
 	// Named input parameters.
-	Inputs map[string]*TensorInfo `protobuf:"bytes,1,rep,name=inputs" json:"inputs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Inputs map[string]*TensorInfo `protobuf:"bytes,1,rep,name=inputs,proto3" json:"inputs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// Named output parameters.
-	Outputs map[string]*TensorInfo `protobuf:"bytes,2,rep,name=outputs" json:"outputs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value"`
+	Outputs map[string]*TensorInfo `protobuf:"bytes,2,rep,name=outputs,proto3" json:"outputs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// Extensible method_name information enabling third-party users to mark a
 	// SignatureDef as supporting a particular method. This enables producers and
 	// consumers of SignatureDefs, e.g. a model definition library and a serving
@@ -831,10 +1197,38 @@ type SignatureDef struct {
 	MethodName string `protobuf:"bytes,3,opt,name=method_name,json=methodName,proto3" json:"method_name,omitempty"`
 }
 
-func (m *SignatureDef) Reset()                    { *m = SignatureDef{} }
-func (m *SignatureDef) String() string            { return proto.CompactTextString(m) }
-func (*SignatureDef) ProtoMessage()               {}
-func (*SignatureDef) Descriptor() ([]byte, []int) { return fileDescriptorMetaGraph, []int{3} }
+func (m *SignatureDef) Reset()         { *m = SignatureDef{} }
+func (m *SignatureDef) String() string { return proto.CompactTextString(m) }
+func (*SignatureDef) ProtoMessage()    {}
+func (*SignatureDef) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e94adf32e895c059, []int{3}
+}
+func (m *SignatureDef) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SignatureDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SignatureDef.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SignatureDef) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SignatureDef.Merge(m, src)
+}
+func (m *SignatureDef) XXX_Size() int {
+	return m.Size()
+}
+func (m *SignatureDef) XXX_DiscardUnknown() {
+	xxx_messageInfo_SignatureDef.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SignatureDef proto.InternalMessageInfo
 
 func (m *SignatureDef) GetInputs() map[string]*TensorInfo {
 	if m != nil {
@@ -861,17 +1255,45 @@ func (m *SignatureDef) GetMethodName() string {
 // name.
 type AssetFileDef struct {
 	// The tensor to bind the asset filename to.
-	TensorInfo *TensorInfo `protobuf:"bytes,1,opt,name=tensor_info,json=tensorInfo" json:"tensor_info,omitempty"`
+	TensorInfo *TensorInfo `protobuf:"bytes,1,opt,name=tensor_info,json=tensorInfo,proto3" json:"tensor_info,omitempty"`
 	// The filename within an assets directory. Note: does not include the path
 	// prefix, i.e. directories. For an asset at /tmp/path/vocab.txt, the filename
 	// would be "vocab.txt".
 	Filename string `protobuf:"bytes,2,opt,name=filename,proto3" json:"filename,omitempty"`
 }
 
-func (m *AssetFileDef) Reset()                    { *m = AssetFileDef{} }
-func (m *AssetFileDef) String() string            { return proto.CompactTextString(m) }
-func (*AssetFileDef) ProtoMessage()               {}
-func (*AssetFileDef) Descriptor() ([]byte, []int) { return fileDescriptorMetaGraph, []int{4} }
+func (m *AssetFileDef) Reset()         { *m = AssetFileDef{} }
+func (m *AssetFileDef) String() string { return proto.CompactTextString(m) }
+func (*AssetFileDef) ProtoMessage()    {}
+func (*AssetFileDef) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e94adf32e895c059, []int{4}
+}
+func (m *AssetFileDef) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AssetFileDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AssetFileDef.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AssetFileDef) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AssetFileDef.Merge(m, src)
+}
+func (m *AssetFileDef) XXX_Size() int {
+	return m.Size()
+}
+func (m *AssetFileDef) XXX_DiscardUnknown() {
+	xxx_messageInfo_AssetFileDef.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AssetFileDef proto.InternalMessageInfo
 
 func (m *AssetFileDef) GetTensorInfo() *TensorInfo {
 	if m != nil {
@@ -889,6 +1311,8 @@ func (m *AssetFileDef) GetFilename() string {
 
 func init() {
 	proto.RegisterType((*MetaGraphDef)(nil), "tensorflow.MetaGraphDef")
+	proto.RegisterMapType((map[string]*CollectionDef)(nil), "tensorflow.MetaGraphDef.CollectionDefEntry")
+	proto.RegisterMapType((map[string]*SignatureDef)(nil), "tensorflow.MetaGraphDef.SignatureDefEntry")
 	proto.RegisterType((*MetaGraphDef_MetaInfoDef)(nil), "tensorflow.MetaGraphDef.MetaInfoDef")
 	proto.RegisterType((*CollectionDef)(nil), "tensorflow.CollectionDef")
 	proto.RegisterType((*CollectionDef_NodeList)(nil), "tensorflow.CollectionDef.NodeList")
@@ -898,9 +1322,96 @@ func init() {
 	proto.RegisterType((*CollectionDef_AnyList)(nil), "tensorflow.CollectionDef.AnyList")
 	proto.RegisterType((*TensorInfo)(nil), "tensorflow.TensorInfo")
 	proto.RegisterType((*TensorInfo_CooSparse)(nil), "tensorflow.TensorInfo.CooSparse")
+	proto.RegisterType((*TensorInfo_CompositeTensor)(nil), "tensorflow.TensorInfo.CompositeTensor")
 	proto.RegisterType((*SignatureDef)(nil), "tensorflow.SignatureDef")
+	proto.RegisterMapType((map[string]*TensorInfo)(nil), "tensorflow.SignatureDef.InputsEntry")
+	proto.RegisterMapType((map[string]*TensorInfo)(nil), "tensorflow.SignatureDef.OutputsEntry")
 	proto.RegisterType((*AssetFileDef)(nil), "tensorflow.AssetFileDef")
 }
+
+func init() {
+	proto.RegisterFile("tensorflow/core/protobuf/meta_graph.proto", fileDescriptor_e94adf32e895c059)
+}
+
+var fileDescriptor_e94adf32e895c059 = []byte{
+	// 1199 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x56, 0x4f, 0x6f, 0x1b, 0x45,
+	0x14, 0xf7, 0xda, 0x4e, 0x62, 0x3f, 0x3b, 0xa9, 0x3b, 0x44, 0x25, 0x5d, 0x55, 0x26, 0x35, 0x4d,
+	0x55, 0x4a, 0x6a, 0x2b, 0xa5, 0x0d, 0x08, 0x55, 0xad, 0xec, 0x9a, 0x34, 0x91, 0xa0, 0x29, 0xeb,
+	0x0a, 0x09, 0x38, 0xac, 0xd6, 0xbb, 0xb3, 0xce, 0x12, 0x7b, 0x66, 0xb5, 0x33, 0x4e, 0xe5, 0x23,
+	0x67, 0x2e, 0x7c, 0x04, 0x3e, 0x05, 0x9f, 0x81, 0x63, 0x2f, 0x48, 0xc0, 0x09, 0x25, 0x5f, 0x82,
+	0x1b, 0x68, 0x66, 0xf6, 0xcf, 0x6c, 0x92, 0x6d, 0x2e, 0xdc, 0xf6, 0xcd, 0xfb, 0xbd, 0xdf, 0xbc,
+	0xf7, 0x7b, 0x6f, 0x66, 0x07, 0x3e, 0xe2, 0x98, 0x30, 0x1a, 0xf9, 0x53, 0xfa, 0xa6, 0xe7, 0xd2,
+	0x08, 0xf7, 0xc2, 0x88, 0x72, 0x3a, 0x9e, 0xfb, 0xbd, 0x19, 0xe6, 0x8e, 0x3d, 0x89, 0x9c, 0xf0,
+	0xa8, 0x2b, 0xd7, 0x10, 0x64, 0x50, 0xf3, 0xe6, 0x84, 0xd2, 0xc9, 0x54, 0x43, 0x3b, 0x64, 0xa1,
+	0x60, 0xe6, 0xd6, 0x79, 0x46, 0x3f, 0x72, 0x66, 0xf8, 0x0d, 0x8d, 0x8e, 0x7b, 0x1a, 0x9b, 0x79,
+	0xb7, 0x18, 0x46, 0x43, 0xdb, 0xc3, 0x7e, 0x8c, 0xdb, 0x2e, 0xc6, 0x29, 0x8f, 0xcd, 0x8e, 0x9c,
+	0x10, 0x5f, 0xbd, 0x39, 0x5f, 0x84, 0x98, 0xc5, 0xb0, 0x9d, 0xc2, 0xaa, 0x99, 0x73, 0x82, 0x3d,
+	0x9b, 0x8e, 0x7f, 0xc0, 0x2e, 0xd7, 0xab, 0x37, 0xef, 0xbc, 0x33, 0x24, 0x2a, 0xda, 0x3f, 0x43,
+	0xf1, 0x68, 0xee, 0x72, 0x05, 0xeb, 0xfc, 0xbb, 0x02, 0xcd, 0xaf, 0x30, 0x77, 0x5e, 0x88, 0x0d,
+	0x86, 0xd8, 0x47, 0xfb, 0xb0, 0x2a, 0xf5, 0x0e, 0x88, 0x4f, 0x45, 0xf1, 0x1b, 0xc6, 0xa6, 0x71,
+	0xaf, 0xf1, 0xf0, 0x4e, 0x37, 0xe3, 0xeb, 0xea, 0x01, 0xd2, 0x38, 0x20, 0x3e, 0x1d, 0x62, 0xdf,
+	0x6a, 0xcc, 0x32, 0x03, 0xed, 0x40, 0x5d, 0xa6, 0x2d, 0x59, 0xca, 0x92, 0x65, 0x5d, 0x67, 0x49,
+	0x18, 0xac, 0xda, 0x24, 0xd9, 0x7c, 0x07, 0xea, 0xb2, 0x06, 0x19, 0x52, 0xb9, 0x18, 0x32, 0x12,
+	0x4e, 0x19, 0xc2, 0xe2, 0x2f, 0x64, 0xc1, 0x9a, 0x4b, 0xa7, 0x53, 0xec, 0xf2, 0x80, 0x12, 0x19,
+	0x57, 0xdd, 0xac, 0xdc, 0x6b, 0x3c, 0xfc, 0xb8, 0x30, 0xe1, 0xe7, 0x29, 0x7c, 0x88, 0xfd, 0x2f,
+	0x08, 0x8f, 0x16, 0xd6, 0xaa, 0xab, 0xaf, 0xa1, 0x43, 0x58, 0x65, 0xc1, 0x84, 0x38, 0x7c, 0x1e,
+	0x61, 0x49, 0xb9, 0x24, 0x29, 0xef, 0x17, 0x52, 0x8e, 0x12, 0x74, 0xca, 0xd8, 0x64, 0xda, 0x12,
+	0x7a, 0x0a, 0x6b, 0x0e, 0x63, 0x98, 0xdb, 0x7e, 0x30, 0x55, 0x8c, 0xcb, 0x92, 0x71, 0x43, 0x67,
+	0xec, 0x0b, 0xc4, 0x5e, 0x30, 0x15, 0x11, 0x56, 0xd3, 0xd1, 0x2c, 0xb4, 0x07, 0x2d, 0x7d, 0x10,
+	0x24, 0xc3, 0x8a, 0x94, 0xe7, 0xd6, 0x79, 0x79, 0xbc, 0x43, 0x09, 0x94, 0xa9, 0x59, 0x6b, 0x34,
+	0x33, 0x86, 0xd8, 0x37, 0xff, 0x2c, 0x43, 0x43, 0xeb, 0x17, 0xda, 0x06, 0x94, 0x1d, 0x2e, 0xfb,
+	0x04, 0x47, 0x2c, 0xa0, 0x44, 0x76, 0xbc, 0x6e, 0xb5, 0x66, 0x49, 0x85, 0xdf, 0xa8, 0x75, 0xf4,
+	0x04, 0x5a, 0x8c, 0x47, 0x41, 0x18, 0x8a, 0xb9, 0x0c, 0xed, 0x69, 0xc0, 0x78, 0xdc, 0x57, 0xa4,
+	0x67, 0x71, 0x18, 0x7e, 0x19, 0x30, 0x6e, 0xad, 0x25, 0x58, 0x65, 0xa3, 0x1e, 0xd4, 0x1c, 0xb2,
+	0x90, 0x73, 0x95, 0xb6, 0x56, 0x9d, 0xdd, 0x6e, 0x32, 0x9a, 0xdd, 0x3e, 0x59, 0x58, 0x2b, 0x0e,
+	0x59, 0x88, 0xfc, 0x10, 0x82, 0x2a, 0x77, 0x26, 0x4c, 0xf6, 0xb3, 0x6e, 0xc9, 0x6f, 0xf4, 0x00,
+	0x50, 0xb6, 0x53, 0x9a, 0xf0, 0x92, 0x4c, 0xf8, 0x7a, 0xe6, 0x49, 0x32, 0x7e, 0x04, 0x37, 0x34,
+	0xf8, 0x24, 0xe0, 0x69, 0xc8, 0xb2, 0x0c, 0x59, 0xcf, 0xbc, 0x2f, 0x02, 0xae, 0x45, 0xa5, 0x75,
+	0x7a, 0xd8, 0x77, 0xe6, 0x53, 0x6e, 0x3b, 0x9c, 0x47, 0x4c, 0x6a, 0x5e, 0xb3, 0xd6, 0x13, 0xef,
+	0x50, 0x39, 0xfb, 0xc2, 0x67, 0x7e, 0x0f, 0xe8, 0xe2, 0x64, 0xa1, 0x16, 0x54, 0x8e, 0xf1, 0x22,
+	0x96, 0x54, 0x7c, 0xa2, 0x1e, 0x2c, 0x9d, 0x38, 0xd3, 0x39, 0x8e, 0xa5, 0xbb, 0xa9, 0x4b, 0x97,
+	0x23, 0xb0, 0x14, 0xee, 0xf3, 0xf2, 0x67, 0x86, 0xf9, 0x2d, 0x5c, 0xbf, 0x30, 0x63, 0x97, 0x70,
+	0x77, 0xf3, 0xdc, 0xb9, 0xf1, 0xd2, 0xe3, 0x35, 0xea, 0xce, 0xaf, 0x55, 0x58, 0xcd, 0xed, 0x8b,
+	0xfa, 0x50, 0x27, 0xd4, 0xc3, 0xaa, 0xc1, 0xea, 0xf8, 0x77, 0x0a, 0xb3, 0xec, 0xbe, 0xa4, 0x1e,
+	0x16, 0x0d, 0xde, 0x2f, 0x59, 0x35, 0x12, 0x7f, 0xa3, 0x21, 0xc0, 0x78, 0xc1, 0x31, 0xd3, 0x87,
+	0xe4, 0xc3, 0x62, 0x8e, 0x81, 0xc0, 0xc6, 0x24, 0xf5, 0x71, 0x62, 0x08, 0x96, 0x80, 0xf0, 0xdd,
+	0x47, 0x8a, 0xa5, 0x72, 0x15, 0xcb, 0x81, 0xc0, 0x26, 0x2c, 0x41, 0x62, 0x08, 0x16, 0x7f, 0x4a,
+	0x1d, 0xae, 0x58, 0xaa, 0x57, 0xb1, 0xec, 0x09, 0x6c, 0xc2, 0xe2, 0x27, 0x06, 0x7a, 0xaa, 0xc6,
+	0x57, 0x72, 0x2c, 0x49, 0x8e, 0xdb, 0xc5, 0x1c, 0x7d, 0xb2, 0x88, 0x19, 0xc4, 0x34, 0x8b, 0x4f,
+	0x73, 0x13, 0x6a, 0x89, 0x52, 0x68, 0x3d, 0x69, 0x93, 0x21, 0x47, 0x5b, 0x19, 0xe6, 0x6d, 0xa8,
+	0xa7, 0x3a, 0xe4, 0x21, 0xcd, 0x04, 0xb2, 0x05, 0xf5, 0xb4, 0x48, 0xb4, 0xa1, 0x43, 0x2a, 0x83,
+	0x72, 0xcb, 0xd0, 0x60, 0x69, 0x15, 0x79, 0x58, 0x59, 0x87, 0x3d, 0x86, 0x95, 0x38, 0x51, 0x74,
+	0x5f, 0x07, 0x15, 0x9d, 0x4c, 0x05, 0x19, 0x2c, 0x43, 0xf5, 0x38, 0x20, 0x5e, 0xe7, 0xaf, 0x2a,
+	0xc0, 0x6b, 0xa9, 0x80, 0x3c, 0xae, 0xeb, 0x50, 0x25, 0xce, 0x0c, 0xab, 0x71, 0xdc, 0x2f, 0x59,
+	0xd2, 0x42, 0x7d, 0x00, 0x97, 0x52, 0x9b, 0x85, 0x4e, 0xc4, 0x70, 0x2c, 0xfe, 0xa6, 0x2e, 0x5c,
+	0xc6, 0xd0, 0x7d, 0x4e, 0xe9, 0x48, 0xe2, 0x84, 0xf2, 0x6e, 0x62, 0xa0, 0x11, 0xb4, 0x5c, 0x3a,
+	0x0b, 0x29, 0x0b, 0x38, 0xb6, 0x55, 0x64, 0xdc, 0x81, 0xbb, 0x85, 0x44, 0x31, 0x5c, 0xad, 0xed,
+	0x97, 0xac, 0x6b, 0x6e, 0x7e, 0x49, 0x14, 0xec, 0x89, 0xff, 0xb0, 0x9c, 0xcd, 0xb5, 0xfc, 0x5f,
+	0x66, 0xe8, 0x70, 0xe7, 0xf5, 0x22, 0xc4, 0x96, 0x82, 0xa0, 0x67, 0xd0, 0xd4, 0x7f, 0xf0, 0xf1,
+	0x20, 0xde, 0xba, 0xb8, 0xf9, 0x48, 0xb8, 0x5f, 0x09, 0xc9, 0xac, 0x06, 0xcf, 0x56, 0xcc, 0x5f,
+	0x0c, 0xa8, 0xa7, 0xc5, 0x89, 0x4b, 0x57, 0x0a, 0xc9, 0xe2, 0x62, 0xec, 0x4c, 0x36, 0xab, 0xa5,
+	0x3c, 0x8a, 0xee, 0xa5, 0x10, 0xb0, 0x0b, 0xef, 0x05, 0xc4, 0x0b, 0xdc, 0x73, 0xf0, 0xb2, 0xba,
+	0xf2, 0x62, 0x97, 0x86, 0x7f, 0x0c, 0xef, 0x7b, 0x98, 0x30, 0xac, 0x72, 0xcd, 0xc5, 0x54, 0xd4,
+	0x9d, 0x27, 0xdd, 0x32, 0xb1, 0x2c, 0xcc, 0xfc, 0xd1, 0x80, 0x6b, 0xe7, 0x64, 0x43, 0xbb, 0x50,
+	0x17, 0xf5, 0xdb, 0x2c, 0xc4, 0x6e, 0x7c, 0x0f, 0xe4, 0x6e, 0x2b, 0xa1, 0xd1, 0x28, 0xc4, 0xae,
+	0xaa, 0xb8, 0xc6, 0x63, 0x13, 0xed, 0x8a, 0x9e, 0xcf, 0x42, 0x4a, 0x30, 0xe1, 0x6c, 0xa3, 0x2c,
+	0x27, 0xea, 0xc6, 0xe5, 0xad, 0xb2, 0x34, 0xe4, 0x00, 0xa0, 0x86, 0x89, 0x4b, 0xbd, 0x80, 0x4c,
+	0x3a, 0xbf, 0x97, 0xa1, 0xa9, 0xdf, 0x58, 0xe8, 0x09, 0x2c, 0x07, 0x24, 0x9c, 0x73, 0x16, 0x8f,
+	0xe8, 0x9d, 0xa2, 0xbb, 0xad, 0x7b, 0x20, 0x61, 0xea, 0x37, 0x1c, 0xc7, 0xa0, 0x67, 0xb0, 0x42,
+	0xe7, 0x5c, 0x86, 0xab, 0x7c, 0xb6, 0x0a, 0xc3, 0x0f, 0x15, 0x4e, 0xc5, 0x27, 0x51, 0xe8, 0x03,
+	0x10, 0x6f, 0x9b, 0x23, 0xea, 0xe9, 0x52, 0x82, 0x5a, 0x92, 0x02, 0x7e, 0x0d, 0x0d, 0x6d, 0xe3,
+	0x4b, 0xee, 0xe6, 0xed, 0xfc, 0xdd, 0x5c, 0x24, 0x88, 0x76, 0xe9, 0x5b, 0xd0, 0xd4, 0x93, 0xf9,
+	0x3f, 0x38, 0x3b, 0x2e, 0x34, 0xf5, 0x77, 0x06, 0xfa, 0x14, 0xe2, 0x49, 0x55, 0x3f, 0x66, 0xe3,
+	0x9d, 0x3c, 0xf1, 0xbb, 0x5b, 0x1e, 0x77, 0x13, 0x6a, 0xe2, 0x31, 0xa3, 0x0d, 0x63, 0x6a, 0x0f,
+	0x7e, 0x32, 0x7e, 0x3b, 0x6d, 0x1b, 0x6f, 0x4f, 0xdb, 0xc6, 0xdf, 0xa7, 0x6d, 0xe3, 0xe7, 0xb3,
+	0x76, 0xe9, 0xed, 0x59, 0xbb, 0xf4, 0xc7, 0x59, 0xbb, 0x04, 0x1b, 0x34, 0x9a, 0xe8, 0xec, 0xe9,
+	0xab, 0x78, 0x70, 0x2d, 0x7d, 0x51, 0xc9, 0x79, 0x62, 0xaf, 0x8c, 0xef, 0xfa, 0x93, 0x80, 0x1f,
+	0xcd, 0xc7, 0x5d, 0x97, 0xce, 0x7a, 0xfd, 0x30, 0x9c, 0x06, 0x7e, 0x80, 0xa3, 0xde, 0x84, 0x3e,
+	0xd0, 0xde, 0xb6, 0xf2, 0x31, 0xdd, 0x2b, 0x7a, 0xec, 0xfe, 0x63, 0x18, 0xe3, 0x65, 0x69, 0x7c,
+	0xf2, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x03, 0x6a, 0xf6, 0xb0, 0x61, 0x0c, 0x00, 0x00,
+}
+
 func (m *MetaGraphDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1014,6 +1525,16 @@ func (m *MetaGraphDef) MarshalTo(dAtA []byte) (int, error) {
 			i += n
 		}
 	}
+	if m.ObjectGraphDef != nil {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintMetaGraph(dAtA, i, uint64(m.ObjectGraphDef.Size()))
+		n6, err := m.ObjectGraphDef.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n6
+	}
 	return i, nil
 }
 
@@ -1042,21 +1563,21 @@ func (m *MetaGraphDef_MetaInfoDef) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.StrippedOpList.Size()))
-		n6, err := m.StrippedOpList.MarshalTo(dAtA[i:])
+		n7, err := m.StrippedOpList.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n6
+		i += n7
 	}
 	if m.AnyInfo != nil {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.AnyInfo.Size()))
-		n7, err := m.AnyInfo.MarshalTo(dAtA[i:])
+		n8, err := m.AnyInfo.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n7
+		i += n8
 	}
 	if len(m.Tags) > 0 {
 		for _, s := range m.Tags {
@@ -1114,11 +1635,11 @@ func (m *CollectionDef) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if m.Kind != nil {
-		nn8, err := m.Kind.MarshalTo(dAtA[i:])
+		nn9, err := m.Kind.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += nn8
+		i += nn9
 	}
 	return i, nil
 }
@@ -1129,11 +1650,11 @@ func (m *CollectionDef_NodeList_) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.NodeList.Size()))
-		n9, err := m.NodeList.MarshalTo(dAtA[i:])
+		n10, err := m.NodeList.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n9
+		i += n10
 	}
 	return i, nil
 }
@@ -1143,11 +1664,11 @@ func (m *CollectionDef_BytesList_) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.BytesList.Size()))
-		n10, err := m.BytesList.MarshalTo(dAtA[i:])
+		n11, err := m.BytesList.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n11
 	}
 	return i, nil
 }
@@ -1157,11 +1678,11 @@ func (m *CollectionDef_Int64List_) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.Int64List.Size()))
-		n11, err := m.Int64List.MarshalTo(dAtA[i:])
+		n12, err := m.Int64List.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n11
+		i += n12
 	}
 	return i, nil
 }
@@ -1171,11 +1692,11 @@ func (m *CollectionDef_FloatList_) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.FloatList.Size()))
-		n12, err := m.FloatList.MarshalTo(dAtA[i:])
+		n13, err := m.FloatList.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n12
+		i += n13
 	}
 	return i, nil
 }
@@ -1185,11 +1706,11 @@ func (m *CollectionDef_AnyList_) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x2a
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.AnyList.Size()))
-		n13, err := m.AnyList.MarshalTo(dAtA[i:])
+		n14, err := m.AnyList.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n13
+		i += n14
 	}
 	return i, nil
 }
@@ -1268,22 +1789,22 @@ func (m *CollectionDef_Int64List) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
-		dAtA15 := make([]byte, len(m.Value)*10)
-		var j14 int
+		dAtA16 := make([]byte, len(m.Value)*10)
+		var j15 int
 		for _, num1 := range m.Value {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA15[j14] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA16[j15] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j14++
+				j15++
 			}
-			dAtA15[j14] = uint8(num)
-			j14++
+			dAtA16[j15] = uint8(num)
+			j15++
 		}
 		dAtA[i] = 0xa
 		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(j14))
-		i += copy(dAtA[i:], dAtA15[:j14])
+		i = encodeVarintMetaGraph(dAtA, i, uint64(j15))
+		i += copy(dAtA[i:], dAtA16[:j15])
 	}
 	return i, nil
 }
@@ -1308,8 +1829,8 @@ func (m *CollectionDef_FloatList) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.Value)*4))
 		for _, num := range m.Value {
-			f16 := math.Float32bits(float32(num))
-			binary.LittleEndian.PutUint32(dAtA[i:], uint32(f16))
+			f17 := math.Float32bits(float32(num))
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f17))
 			i += 4
 		}
 	}
@@ -1362,11 +1883,11 @@ func (m *TensorInfo) MarshalTo(dAtA []byte) (int, error) {
 	var l int
 	_ = l
 	if m.Encoding != nil {
-		nn17, err := m.Encoding.MarshalTo(dAtA[i:])
+		nn18, err := m.Encoding.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += nn17
+		i += nn18
 	}
 	if m.Dtype != 0 {
 		dAtA[i] = 0x10
@@ -1377,11 +1898,11 @@ func (m *TensorInfo) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.TensorShape.Size()))
-		n18, err := m.TensorShape.MarshalTo(dAtA[i:])
+		n19, err := m.TensorShape.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n18
+		i += n19
 	}
 	return i, nil
 }
@@ -1400,11 +1921,25 @@ func (m *TensorInfo_CooSparse_) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.CooSparse.Size()))
-		n19, err := m.CooSparse.MarshalTo(dAtA[i:])
+		n20, err := m.CooSparse.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n19
+		i += n20
+	}
+	return i, nil
+}
+func (m *TensorInfo_CompositeTensor_) MarshalTo(dAtA []byte) (int, error) {
+	i := 0
+	if m.CompositeTensor != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintMetaGraph(dAtA, i, uint64(m.CompositeTensor.Size()))
+		n21, err := m.CompositeTensor.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n21
 	}
 	return i, nil
 }
@@ -1444,6 +1979,46 @@ func (m *TensorInfo_CooSparse) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *TensorInfo_CompositeTensor) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TensorInfo_CompositeTensor) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.TypeSpec != nil {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintMetaGraph(dAtA, i, uint64(m.TypeSpec.Size()))
+		n22, err := m.TypeSpec.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n22
+	}
+	if len(m.Components) > 0 {
+		for _, msg := range m.Components {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintMetaGraph(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
+}
+
 func (m *SignatureDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1479,11 +2054,11 @@ func (m *SignatureDef) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintMetaGraph(dAtA, i, uint64(v.Size()))
-				n20, err := v.MarshalTo(dAtA[i:])
+				n23, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n20
+				i += n23
 			}
 		}
 	}
@@ -1507,11 +2082,11 @@ func (m *SignatureDef) MarshalTo(dAtA []byte) (int, error) {
 				dAtA[i] = 0x12
 				i++
 				i = encodeVarintMetaGraph(dAtA, i, uint64(v.Size()))
-				n21, err := v.MarshalTo(dAtA[i:])
+				n24, err := v.MarshalTo(dAtA[i:])
 				if err != nil {
 					return 0, err
 				}
-				i += n21
+				i += n24
 			}
 		}
 	}
@@ -1543,11 +2118,11 @@ func (m *AssetFileDef) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintMetaGraph(dAtA, i, uint64(m.TensorInfo.Size()))
-		n22, err := m.TensorInfo.MarshalTo(dAtA[i:])
+		n25, err := m.TensorInfo.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n22
+		i += n25
 	}
 	if len(m.Filename) > 0 {
 		dAtA[i] = 0x12
@@ -1568,6 +2143,9 @@ func encodeVarintMetaGraph(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *MetaGraphDef) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.MetaInfoDef != nil {
@@ -1614,10 +2192,17 @@ func (m *MetaGraphDef) Size() (n int) {
 			n += 1 + l + sovMetaGraph(uint64(l))
 		}
 	}
+	if m.ObjectGraphDef != nil {
+		l = m.ObjectGraphDef.Size()
+		n += 1 + l + sovMetaGraph(uint64(l))
+	}
 	return n
 }
 
 func (m *MetaGraphDef_MetaInfoDef) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.MetaGraphVersion)
@@ -1653,6 +2238,9 @@ func (m *MetaGraphDef_MetaInfoDef) Size() (n int) {
 }
 
 func (m *CollectionDef) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Kind != nil {
@@ -1662,6 +2250,9 @@ func (m *CollectionDef) Size() (n int) {
 }
 
 func (m *CollectionDef_NodeList_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.NodeList != nil {
@@ -1671,6 +2262,9 @@ func (m *CollectionDef_NodeList_) Size() (n int) {
 	return n
 }
 func (m *CollectionDef_BytesList_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.BytesList != nil {
@@ -1680,6 +2274,9 @@ func (m *CollectionDef_BytesList_) Size() (n int) {
 	return n
 }
 func (m *CollectionDef_Int64List_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Int64List != nil {
@@ -1689,6 +2286,9 @@ func (m *CollectionDef_Int64List_) Size() (n int) {
 	return n
 }
 func (m *CollectionDef_FloatList_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.FloatList != nil {
@@ -1698,6 +2298,9 @@ func (m *CollectionDef_FloatList_) Size() (n int) {
 	return n
 }
 func (m *CollectionDef_AnyList_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.AnyList != nil {
@@ -1707,6 +2310,9 @@ func (m *CollectionDef_AnyList_) Size() (n int) {
 	return n
 }
 func (m *CollectionDef_NodeList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
@@ -1719,6 +2325,9 @@ func (m *CollectionDef_NodeList) Size() (n int) {
 }
 
 func (m *CollectionDef_BytesList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
@@ -1731,6 +2340,9 @@ func (m *CollectionDef_BytesList) Size() (n int) {
 }
 
 func (m *CollectionDef_Int64List) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
@@ -1744,6 +2356,9 @@ func (m *CollectionDef_Int64List) Size() (n int) {
 }
 
 func (m *CollectionDef_FloatList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
@@ -1753,6 +2368,9 @@ func (m *CollectionDef_FloatList) Size() (n int) {
 }
 
 func (m *CollectionDef_AnyList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
@@ -1765,6 +2383,9 @@ func (m *CollectionDef_AnyList) Size() (n int) {
 }
 
 func (m *TensorInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Encoding != nil {
@@ -1781,6 +2402,9 @@ func (m *TensorInfo) Size() (n int) {
 }
 
 func (m *TensorInfo_Name) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.Name)
@@ -1788,6 +2412,9 @@ func (m *TensorInfo_Name) Size() (n int) {
 	return n
 }
 func (m *TensorInfo_CooSparse_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.CooSparse != nil {
@@ -1796,7 +2423,22 @@ func (m *TensorInfo_CooSparse_) Size() (n int) {
 	}
 	return n
 }
+func (m *TensorInfo_CompositeTensor_) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.CompositeTensor != nil {
+		l = m.CompositeTensor.Size()
+		n += 1 + l + sovMetaGraph(uint64(l))
+	}
+	return n
+}
 func (m *TensorInfo_CooSparse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.ValuesTensorName)
@@ -1814,7 +2456,29 @@ func (m *TensorInfo_CooSparse) Size() (n int) {
 	return n
 }
 
+func (m *TensorInfo_CompositeTensor) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.TypeSpec != nil {
+		l = m.TypeSpec.Size()
+		n += 1 + l + sovMetaGraph(uint64(l))
+	}
+	if len(m.Components) > 0 {
+		for _, e := range m.Components {
+			l = e.Size()
+			n += 1 + l + sovMetaGraph(uint64(l))
+		}
+	}
+	return n
+}
+
 func (m *SignatureDef) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Inputs) > 0 {
@@ -1851,6 +2515,9 @@ func (m *SignatureDef) Size() (n int) {
 }
 
 func (m *AssetFileDef) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.TensorInfo != nil {
@@ -1966,7 +2633,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.GraphDef == nil {
-				m.GraphDef = &tensorflow10.GraphDef{}
+				m.GraphDef = &framework.GraphDef{}
 			}
 			if err := m.GraphDef.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2282,6 +2949,39 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ObjectGraphDef", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMetaGraph
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.ObjectGraphDef == nil {
+				m.ObjectGraphDef = &SavedObjectGraph{}
+			}
+			if err := m.ObjectGraphDef.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMetaGraph(dAtA[iNdEx:])
@@ -2388,7 +3088,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.StrippedOpList == nil {
-				m.StrippedOpList = &tensorflow7.OpList{}
+				m.StrippedOpList = &framework.OpList{}
 			}
 			if err := m.StrippedOpList.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2421,7 +3121,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.AnyInfo == nil {
-				m.AnyInfo = &google_protobuf.Any{}
+				m.AnyInfo = &types.Any{}
 			}
 			if err := m.AnyInfo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2993,6 +3693,17 @@ func (m *CollectionDef_Int64List) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Value) == 0 {
+					m.Value = make([]int64, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v int64
 					for shift := uint(0); ; shift += 7 {
@@ -3070,7 +3781,7 @@ func (m *CollectionDef_FloatList) Unmarshal(dAtA []byte) error {
 				if (iNdEx + 4) > l {
 					return io.ErrUnexpectedEOF
 				}
-				v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+				v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 				iNdEx += 4
 				v2 := float32(math.Float32frombits(v))
 				m.Value = append(m.Value, v2)
@@ -3097,12 +3808,17 @@ func (m *CollectionDef_FloatList) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen / 4
+				if elementCount != 0 && len(m.Value) == 0 {
+					m.Value = make([]float32, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint32
 					if (iNdEx + 4) > l {
 						return io.ErrUnexpectedEOF
 					}
-					v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+					v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 					iNdEx += 4
 					v2 := float32(math.Float32frombits(v))
 					m.Value = append(m.Value, v2)
@@ -3186,7 +3902,7 @@ func (m *CollectionDef_AnyList) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Value = append(m.Value, &google_protobuf.Any{})
+			m.Value = append(m.Value, &types.Any{})
 			if err := m.Value[len(m.Value)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -3284,7 +4000,7 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (tensorflow1.DataType(b) & 0x7F) << shift
+				m.Dtype |= (framework.DataType(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3316,7 +4032,7 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.TensorShape == nil {
-				m.TensorShape = &tensorflow.TensorShapeProto{}
+				m.TensorShape = &framework.TensorShapeProto{}
 			}
 			if err := m.TensorShape.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -3353,6 +4069,38 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			m.Encoding = &TensorInfo_CooSparse_{v}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CompositeTensor", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMetaGraph
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &TensorInfo_CompositeTensor{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Encoding = &TensorInfo_CompositeTensor_{v}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -3490,6 +4238,120 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.DenseShapeTensorName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMetaGraph(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TensorInfo_CompositeTensor) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMetaGraph
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CompositeTensor: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CompositeTensor: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TypeSpec", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMetaGraph
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.TypeSpec == nil {
+				m.TypeSpec = &TypeSpecProto{}
+			}
+			if err := m.TypeSpec.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Components", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMetaGraph
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Components = append(m.Components, &TensorInfo{})
+			if err := m.Components[len(m.Components)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -4053,76 +4915,3 @@ var (
 	ErrInvalidLengthMetaGraph = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowMetaGraph   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow/core/protobuf/meta_graph.proto", fileDescriptorMetaGraph) }
-
-var fileDescriptorMetaGraph = []byte{
-	// 1072 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x56, 0xdd, 0x6e, 0x1b, 0x45,
-	0x14, 0xce, 0xda, 0x4e, 0x62, 0x1f, 0x3b, 0x21, 0x1d, 0xa2, 0x92, 0xae, 0x50, 0x48, 0x4d, 0x82,
-	0x42, 0x49, 0xd7, 0x6a, 0x69, 0x01, 0xa1, 0xaa, 0x95, 0x5d, 0xd3, 0x26, 0x12, 0x34, 0x65, 0x53,
-	0x21, 0x01, 0x17, 0xd6, 0xd8, 0x3b, 0xbb, 0x19, 0x65, 0x3d, 0xb3, 0xda, 0x19, 0xa7, 0xf2, 0x25,
-	0xe2, 0x05, 0x78, 0x04, 0x9e, 0x02, 0x5e, 0x81, 0x4b, 0x6e, 0xb8, 0xe0, 0x0e, 0x85, 0x97, 0xe0,
-	0x12, 0xcd, 0xcc, 0xfe, 0x8c, 0x9b, 0x2c, 0xb9, 0xe1, 0x6e, 0xce, 0x9c, 0xef, 0xfb, 0xe6, 0x9c,
-	0x39, 0x67, 0x7e, 0xe0, 0x43, 0x49, 0x98, 0xe0, 0x69, 0x18, 0xf3, 0xd7, 0xbd, 0x09, 0x4f, 0x49,
-	0x2f, 0x49, 0xb9, 0xe4, 0xe3, 0x59, 0xd8, 0x9b, 0x12, 0x89, 0x47, 0x51, 0x8a, 0x93, 0x53, 0x4f,
-	0xcf, 0x21, 0x28, 0xa1, 0xee, 0xad, 0x88, 0xf3, 0x28, 0xb6, 0xd0, 0x98, 0xcd, 0x0d, 0xcc, 0xdd,
-	0x7b, 0x53, 0x31, 0x4c, 0xf1, 0x94, 0xbc, 0xe6, 0xe9, 0x59, 0xcf, 0x52, 0x73, 0x3f, 0xa8, 0x86,
-	0xf1, 0x64, 0x14, 0x90, 0x30, 0xc3, 0x1d, 0x54, 0xe3, 0x8c, 0x67, 0x24, 0x4e, 0x71, 0x42, 0xae,
-	0x5f, 0x5c, 0xce, 0x13, 0x22, 0x32, 0xd8, 0x6e, 0x65, 0xd6, 0x02, 0x9f, 0x93, 0xd4, 0xa0, 0xba,
-	0xbf, 0xae, 0x42, 0xe7, 0x2b, 0x22, 0xf1, 0x73, 0x15, 0xf6, 0x90, 0x84, 0xe8, 0x10, 0xd6, 0xf4,
-	0xae, 0x50, 0x16, 0x72, 0x15, 0xe2, 0x96, 0xb3, 0xe3, 0xec, 0xb7, 0xef, 0xef, 0x7a, 0xa5, 0x9c,
-	0x67, 0x13, 0xb4, 0x71, 0xc4, 0x42, 0x3e, 0x24, 0xa1, 0xdf, 0x9e, 0x96, 0x06, 0xba, 0x07, 0x2d,
-	0xbd, 0x19, 0x5a, 0xa5, 0xa6, 0x55, 0x36, 0x6d, 0x95, 0x5c, 0xc1, 0x6f, 0x46, 0xf9, 0xe2, 0xf7,
-	0xa0, 0xa5, 0x83, 0xd3, 0x94, 0xfa, 0x65, 0xca, 0x89, 0x72, 0x6a, 0x8a, 0xc8, 0x46, 0xc8, 0x87,
-	0xf5, 0x09, 0x8f, 0x63, 0x32, 0x91, 0x94, 0x33, 0xcd, 0x6b, 0xec, 0xd4, 0xf7, 0xdb, 0xf7, 0x3f,
-	0xaa, 0x0c, 0xf8, 0x69, 0x01, 0x1f, 0x92, 0xf0, 0x0b, 0x26, 0xd3, 0xb9, 0xbf, 0x36, 0xb1, 0xe7,
-	0xd0, 0x31, 0xac, 0x09, 0x1a, 0x31, 0x2c, 0x67, 0x29, 0xd1, 0x92, 0xcb, 0x5a, 0xf2, 0x4e, 0xa5,
-	0xe4, 0x49, 0x8e, 0x2e, 0x14, 0x3b, 0xc2, 0x9a, 0x42, 0x8f, 0x61, 0x1d, 0x0b, 0x41, 0xe4, 0x28,
-	0xa4, 0xb1, 0x51, 0x5c, 0xd1, 0x8a, 0x5b, 0xb6, 0x62, 0x5f, 0x21, 0x9e, 0xd1, 0x58, 0x31, 0xfc,
-	0x0e, 0xb6, 0x2c, 0xf7, 0xcf, 0x1a, 0xb4, 0xad, 0x7d, 0x46, 0x07, 0x80, 0xca, 0xd6, 0x1d, 0x9d,
-	0x93, 0x54, 0x50, 0xce, 0x74, 0xa5, 0x5a, 0xfe, 0xc6, 0x34, 0x8f, 0xec, 0x1b, 0x33, 0x8f, 0x1e,
-	0xc1, 0x86, 0x90, 0x29, 0x4d, 0x12, 0x12, 0x8c, 0x78, 0x32, 0x8a, 0xa9, 0x90, 0x59, 0x3d, 0x90,
-	0xbd, 0xfe, 0x71, 0xf2, 0x25, 0x15, 0xd2, 0x5f, 0xcf, 0xb1, 0xc6, 0x46, 0x3d, 0x68, 0x62, 0x36,
-	0xd7, 0xfd, 0x50, 0x94, 0xc4, 0x9c, 0x0c, 0x2f, 0xef, 0x28, 0xaf, 0xcf, 0xe6, 0xfe, 0x2a, 0x66,
-	0x73, 0x15, 0x1f, 0x42, 0xd0, 0x90, 0x38, 0x12, 0xba, 0x0e, 0x2d, 0x5f, 0x8f, 0xd1, 0x5d, 0x40,
-	0xe5, 0x4a, 0x45, 0xc0, 0xcb, 0x3a, 0xe0, 0x1b, 0xa5, 0x27, 0x8f, 0xf8, 0x01, 0xdc, 0xb4, 0xe0,
-	0x11, 0x95, 0x05, 0x65, 0x45, 0x53, 0x36, 0x4b, 0xef, 0x73, 0x2a, 0x2d, 0x56, 0x91, 0x67, 0x40,
-	0x42, 0x3c, 0x8b, 0xe5, 0x08, 0x4b, 0x99, 0x8a, 0xad, 0xd5, 0x1d, 0x67, 0xbf, 0xe9, 0x6f, 0xe6,
-	0xde, 0xa1, 0x71, 0xf6, 0x95, 0xcf, 0xfd, 0x1e, 0xd0, 0xe5, 0x8e, 0x40, 0x1b, 0x50, 0x3f, 0x23,
-	0xf3, 0x6c, 0x4b, 0xd5, 0x10, 0xf5, 0x60, 0xf9, 0x1c, 0xc7, 0x33, 0x92, 0x6d, 0xdd, 0x2d, 0x7b,
-	0xeb, 0x16, 0x04, 0x7c, 0x83, 0xfb, 0xbc, 0xf6, 0x99, 0xe3, 0x7e, 0x0b, 0x37, 0x2e, 0xf5, 0xc6,
-	0x15, 0xda, 0xde, 0xa2, 0xf6, 0x42, 0x5b, 0xd8, 0x7c, 0x4b, 0xba, 0xfb, 0x4b, 0x03, 0xd6, 0x16,
-	0xd6, 0x45, 0x7d, 0x68, 0x31, 0x1e, 0x10, 0x53, 0x60, 0x73, 0x6c, 0xbb, 0x95, 0x51, 0x7a, 0x2f,
-	0x78, 0x40, 0x54, 0x81, 0x0f, 0x97, 0xfc, 0x26, 0xcb, 0xc6, 0x68, 0x08, 0x30, 0x9e, 0x4b, 0x22,
-	0xec, 0x26, 0x79, 0xbf, 0x5a, 0x63, 0xa0, 0xb0, 0x99, 0x48, 0x6b, 0x9c, 0x1b, 0x4a, 0x85, 0x32,
-	0xf9, 0xc9, 0x03, 0xa3, 0x52, 0xbf, 0x4e, 0xe5, 0x48, 0x61, 0x73, 0x15, 0x9a, 0x1b, 0x4a, 0x25,
-	0x8c, 0x39, 0x96, 0x46, 0xa5, 0x71, 0x9d, 0xca, 0x33, 0x85, 0xcd, 0x55, 0xc2, 0xdc, 0x40, 0x8f,
-	0x4d, 0xfb, 0x6a, 0x8d, 0x65, 0xad, 0x71, 0xbb, 0x5a, 0xa3, 0xcf, 0xe6, 0x99, 0x82, 0xea, 0x66,
-	0x35, 0x74, 0x77, 0xa0, 0x99, 0xef, 0x14, 0xda, 0xcc, 0xcb, 0xe4, 0xe8, 0xd6, 0x36, 0x86, 0x7b,
-	0x1b, 0x5a, 0xc5, 0x3e, 0x2c, 0x42, 0x3a, 0x39, 0x64, 0x0f, 0x5a, 0x45, 0x92, 0x68, 0xcb, 0x86,
-	0xd4, 0x07, 0xb5, 0x0d, 0xc7, 0x82, 0x15, 0x59, 0x2c, 0xc2, 0x6a, 0x36, 0xec, 0x21, 0xac, 0x66,
-	0x81, 0xa2, 0x3b, 0x36, 0xa8, 0xea, 0x64, 0x1a, 0xc8, 0x60, 0x05, 0x1a, 0x67, 0x94, 0x05, 0xdd,
-	0x1f, 0xea, 0x00, 0xaf, 0xf4, 0x0e, 0xe8, 0xe3, 0xba, 0x09, 0x0d, 0x86, 0xa7, 0xc4, 0xb4, 0xe3,
-	0xe1, 0x92, 0xaf, 0x2d, 0x25, 0x1c, 0xa8, 0xd7, 0x44, 0xf7, 0xc0, 0xfa, 0xe2, 0x2d, 0x3c, 0xc4,
-	0x12, 0xbf, 0x9a, 0x27, 0xc4, 0x37, 0x10, 0xf4, 0x04, 0x3a, 0xf6, 0x33, 0x95, 0x15, 0xfc, 0x5d,
-	0x9b, 0x62, 0xd6, 0x3b, 0x51, 0xee, 0x97, 0x2a, 0x34, 0xbf, 0x2d, 0xcb, 0x19, 0xd4, 0x07, 0x98,
-	0x70, 0x3e, 0x12, 0x09, 0x4e, 0x05, 0xc9, 0x2a, 0xbd, 0x73, 0x99, 0xae, 0xc2, 0xf5, 0x9e, 0x72,
-	0x7e, 0xa2, 0x71, 0xaa, 0xcc, 0x93, 0xdc, 0x70, 0x7f, 0x76, 0xa0, 0x55, 0xb8, 0xd4, 0xfd, 0xa8,
-	0x73, 0x16, 0xa3, 0x2c, 0xb0, 0x32, 0x43, 0x7f, 0xc3, 0x78, 0x8c, 0xe4, 0x0b, 0x95, 0xab, 0x07,
-	0x6f, 0x53, 0x16, 0xd0, 0xc9, 0x1b, 0xf0, 0x9a, 0xb9, 0x9d, 0x32, 0x97, 0x85, 0x7f, 0x08, 0xef,
-	0x04, 0x84, 0x09, 0x62, 0xd2, 0x5d, 0xe0, 0xd4, 0xcd, 0xf5, 0xa4, 0xdd, 0x3a, 0xb7, 0x92, 0x36,
-	0x00, 0x68, 0x12, 0x36, 0xe1, 0x01, 0x65, 0x51, 0xf7, 0x8f, 0x1a, 0x74, 0xec, 0x83, 0x8d, 0x1e,
-	0xc1, 0x0a, 0x65, 0xc9, 0x4c, 0x8a, 0xac, 0x92, 0xbb, 0x55, 0x57, 0x80, 0x77, 0xa4, 0x61, 0xe6,
-	0x95, 0xc9, 0x38, 0xe8, 0x09, 0xac, 0xf2, 0x99, 0xd4, 0xf4, 0x9a, 0xa6, 0xef, 0x55, 0xd2, 0x8f,
-	0x0d, 0xce, 0xf0, 0x73, 0x16, 0x7a, 0x0f, 0xd4, 0xd3, 0x7d, 0xca, 0x03, 0x3b, 0x0d, 0x30, 0x53,
-	0x2a, 0x78, 0xf7, 0x6b, 0x68, 0x5b, 0x0b, 0x5f, 0x71, 0x85, 0x1d, 0x2c, 0x5e, 0x61, 0x37, 0xaf,
-	0x2e, 0x9f, 0x7d, 0x37, 0xfa, 0xd0, 0xb1, 0x83, 0xf9, 0x3f, 0x34, 0xbb, 0x13, 0xe8, 0xd8, 0xcf,
-	0x28, 0xfa, 0x14, 0xb2, 0x46, 0x33, 0xef, 0x97, 0xf3, 0x9f, 0x3a, 0xd9, 0xe7, 0x4f, 0x9f, 0x0a,
-	0x17, 0x9a, 0xea, 0xad, 0xb6, 0x1a, 0xa1, 0xb0, 0x07, 0x3f, 0x3a, 0xbf, 0x5d, 0x6c, 0x3b, 0xbf,
-	0x5f, 0x6c, 0x3b, 0x7f, 0x5d, 0x6c, 0x3b, 0x3f, 0xfd, 0xbd, 0xbd, 0x04, 0x5b, 0x3c, 0x8d, 0x6c,
-	0xd5, 0xe2, 0x4b, 0x36, 0x78, 0xab, 0xf8, 0x28, 0xe8, 0xc6, 0x17, 0x2f, 0x9d, 0xef, 0xfa, 0x11,
-	0x95, 0xa7, 0xb3, 0xb1, 0x37, 0xe1, 0xd3, 0x5e, 0x3f, 0x49, 0x62, 0x1a, 0x52, 0x92, 0xf6, 0x22,
-	0x7e, 0xd7, 0xfa, 0xb1, 0xe9, 0x9f, 0x5c, 0xaf, 0xea, 0x0b, 0xf7, 0x8f, 0xe3, 0x8c, 0x57, 0xb4,
-	0xf1, 0xf1, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x38, 0x3a, 0x34, 0xde, 0xde, 0x0a, 0x00, 0x00,
-}

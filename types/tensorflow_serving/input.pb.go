@@ -3,31 +3,66 @@
 
 package tensorflow_serving
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import tensorflow1 "github.com/Applifier/go-tensorflow/types/tensorflow/core/example"
-
-import io "io"
+import (
+	fmt "fmt"
+	example "github.com/Applifier/go-tensorflow/types/tensorflow/core/example"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 // Specifies one or more fully independent input Examples.
 // See examples at:
 //     https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/example/example.proto
 type ExampleList struct {
-	Examples []*tensorflow1.Example `protobuf:"bytes,1,rep,name=examples" json:"examples,omitempty"`
+	Examples []*example.Example `protobuf:"bytes,1,rep,name=examples,proto3" json:"examples,omitempty"`
 }
 
-func (m *ExampleList) Reset()                    { *m = ExampleList{} }
-func (m *ExampleList) String() string            { return proto.CompactTextString(m) }
-func (*ExampleList) ProtoMessage()               {}
-func (*ExampleList) Descriptor() ([]byte, []int) { return fileDescriptorInput, []int{0} }
+func (m *ExampleList) Reset()         { *m = ExampleList{} }
+func (m *ExampleList) String() string { return proto.CompactTextString(m) }
+func (*ExampleList) ProtoMessage()    {}
+func (*ExampleList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4595aa0586506d9d, []int{0}
+}
+func (m *ExampleList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ExampleList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ExampleList.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ExampleList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExampleList.Merge(m, src)
+}
+func (m *ExampleList) XXX_Size() int {
+	return m.Size()
+}
+func (m *ExampleList) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExampleList.DiscardUnknown(m)
+}
 
-func (m *ExampleList) GetExamples() []*tensorflow1.Example {
+var xxx_messageInfo_ExampleList proto.InternalMessageInfo
+
+func (m *ExampleList) GetExamples() []*example.Example {
 	if m != nil {
 		return m.Examples
 	}
@@ -44,31 +79,37 @@ func (m *ExampleList) GetExamples() []*tensorflow1.Example {
 // to perform some inference on.
 //
 // context: {
-//   feature: {
-//     key  : "query"
-//     value: {
-//       bytes_list: {
-//         value: [ "pizza" ]
+//   features: {
+//     feature: {
+//       key  : "query"
+//       value: {
+//         bytes_list: {
+//           value: [ "pizza" ]
+//         }
 //       }
 //     }
 //   }
 // }
 // examples: {
-//   feature: {
-//     key  : "cuisine"
-//     value: {
-//       bytes_list: {
-//         value: [ "Pizzeria" ]
+//   features: {
+//     feature: {
+//       key  : "cuisine"
+//       value: {
+//         bytes_list: {
+//           value: [ "Pizzeria" ]
+//         }
 //       }
 //     }
 //   }
 // }
 // examples: {
-//   feature: {
-//     key  : "cuisine"
-//     value: {
-//       bytes_list: {
-//         value: [ "Taqueria" ]
+//   features: {
+//     feature: {
+//       key  : "cuisine"
+//       value: {
+//         bytes_list: {
+//           value: [ "Taqueria" ]
+//         }
 //       }
 //     }
 //   }
@@ -82,23 +123,51 @@ func (m *ExampleList) GetExamples() []*tensorflow1.Example {
 //     tensorflow/core/example/example.proto
 //     https://developers.google.com/protocol-buffers/docs/proto3#maps
 type ExampleListWithContext struct {
-	Examples []*tensorflow1.Example `protobuf:"bytes,1,rep,name=examples" json:"examples,omitempty"`
-	Context  *tensorflow1.Example   `protobuf:"bytes,2,opt,name=context" json:"context,omitempty"`
+	Examples []*example.Example `protobuf:"bytes,1,rep,name=examples,proto3" json:"examples,omitempty"`
+	Context  *example.Example   `protobuf:"bytes,2,opt,name=context,proto3" json:"context,omitempty"`
 }
 
-func (m *ExampleListWithContext) Reset()                    { *m = ExampleListWithContext{} }
-func (m *ExampleListWithContext) String() string            { return proto.CompactTextString(m) }
-func (*ExampleListWithContext) ProtoMessage()               {}
-func (*ExampleListWithContext) Descriptor() ([]byte, []int) { return fileDescriptorInput, []int{1} }
+func (m *ExampleListWithContext) Reset()         { *m = ExampleListWithContext{} }
+func (m *ExampleListWithContext) String() string { return proto.CompactTextString(m) }
+func (*ExampleListWithContext) ProtoMessage()    {}
+func (*ExampleListWithContext) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4595aa0586506d9d, []int{1}
+}
+func (m *ExampleListWithContext) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ExampleListWithContext) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ExampleListWithContext.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ExampleListWithContext) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExampleListWithContext.Merge(m, src)
+}
+func (m *ExampleListWithContext) XXX_Size() int {
+	return m.Size()
+}
+func (m *ExampleListWithContext) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExampleListWithContext.DiscardUnknown(m)
+}
 
-func (m *ExampleListWithContext) GetExamples() []*tensorflow1.Example {
+var xxx_messageInfo_ExampleListWithContext proto.InternalMessageInfo
+
+func (m *ExampleListWithContext) GetExamples() []*example.Example {
 	if m != nil {
 		return m.Examples
 	}
 	return nil
 }
 
-func (m *ExampleListWithContext) GetContext() *tensorflow1.Example {
+func (m *ExampleListWithContext) GetContext() *example.Example {
 	if m != nil {
 		return m.Context
 	}
@@ -112,10 +181,38 @@ type Input struct {
 	Kind isInput_Kind `protobuf_oneof:"kind"`
 }
 
-func (m *Input) Reset()                    { *m = Input{} }
-func (m *Input) String() string            { return proto.CompactTextString(m) }
-func (*Input) ProtoMessage()               {}
-func (*Input) Descriptor() ([]byte, []int) { return fileDescriptorInput, []int{2} }
+func (m *Input) Reset()         { *m = Input{} }
+func (m *Input) String() string { return proto.CompactTextString(m) }
+func (*Input) ProtoMessage()    {}
+func (*Input) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4595aa0586506d9d, []int{2}
+}
+func (m *Input) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *Input) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_Input.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *Input) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Input.Merge(m, src)
+}
+func (m *Input) XXX_Size() int {
+	return m.Size()
+}
+func (m *Input) XXX_DiscardUnknown() {
+	xxx_messageInfo_Input.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Input proto.InternalMessageInfo
 
 type isInput_Kind interface {
 	isInput_Kind()
@@ -124,10 +221,10 @@ type isInput_Kind interface {
 }
 
 type Input_ExampleList struct {
-	ExampleList *ExampleList `protobuf:"bytes,1,opt,name=example_list,json=exampleList,oneof"`
+	ExampleList *ExampleList `protobuf:"bytes,1,opt,name=example_list,json=exampleList,proto3,oneof"`
 }
 type Input_ExampleListWithContext struct {
-	ExampleListWithContext *ExampleListWithContext `protobuf:"bytes,2,opt,name=example_list_with_context,json=exampleListWithContext,oneof"`
+	ExampleListWithContext *ExampleListWithContext `protobuf:"bytes,2,opt,name=example_list_with_context,json=exampleListWithContext,proto3,oneof"`
 }
 
 func (*Input_ExampleList) isInput_Kind()            {}
@@ -213,12 +310,12 @@ func _Input_OneofSizer(msg proto.Message) (n int) {
 	switch x := m.Kind.(type) {
 	case *Input_ExampleList:
 		s := proto.Size(x.ExampleList)
-		n += proto.SizeVarint(1<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *Input_ExampleListWithContext:
 		s := proto.Size(x.ExampleListWithContext)
-		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case nil:
@@ -233,6 +330,30 @@ func init() {
 	proto.RegisterType((*ExampleListWithContext)(nil), "tensorflow.serving.ExampleListWithContext")
 	proto.RegisterType((*Input)(nil), "tensorflow.serving.Input")
 }
+
+func init() { proto.RegisterFile("tensorflow_serving/input.proto", fileDescriptor_4595aa0586506d9d) }
+
+var fileDescriptor_4595aa0586506d9d = []byte{
+	// 262 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2b, 0x49, 0xcd, 0x2b,
+	0xce, 0x2f, 0x4a, 0xcb, 0xc9, 0x2f, 0x8f, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0xcc, 0x4b, 0xd7, 0xcf,
+	0xcc, 0x2b, 0x28, 0x2d, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x42, 0xc8, 0xeb, 0x41,
+	0xe5, 0xa5, 0x54, 0x11, 0x62, 0xfa, 0xc9, 0xf9, 0x45, 0xa9, 0xfa, 0xa9, 0x15, 0x89, 0xb9, 0x05,
+	0x39, 0x70, 0x1a, 0xa2, 0x55, 0xc9, 0x8e, 0x8b, 0xdb, 0x15, 0x22, 0xe0, 0x93, 0x59, 0x5c, 0x22,
+	0xa4, 0xcf, 0xc5, 0x01, 0x95, 0x2f, 0x96, 0x60, 0x54, 0x60, 0xd6, 0xe0, 0x36, 0x12, 0xd6, 0x43,
+	0x32, 0x1c, 0xaa, 0x34, 0x08, 0xae, 0x48, 0xa9, 0x82, 0x4b, 0x0c, 0x49, 0x7f, 0x78, 0x66, 0x49,
+	0x86, 0x73, 0x7e, 0x5e, 0x49, 0x6a, 0x05, 0xe9, 0x46, 0x09, 0xe9, 0x72, 0xb1, 0x27, 0x43, 0xf4,
+	0x4a, 0x30, 0x29, 0x30, 0xe2, 0x52, 0x0f, 0x53, 0xa3, 0x74, 0x8c, 0x91, 0x8b, 0xd5, 0x13, 0x14,
+	0x08, 0x42, 0x1e, 0x5c, 0x3c, 0x50, 0x43, 0xe2, 0x73, 0x32, 0x8b, 0x4b, 0x24, 0x18, 0xc1, 0xba,
+	0xe5, 0xf5, 0x30, 0x43, 0x45, 0x0f, 0xc9, 0xad, 0x4e, 0x4c, 0x1a, 0x8c, 0x1e, 0x0c, 0x41, 0xdc,
+	0xa9, 0x48, 0xde, 0xcf, 0xe6, 0x92, 0x44, 0x36, 0x29, 0xbe, 0x3c, 0xb3, 0x24, 0x23, 0x1e, 0xd5,
+	0x51, 0x5a, 0x04, 0x8c, 0x45, 0x0a, 0x02, 0xa8, 0x0d, 0x62, 0xa9, 0xd8, 0x65, 0xd9, 0xb8, 0x58,
+	0xb2, 0x33, 0xf3, 0x52, 0x9c, 0xa4, 0x4f, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48, 0x8e, 0xf1, 0xc1,
+	0x23, 0x39, 0xc6, 0x09, 0x8f, 0xe5, 0x18, 0x2e, 0x3c, 0x96, 0x63, 0xb8, 0xf1, 0x58, 0x8e, 0xe1,
+	0x07, 0x23, 0x63, 0x12, 0x1b, 0x38, 0x9a, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0xc4, 0x53,
+	0xa4, 0xa2, 0x03, 0x02, 0x00, 0x00,
+}
+
 func (m *ExampleList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -366,6 +487,9 @@ func encodeVarintInput(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *ExampleList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Examples) > 0 {
@@ -378,6 +502,9 @@ func (m *ExampleList) Size() (n int) {
 }
 
 func (m *ExampleListWithContext) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Examples) > 0 {
@@ -394,6 +521,9 @@ func (m *ExampleListWithContext) Size() (n int) {
 }
 
 func (m *Input) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Kind != nil {
@@ -403,6 +533,9 @@ func (m *Input) Size() (n int) {
 }
 
 func (m *Input_ExampleList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ExampleList != nil {
@@ -412,6 +545,9 @@ func (m *Input_ExampleList) Size() (n int) {
 	return n
 }
 func (m *Input_ExampleListWithContext) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.ExampleListWithContext != nil {
@@ -489,7 +625,7 @@ func (m *ExampleList) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Examples = append(m.Examples, &tensorflow1.Example{})
+			m.Examples = append(m.Examples, &example.Example{})
 			if err := m.Examples[len(m.Examples)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -570,7 +706,7 @@ func (m *ExampleListWithContext) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Examples = append(m.Examples, &tensorflow1.Example{})
+			m.Examples = append(m.Examples, &example.Example{})
 			if err := m.Examples[len(m.Examples)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -602,7 +738,7 @@ func (m *ExampleListWithContext) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Context == nil {
-				m.Context = &tensorflow1.Example{}
+				m.Context = &example.Example{}
 			}
 			if err := m.Context.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -847,25 +983,3 @@ var (
 	ErrInvalidLengthInput = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowInput   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow_serving/input.proto", fileDescriptorInput) }
-
-var fileDescriptorInput = []byte{
-	// 253 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2b, 0x49, 0xcd, 0x2b,
-	0xce, 0x2f, 0x4a, 0xcb, 0xc9, 0x2f, 0x8f, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0xcc, 0x4b, 0xd7, 0xcf,
-	0xcc, 0x2b, 0x28, 0x2d, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x42, 0xc8, 0xeb, 0x41,
-	0xe5, 0xa5, 0x54, 0x11, 0x62, 0xfa, 0xc9, 0xf9, 0x45, 0xa9, 0xfa, 0xa9, 0x15, 0x89, 0xb9, 0x05,
-	0x39, 0x70, 0x1a, 0xa2, 0x55, 0xc9, 0x8e, 0x8b, 0xdb, 0x15, 0x22, 0xe0, 0x93, 0x59, 0x5c, 0x22,
-	0xa4, 0xcf, 0xc5, 0x01, 0x95, 0x2f, 0x96, 0x60, 0x54, 0x60, 0xd6, 0xe0, 0x36, 0x12, 0xd6, 0x43,
-	0x32, 0x1c, 0xaa, 0x34, 0x08, 0xae, 0x48, 0xa9, 0x82, 0x4b, 0x0c, 0x49, 0x7f, 0x78, 0x66, 0x49,
-	0x86, 0x73, 0x7e, 0x5e, 0x49, 0x6a, 0x05, 0xe9, 0x46, 0x09, 0xe9, 0x72, 0xb1, 0x27, 0x43, 0xf4,
-	0x4a, 0x30, 0x29, 0x30, 0xe2, 0x52, 0x0f, 0x53, 0xa3, 0x74, 0x8c, 0x91, 0x8b, 0xd5, 0x13, 0x14,
-	0x08, 0x42, 0x1e, 0x5c, 0x3c, 0x50, 0x43, 0xe2, 0x73, 0x32, 0x8b, 0x4b, 0x24, 0x18, 0xc1, 0xba,
-	0xe5, 0xf5, 0x30, 0x43, 0x45, 0x0f, 0xc9, 0xad, 0x4e, 0x4c, 0x1a, 0x8c, 0x1e, 0x0c, 0x41, 0xdc,
-	0xa9, 0x48, 0xde, 0xcf, 0xe6, 0x92, 0x44, 0x36, 0x29, 0xbe, 0x3c, 0xb3, 0x24, 0x23, 0x1e, 0xd5,
-	0x51, 0x5a, 0x04, 0x8c, 0x45, 0x0a, 0x02, 0xa8, 0x0d, 0x62, 0xa9, 0xd8, 0x65, 0xd9, 0xb8, 0x58,
-	0xb2, 0x33, 0xf3, 0x52, 0x9c, 0x84, 0x4f, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48, 0x8e, 0xf1, 0xc1,
-	0x23, 0x39, 0xc6, 0x09, 0x8f, 0xe5, 0x18, 0x7e, 0x30, 0x32, 0x26, 0xb1, 0x81, 0xa3, 0xc7, 0x18,
-	0x10, 0x00, 0x00, 0xff, 0xff, 0x52, 0x9e, 0x1b, 0x9b, 0xfb, 0x01, 0x00, 0x00,
-}

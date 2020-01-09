@@ -3,21 +3,25 @@
 
 package protobuf
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import tensorflow2 "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
-import tensorflow10 "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
-import tensorflow13 "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
-
-import binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	framework "github.com/Applifier/go-tensorflow/types/tensorflow/core/framework"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
 
 // Optimization level
 type OptimizerOptions_Level int32
@@ -36,6 +40,7 @@ var OptimizerOptions_Level_name = map[int32]string{
 	0:  "L1",
 	-1: "L0",
 }
+
 var OptimizerOptions_Level_value = map[string]int32{
 	"L1": 0,
 	"L0": -1,
@@ -44,8 +49,9 @@ var OptimizerOptions_Level_value = map[string]int32{
 func (x OptimizerOptions_Level) String() string {
 	return proto.EnumName(OptimizerOptions_Level_name, int32(x))
 }
+
 func (OptimizerOptions_Level) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptorConfig, []int{1, 0}
+	return fileDescriptor_e2349c44c118036b, []int{1, 0}
 }
 
 // Control the use of the compiler/jit.  Experimental.
@@ -68,6 +74,7 @@ var OptimizerOptions_GlobalJitLevel_name = map[int32]string{
 	1:  "ON_1",
 	2:  "ON_2",
 }
+
 var OptimizerOptions_GlobalJitLevel_value = map[string]int32{
 	"DEFAULT": 0,
 	"OFF":     -1,
@@ -78,8 +85,9 @@ var OptimizerOptions_GlobalJitLevel_value = map[string]int32{
 func (x OptimizerOptions_GlobalJitLevel) String() string {
 	return proto.EnumName(OptimizerOptions_GlobalJitLevel_name, int32(x))
 }
+
 func (OptimizerOptions_GlobalJitLevel) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptorConfig, []int{1, 1}
+	return fileDescriptor_e2349c44c118036b, []int{1, 1}
 }
 
 // TODO(pbar) Turn this into a TraceOptions proto which allows
@@ -99,6 +107,7 @@ var RunOptions_TraceLevel_name = map[int32]string{
 	2: "HARDWARE_TRACE",
 	3: "FULL_TRACE",
 }
+
 var RunOptions_TraceLevel_value = map[string]int32{
 	"NO_TRACE":       0,
 	"SOFTWARE_TRACE": 1,
@@ -109,8 +118,9 @@ var RunOptions_TraceLevel_value = map[string]int32{
 func (x RunOptions_TraceLevel) String() string {
 	return proto.EnumName(RunOptions_TraceLevel_name, int32(x))
 }
+
 func (RunOptions_TraceLevel) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptorConfig, []int{6, 0}
+	return fileDescriptor_e2349c44c118036b, []int{7, 0}
 }
 
 type GPUOptions struct {
@@ -164,7 +174,7 @@ type GPUOptions struct {
 	//    after the process starts.  Users are required to use vendor
 	//    specific mechanisms (e.g., CUDA_VISIBLE_DEVICES) to control the
 	//    physical to visible device mapping prior to invoking TensorFlow.
-	// 2. In the code, the ids in this list are also called "CUDA GPU id"s,
+	// 2. In the code, the ids in this list are also called "platform GPU id"s,
 	//    and the 'virtual' ids of GPU devices (i.e. the ids in the device
 	//    name "/device:GPU:<id>") are also called "TF GPU id"s. Please
 	//    refer to third_party/tensorflow/core/common_runtime/gpu/gpu_id.h
@@ -190,13 +200,41 @@ type GPUOptions struct {
 	// Everything inside experimental is subject to change and is not subject
 	// to API stability guarantees in
 	// https://www.tensorflow.org/guide/version_compat.
-	Experimental *GPUOptions_Experimental `protobuf:"bytes,9,opt,name=experimental" json:"experimental,omitempty"`
+	Experimental *GPUOptions_Experimental `protobuf:"bytes,9,opt,name=experimental,proto3" json:"experimental,omitempty"`
 }
 
-func (m *GPUOptions) Reset()                    { *m = GPUOptions{} }
-func (m *GPUOptions) String() string            { return proto.CompactTextString(m) }
-func (*GPUOptions) ProtoMessage()               {}
-func (*GPUOptions) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{0} }
+func (m *GPUOptions) Reset()         { *m = GPUOptions{} }
+func (m *GPUOptions) String() string { return proto.CompactTextString(m) }
+func (*GPUOptions) ProtoMessage()    {}
+func (*GPUOptions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{0}
+}
+func (m *GPUOptions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GPUOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GPUOptions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GPUOptions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GPUOptions.Merge(m, src)
+}
+func (m *GPUOptions) XXX_Size() int {
+	return m.Size()
+}
+func (m *GPUOptions) XXX_DiscardUnknown() {
+	xxx_messageInfo_GPUOptions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GPUOptions proto.InternalMessageInfo
 
 func (m *GPUOptions) GetPerProcessGpuMemoryFraction() float64 {
 	if m != nil {
@@ -285,7 +323,7 @@ type GPUOptions_Experimental struct {
 	// 2. Currently this setting is per-process, not per-session. Using
 	//    different settings in different sessions within same process will
 	//    result in undefined behavior.
-	VirtualDevices []*GPUOptions_Experimental_VirtualDevices `protobuf:"bytes,1,rep,name=virtual_devices,json=virtualDevices" json:"virtual_devices,omitempty"`
+	VirtualDevices []*GPUOptions_Experimental_VirtualDevices `protobuf:"bytes,1,rep,name=virtual_devices,json=virtualDevices,proto3" json:"virtual_devices,omitempty"`
 	// If true, uses CUDA unified memory for memory allocations. If
 	// per_process_gpu_memory_fraction option is greater than 1.0, then unified
 	// memory is used regardless of the value for this field. See comments for
@@ -298,12 +336,70 @@ type GPUOptions_Experimental struct {
 	// for each GPUDevice.  Default value is 0, which is automatically
 	// converted to 1.
 	NumDevToDevCopyStreams int32 `protobuf:"varint,3,opt,name=num_dev_to_dev_copy_streams,json=numDevToDevCopyStreams,proto3" json:"num_dev_to_dev_copy_streams,omitempty"`
+	// If non-empty, defines a good GPU ring order on a single worker based on
+	// device interconnect.  This assumes that all workers have the same GPU
+	// topology.  Specify as a comma-separated string, e.g. "3,2,1,0,7,6,5,4".
+	// This ring order is used by the RingReducer implementation of
+	// CollectiveReduce, and serves as an override to automatic ring order
+	// generation in OrderTaskDeviceMap() during CollectiveParam resolution.
+	CollectiveRingOrder string `protobuf:"bytes,4,opt,name=collective_ring_order,json=collectiveRingOrder,proto3" json:"collective_ring_order,omitempty"`
+	// If true then extra work is done by GPUDevice and GPUBFCAllocator to
+	// keep track of when GPU memory is freed and when kernels actually
+	// complete so that we can know when a nominally free memory chunk
+	// is really not subject to pending use.
+	TimestampedAllocator bool `protobuf:"varint,5,opt,name=timestamped_allocator,json=timestampedAllocator,proto3" json:"timestamped_allocator,omitempty"`
+	// Parameters for GPUKernelTracker.  By default no kernel tracking is done.
+	// Note that timestamped_allocator is only effective if some tracking is
+	// specified.
+	//
+	// If kernel_tracker_max_interval = n > 0, then a tracking event
+	// is inserted after every n kernels without an event.
+	KernelTrackerMaxInterval int32 `protobuf:"varint,7,opt,name=kernel_tracker_max_interval,json=kernelTrackerMaxInterval,proto3" json:"kernel_tracker_max_interval,omitempty"`
+	// If kernel_tracker_max_bytes = n > 0, then a tracking event is
+	// inserted after every series of kernels allocating a sum of
+	// memory >= n.  If one kernel allocates b * n bytes, then one
+	// event will be inserted after it, but it will count as b against
+	// the pending limit.
+	KernelTrackerMaxBytes int32 `protobuf:"varint,8,opt,name=kernel_tracker_max_bytes,json=kernelTrackerMaxBytes,proto3" json:"kernel_tracker_max_bytes,omitempty"`
+	// If kernel_tracker_max_pending > 0 then no more than this many
+	// tracking events can be outstanding at a time.  An attempt to
+	// launch an additional kernel will stall until an event
+	// completes.
+	KernelTrackerMaxPending int32 `protobuf:"varint,9,opt,name=kernel_tracker_max_pending,json=kernelTrackerMaxPending,proto3" json:"kernel_tracker_max_pending,omitempty"`
 }
 
-func (m *GPUOptions_Experimental) Reset()                    { *m = GPUOptions_Experimental{} }
-func (m *GPUOptions_Experimental) String() string            { return proto.CompactTextString(m) }
-func (*GPUOptions_Experimental) ProtoMessage()               {}
-func (*GPUOptions_Experimental) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{0, 0} }
+func (m *GPUOptions_Experimental) Reset()         { *m = GPUOptions_Experimental{} }
+func (m *GPUOptions_Experimental) String() string { return proto.CompactTextString(m) }
+func (*GPUOptions_Experimental) ProtoMessage()    {}
+func (*GPUOptions_Experimental) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{0, 0}
+}
+func (m *GPUOptions_Experimental) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GPUOptions_Experimental) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GPUOptions_Experimental.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GPUOptions_Experimental) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GPUOptions_Experimental.Merge(m, src)
+}
+func (m *GPUOptions_Experimental) XXX_Size() int {
+	return m.Size()
+}
+func (m *GPUOptions_Experimental) XXX_DiscardUnknown() {
+	xxx_messageInfo_GPUOptions_Experimental.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GPUOptions_Experimental proto.InternalMessageInfo
 
 func (m *GPUOptions_Experimental) GetVirtualDevices() []*GPUOptions_Experimental_VirtualDevices {
 	if m != nil {
@@ -326,6 +422,41 @@ func (m *GPUOptions_Experimental) GetNumDevToDevCopyStreams() int32 {
 	return 0
 }
 
+func (m *GPUOptions_Experimental) GetCollectiveRingOrder() string {
+	if m != nil {
+		return m.CollectiveRingOrder
+	}
+	return ""
+}
+
+func (m *GPUOptions_Experimental) GetTimestampedAllocator() bool {
+	if m != nil {
+		return m.TimestampedAllocator
+	}
+	return false
+}
+
+func (m *GPUOptions_Experimental) GetKernelTrackerMaxInterval() int32 {
+	if m != nil {
+		return m.KernelTrackerMaxInterval
+	}
+	return 0
+}
+
+func (m *GPUOptions_Experimental) GetKernelTrackerMaxBytes() int32 {
+	if m != nil {
+		return m.KernelTrackerMaxBytes
+	}
+	return 0
+}
+
+func (m *GPUOptions_Experimental) GetKernelTrackerMaxPending() int32 {
+	if m != nil {
+		return m.KernelTrackerMaxPending
+	}
+	return 0
+}
+
 // Configuration for breaking down a visible GPU into multiple "virtual"
 // devices.
 type GPUOptions_Experimental_VirtualDevices struct {
@@ -337,7 +468,7 @@ type GPUOptions_Experimental_VirtualDevices struct {
 	//
 	// For the concept of "visible" and "virtual" GPU, see the comments for
 	// "visible_device_list" above for more information.
-	MemoryLimitMb []float32 `protobuf:"fixed32,1,rep,packed,name=memory_limit_mb,json=memoryLimitMb" json:"memory_limit_mb,omitempty"`
+	MemoryLimitMb []float32 `protobuf:"fixed32,1,rep,packed,name=memory_limit_mb,json=memoryLimitMb,proto3" json:"memory_limit_mb,omitempty"`
 }
 
 func (m *GPUOptions_Experimental_VirtualDevices) Reset() {
@@ -346,8 +477,34 @@ func (m *GPUOptions_Experimental_VirtualDevices) Reset() {
 func (m *GPUOptions_Experimental_VirtualDevices) String() string { return proto.CompactTextString(m) }
 func (*GPUOptions_Experimental_VirtualDevices) ProtoMessage()    {}
 func (*GPUOptions_Experimental_VirtualDevices) Descriptor() ([]byte, []int) {
-	return fileDescriptorConfig, []int{0, 0, 0}
+	return fileDescriptor_e2349c44c118036b, []int{0, 0, 0}
 }
+func (m *GPUOptions_Experimental_VirtualDevices) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GPUOptions_Experimental_VirtualDevices) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GPUOptions_Experimental_VirtualDevices.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GPUOptions_Experimental_VirtualDevices) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GPUOptions_Experimental_VirtualDevices.Merge(m, src)
+}
+func (m *GPUOptions_Experimental_VirtualDevices) XXX_Size() int {
+	return m.Size()
+}
+func (m *GPUOptions_Experimental_VirtualDevices) XXX_DiscardUnknown() {
+	xxx_messageInfo_GPUOptions_Experimental_VirtualDevices.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GPUOptions_Experimental_VirtualDevices proto.InternalMessageInfo
 
 func (m *GPUOptions_Experimental_VirtualDevices) GetMemoryLimitMb() []float32 {
 	if m != nil {
@@ -376,10 +533,38 @@ type OptimizerOptions struct {
 	GlobalJitLevel OptimizerOptions_GlobalJitLevel `protobuf:"varint,5,opt,name=global_jit_level,json=globalJitLevel,proto3,enum=tensorflow.OptimizerOptions_GlobalJitLevel" json:"global_jit_level,omitempty"`
 }
 
-func (m *OptimizerOptions) Reset()                    { *m = OptimizerOptions{} }
-func (m *OptimizerOptions) String() string            { return proto.CompactTextString(m) }
-func (*OptimizerOptions) ProtoMessage()               {}
-func (*OptimizerOptions) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{1} }
+func (m *OptimizerOptions) Reset()         { *m = OptimizerOptions{} }
+func (m *OptimizerOptions) String() string { return proto.CompactTextString(m) }
+func (*OptimizerOptions) ProtoMessage()    {}
+func (*OptimizerOptions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{1}
+}
+func (m *OptimizerOptions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *OptimizerOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_OptimizerOptions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *OptimizerOptions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OptimizerOptions.Merge(m, src)
+}
+func (m *OptimizerOptions) XXX_Size() int {
+	return m.Size()
+}
+func (m *OptimizerOptions) XXX_DiscardUnknown() {
+	xxx_messageInfo_OptimizerOptions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OptimizerOptions proto.InternalMessageInfo
 
 func (m *OptimizerOptions) GetDoCommonSubexpressionElimination() bool {
 	if m != nil {
@@ -428,7 +613,7 @@ type GraphOptions struct {
 	// (Currently ignored.)
 	EnableRecvScheduling bool `protobuf:"varint,2,opt,name=enable_recv_scheduling,json=enableRecvScheduling,proto3" json:"enable_recv_scheduling,omitempty"`
 	// Options controlling how graph is optimized.
-	OptimizerOptions *OptimizerOptions `protobuf:"bytes,3,opt,name=optimizer_options,json=optimizerOptions" json:"optimizer_options,omitempty"`
+	OptimizerOptions *OptimizerOptions `protobuf:"bytes,3,opt,name=optimizer_options,json=optimizerOptions,proto3" json:"optimizer_options,omitempty"`
 	// The number of steps to run before returning a cost model detailing
 	// the memory usage and performance of each node of the graph. 0 means
 	// no cost model.
@@ -455,13 +640,41 @@ type GraphOptions struct {
 	// Options that control the type and amount of graph rewriting.
 	// Not currently configurable via the public Python API (i.e. there is no API
 	// stability guarantee if you import RewriterConfig explicitly).
-	RewriteOptions *RewriterConfig `protobuf:"bytes,10,opt,name=rewrite_options,json=rewriteOptions" json:"rewrite_options,omitempty"`
+	RewriteOptions *RewriterConfig `protobuf:"bytes,10,opt,name=rewrite_options,json=rewriteOptions,proto3" json:"rewrite_options,omitempty"`
 }
 
-func (m *GraphOptions) Reset()                    { *m = GraphOptions{} }
-func (m *GraphOptions) String() string            { return proto.CompactTextString(m) }
-func (*GraphOptions) ProtoMessage()               {}
-func (*GraphOptions) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{2} }
+func (m *GraphOptions) Reset()         { *m = GraphOptions{} }
+func (m *GraphOptions) String() string { return proto.CompactTextString(m) }
+func (*GraphOptions) ProtoMessage()    {}
+func (*GraphOptions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{2}
+}
+func (m *GraphOptions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GraphOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_GraphOptions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *GraphOptions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GraphOptions.Merge(m, src)
+}
+func (m *GraphOptions) XXX_Size() int {
+	return m.Size()
+}
+func (m *GraphOptions) XXX_DiscardUnknown() {
+	xxx_messageInfo_GraphOptions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GraphOptions proto.InternalMessageInfo
 
 func (m *GraphOptions) GetEnableRecvScheduling() bool {
 	if m != nil {
@@ -550,10 +763,38 @@ type ThreadPoolOptionProto struct {
 	GlobalName string `protobuf:"bytes,2,opt,name=global_name,json=globalName,proto3" json:"global_name,omitempty"`
 }
 
-func (m *ThreadPoolOptionProto) Reset()                    { *m = ThreadPoolOptionProto{} }
-func (m *ThreadPoolOptionProto) String() string            { return proto.CompactTextString(m) }
-func (*ThreadPoolOptionProto) ProtoMessage()               {}
-func (*ThreadPoolOptionProto) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{3} }
+func (m *ThreadPoolOptionProto) Reset()         { *m = ThreadPoolOptionProto{} }
+func (m *ThreadPoolOptionProto) String() string { return proto.CompactTextString(m) }
+func (*ThreadPoolOptionProto) ProtoMessage()    {}
+func (*ThreadPoolOptionProto) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{3}
+}
+func (m *ThreadPoolOptionProto) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ThreadPoolOptionProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ThreadPoolOptionProto.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ThreadPoolOptionProto) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ThreadPoolOptionProto.Merge(m, src)
+}
+func (m *ThreadPoolOptionProto) XXX_Size() int {
+	return m.Size()
+}
+func (m *ThreadPoolOptionProto) XXX_DiscardUnknown() {
+	xxx_messageInfo_ThreadPoolOptionProto.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ThreadPoolOptionProto proto.InternalMessageInfo
 
 func (m *ThreadPoolOptionProto) GetNumThreads() int32 {
 	if m != nil {
@@ -576,18 +817,149 @@ type RPCOptions struct {
 	// transport for client-master communication that avoids the RPC
 	// stack. This option is primarily for used testing the RPC stack.
 	UseRpcForInprocessMaster bool `protobuf:"varint,1,opt,name=use_rpc_for_inprocess_master,json=useRpcForInprocessMaster,proto3" json:"use_rpc_for_inprocess_master,omitempty"`
+	// The compression algorithm to be used. One of "deflate", "gzip".
+	CompressionAlgorithm string `protobuf:"bytes,2,opt,name=compression_algorithm,json=compressionAlgorithm,proto3" json:"compression_algorithm,omitempty"`
+	// If compression_algorithm is set, the compression level to be used.
+	// From 0 (no compression), up to 3.
+	CompressionLevel int32 `protobuf:"varint,3,opt,name=compression_level,json=compressionLevel,proto3" json:"compression_level,omitempty"`
+	// Setting cache_rpc_response to true will enable sender side caching of
+	// response for RecvTensorAsync and RecvBufAsync to allow receiver to retry
+	// requests . This is only necessary when the network fabric is experiencing a
+	// significant error rate.  Without it we'll fail a step on an network error,
+	// while with it we'll be able to complete long steps (like complex
+	// initializations) in the face of some network errors during RecvTensor.
+	CacheRpcResponse bool `protobuf:"varint,4,opt,name=cache_rpc_response,json=cacheRpcResponse,proto3" json:"cache_rpc_response,omitempty"`
+	// Disables TCP connection sharing when opening a new RPC channel.
+	DisableSessionConnectionSharing bool `protobuf:"varint,5,opt,name=disable_session_connection_sharing,json=disableSessionConnectionSharing,proto3" json:"disable_session_connection_sharing,omitempty"`
 }
 
-func (m *RPCOptions) Reset()                    { *m = RPCOptions{} }
-func (m *RPCOptions) String() string            { return proto.CompactTextString(m) }
-func (*RPCOptions) ProtoMessage()               {}
-func (*RPCOptions) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{4} }
+func (m *RPCOptions) Reset()         { *m = RPCOptions{} }
+func (m *RPCOptions) String() string { return proto.CompactTextString(m) }
+func (*RPCOptions) ProtoMessage()    {}
+func (*RPCOptions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{4}
+}
+func (m *RPCOptions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RPCOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RPCOptions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RPCOptions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RPCOptions.Merge(m, src)
+}
+func (m *RPCOptions) XXX_Size() int {
+	return m.Size()
+}
+func (m *RPCOptions) XXX_DiscardUnknown() {
+	xxx_messageInfo_RPCOptions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RPCOptions proto.InternalMessageInfo
 
 func (m *RPCOptions) GetUseRpcForInprocessMaster() bool {
 	if m != nil {
 		return m.UseRpcForInprocessMaster
 	}
 	return false
+}
+
+func (m *RPCOptions) GetCompressionAlgorithm() string {
+	if m != nil {
+		return m.CompressionAlgorithm
+	}
+	return ""
+}
+
+func (m *RPCOptions) GetCompressionLevel() int32 {
+	if m != nil {
+		return m.CompressionLevel
+	}
+	return 0
+}
+
+func (m *RPCOptions) GetCacheRpcResponse() bool {
+	if m != nil {
+		return m.CacheRpcResponse
+	}
+	return false
+}
+
+func (m *RPCOptions) GetDisableSessionConnectionSharing() bool {
+	if m != nil {
+		return m.DisableSessionConnectionSharing
+	}
+	return false
+}
+
+// Metadata about the session.
+//
+// This can be used by the runtime and the Ops for debugging, monitoring, etc.
+//
+// The (name, version) tuple is expected to be a unique identifier for
+// sessions within the same process.
+//
+// NOTE: This is currently used and propagated only by the direct session.
+type SessionMetadata struct {
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// The version is optional. If set, needs to be >= 0.
+	Version int64 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
+}
+
+func (m *SessionMetadata) Reset()         { *m = SessionMetadata{} }
+func (m *SessionMetadata) String() string { return proto.CompactTextString(m) }
+func (*SessionMetadata) ProtoMessage()    {}
+func (*SessionMetadata) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{5}
+}
+func (m *SessionMetadata) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SessionMetadata) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_SessionMetadata.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *SessionMetadata) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SessionMetadata.Merge(m, src)
+}
+func (m *SessionMetadata) XXX_Size() int {
+	return m.Size()
+}
+func (m *SessionMetadata) XXX_DiscardUnknown() {
+	xxx_messageInfo_SessionMetadata.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SessionMetadata proto.InternalMessageInfo
+
+func (m *SessionMetadata) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *SessionMetadata) GetVersion() int64 {
+	if m != nil {
+		return m.Version
+	}
+	return 0
 }
 
 // Session configuration parameters.
@@ -597,15 +969,27 @@ type ConfigProto struct {
 	// number of devices of that type to use.  If a particular device
 	// type is not found in the map, the system picks an appropriate
 	// number.
-	DeviceCount map[string]int32 `protobuf:"bytes,1,rep,name=device_count,json=deviceCount" json:"device_count,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
+	DeviceCount map[string]int32 `protobuf:"bytes,1,rep,name=device_count,json=deviceCount,proto3" json:"device_count,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"varint,2,opt,name=value,proto3"`
 	// The execution of an individual op (for some op types) can be
 	// parallelized on a pool of intra_op_parallelism_threads.
 	// 0 means the system picks an appropriate number.
+	//
+	// If you create an ordinary session, e.g., from Python or C++,
+	// then there is exactly one intra op thread pool per process.
+	// The first session created determines the number of threads in this pool.
+	// All subsequent sessions reuse/share this one global pool.
+	//
+	// There are notable exceptions to the default behavior describe above:
+	// 1. There is an environment variable  for overriding this thread pool,
+	//    named TF_OVERRIDE_GLOBAL_THREADPOOL.
+	// 2. When connecting to a server, such as a remote `tf.train.Server`
+	//    instance, then this option will be ignored altogether.
 	IntraOpParallelismThreads int32 `protobuf:"varint,2,opt,name=intra_op_parallelism_threads,json=intraOpParallelismThreads,proto3" json:"intra_op_parallelism_threads,omitempty"`
 	// Nodes that perform blocking operations are enqueued on a pool of
 	// inter_op_parallelism_threads available in each process.
 	//
 	// 0 means the system picks an appropriate number.
+	// Negative means all operations are performed in caller's thread.
 	//
 	// Note that the first Session created in the process sets the
 	// number of threads for all future sessions unless use_per_session_threads is
@@ -640,7 +1024,7 @@ type ConfigProto struct {
 	// proto, to avoid creating multiple large pools. It is typically better to
 	// run the non-low-priority work, even across sessions, in a single large
 	// pool.
-	SessionInterOpThreadPool []*ThreadPoolOptionProto `protobuf:"bytes,12,rep,name=session_inter_op_thread_pool,json=sessionInterOpThreadPool" json:"session_inter_op_thread_pool,omitempty"`
+	SessionInterOpThreadPool []*ThreadPoolOptionProto `protobuf:"bytes,12,rep,name=session_inter_op_thread_pool,json=sessionInterOpThreadPool,proto3" json:"session_inter_op_thread_pool,omitempty"`
 	// Assignment of Nodes to Devices is recomputed every placement_period
 	// steps until the system warms up (at which point the recomputation
 	// typically slows down automatically).
@@ -648,9 +1032,9 @@ type ConfigProto struct {
 	// When any filters are present sessions will ignore all devices which do not
 	// match the filters. Each filter can be partially specified, e.g. "/job:ps"
 	// "/job:worker/replica:3", etc.
-	DeviceFilters []string `protobuf:"bytes,4,rep,name=device_filters,json=deviceFilters" json:"device_filters,omitempty"`
+	DeviceFilters []string `protobuf:"bytes,4,rep,name=device_filters,json=deviceFilters,proto3" json:"device_filters,omitempty"`
 	// Options that apply to all GPUs.
-	GpuOptions *GPUOptions `protobuf:"bytes,6,opt,name=gpu_options,json=gpuOptions" json:"gpu_options,omitempty"`
+	GpuOptions *GPUOptions `protobuf:"bytes,6,opt,name=gpu_options,json=gpuOptions,proto3" json:"gpu_options,omitempty"`
 	// Whether soft placement is allowed. If allow_soft_placement is true,
 	// an op will be placed on CPU if
 	//   1. there's no GPU implementation for the OP
@@ -662,25 +1046,54 @@ type ConfigProto struct {
 	// Whether device placements should be logged.
 	LogDevicePlacement bool `protobuf:"varint,8,opt,name=log_device_placement,json=logDevicePlacement,proto3" json:"log_device_placement,omitempty"`
 	// Options that apply to all graphs.
-	GraphOptions *GraphOptions `protobuf:"bytes,10,opt,name=graph_options,json=graphOptions" json:"graph_options,omitempty"`
+	GraphOptions *GraphOptions `protobuf:"bytes,10,opt,name=graph_options,json=graphOptions,proto3" json:"graph_options,omitempty"`
 	// Global timeout for all blocking operations in this session.  If non-zero,
 	// and not overridden on a per-operation basis, this value will be used as the
 	// deadline for all blocking operations.
 	OperationTimeoutInMs int64 `protobuf:"varint,11,opt,name=operation_timeout_in_ms,json=operationTimeoutInMs,proto3" json:"operation_timeout_in_ms,omitempty"`
 	// Options that apply when this session uses the distributed runtime.
-	RpcOptions *RPCOptions `protobuf:"bytes,13,opt,name=rpc_options,json=rpcOptions" json:"rpc_options,omitempty"`
+	RpcOptions *RPCOptions `protobuf:"bytes,13,opt,name=rpc_options,json=rpcOptions,proto3" json:"rpc_options,omitempty"`
 	// Optional list of all workers to use in this session.
-	ClusterDef *ClusterDef `protobuf:"bytes,14,opt,name=cluster_def,json=clusterDef" json:"cluster_def,omitempty"`
+	ClusterDef *ClusterDef `protobuf:"bytes,14,opt,name=cluster_def,json=clusterDef,proto3" json:"cluster_def,omitempty"`
 	// If true, any resources such as Variables used in the session will not be
-	// shared with other sessions.
+	// shared with other sessions. However, when clusterspec propagation is
+	// enabled, this field is ignored and sessions are always isolated.
 	IsolateSessionState bool                      `protobuf:"varint,15,opt,name=isolate_session_state,json=isolateSessionState,proto3" json:"isolate_session_state,omitempty"`
-	Experimental        *ConfigProto_Experimental `protobuf:"bytes,16,opt,name=experimental" json:"experimental,omitempty"`
+	Experimental        *ConfigProto_Experimental `protobuf:"bytes,16,opt,name=experimental,proto3" json:"experimental,omitempty"`
 }
 
-func (m *ConfigProto) Reset()                    { *m = ConfigProto{} }
-func (m *ConfigProto) String() string            { return proto.CompactTextString(m) }
-func (*ConfigProto) ProtoMessage()               {}
-func (*ConfigProto) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{5} }
+func (m *ConfigProto) Reset()         { *m = ConfigProto{} }
+func (m *ConfigProto) String() string { return proto.CompactTextString(m) }
+func (*ConfigProto) ProtoMessage()    {}
+func (*ConfigProto) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{6}
+}
+func (m *ConfigProto) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ConfigProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ConfigProto.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ConfigProto) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ConfigProto.Merge(m, src)
+}
+func (m *ConfigProto) XXX_Size() int {
+	return m.Size()
+}
+func (m *ConfigProto) XXX_DiscardUnknown() {
+	xxx_messageInfo_ConfigProto.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ConfigProto proto.InternalMessageInfo
 
 func (m *ConfigProto) GetDeviceCount() map[string]int32 {
 	if m != nil {
@@ -800,20 +1213,126 @@ func (m *ConfigProto) GetExperimental() *ConfigProto_Experimental {
 type ConfigProto_Experimental struct {
 	// Task name for group resolution.
 	CollectiveGroupLeader string `protobuf:"bytes,1,opt,name=collective_group_leader,json=collectiveGroupLeader,proto3" json:"collective_group_leader,omitempty"`
-	// Whether the client will format templated errors. For example, the string:
-	// "The node was defined on ^^node:Foo:${file}:${line}^^".
-	ClientHandlesErrorFormatting bool `protobuf:"varint,2,opt,name=client_handles_error_formatting,json=clientHandlesErrorFormatting,proto3" json:"client_handles_error_formatting,omitempty"`
 	// Which executor to use, the default executor will be used
 	// if it is an empty string or "DEFAULT"
 	ExecutorType string `protobuf:"bytes,3,opt,name=executor_type,json=executorType,proto3" json:"executor_type,omitempty"`
+	// Guidance to formatting of large RecvBuf fields for transfer.
+	// Any positive value sets the max chunk size.  0 defaults to 4096.
+	// Any negative value indicates no max, i.e. one chunk only.
+	RecvBufMaxChunk int32 `protobuf:"varint,4,opt,name=recv_buf_max_chunk,json=recvBufMaxChunk,proto3" json:"recv_buf_max_chunk,omitempty"`
+	// If true, and supported by the platform, the runtime will attempt to
+	// use NUMA affinity where applicable.  One consequence will be the
+	// existence of as many CPU devices as there are available NUMA nodes.
+	UseNumaAffinity bool `protobuf:"varint,5,opt,name=use_numa_affinity,json=useNumaAffinity,proto3" json:"use_numa_affinity,omitempty"`
+	// If true, make collective op execution order sequential and deterministic
+	// for potentially concurrent collective instances.
+	CollectiveDeterministicSequentialExecution bool `protobuf:"varint,6,opt,name=collective_deterministic_sequential_execution,json=collectiveDeterministicSequentialExecution,proto3" json:"collective_deterministic_sequential_execution,omitempty"`
+	// If true, use NCCL for CollectiveOps.  This feature is highly
+	// experimental.
+	CollectiveNccl bool `protobuf:"varint,7,opt,name=collective_nccl,json=collectiveNccl,proto3" json:"collective_nccl,omitempty"`
+	// In the following, session state means the value of a variable, elements
+	// in a hash table, or any other resource, accessible by worker sessions
+	// held by a TF server.
+	//
+	// When ClusterSpec propagation is enabled, the value of
+	// isolate_session_state is ignored when deciding whether to share session
+	// states in a TF server (for backwards compatibility reasons).
+	// - If share_session_state_in_clusterspec_propagation is true, the session
+	// states are shared.
+	// - If share_session_state_in_clusterspec_propagation is false, session
+	// states are isolated.
+	//
+	// When clusterspec propagation is not used, the value of
+	// share_session_state_in_clusterspec_propagation is ignored when deciding
+	// whether to share session states in a TF server.
+	// - If isolate_session_state is true, session states are isolated.
+	// - If isolate_session_state is false, session states are shared.
+	//
+	// TODO(b/129330037): Add a single API that consistently treats
+	// isolate_session_state and ClusterSpec propagation.
+	ShareSessionStateInClusterspecPropagation bool `protobuf:"varint,8,opt,name=share_session_state_in_clusterspec_propagation,json=shareSessionStateInClusterspecPropagation,proto3" json:"share_session_state_in_clusterspec_propagation,omitempty"`
+	// If using a direct session, disable spinning while waiting for work in
+	// the thread pool. This may result in higher latency for completing ops,
+	// but in the case where there is a lot of spinning may result in lower
+	// CPU usage.
+	DisableThreadSpinning bool `protobuf:"varint,9,opt,name=disable_thread_spinning,json=disableThreadSpinning,proto3" json:"disable_thread_spinning,omitempty"`
+	// When true, WorkerSessions are created with device attributes from the
+	// full cluster.
+	// This is helpful when a worker wants to partition a graph
+	// (for example during a PartitionedCallOp).
+	ShareClusterDevicesInSession bool `protobuf:"varint,10,opt,name=share_cluster_devices_in_session,json=shareClusterDevicesInSession,proto3" json:"share_cluster_devices_in_session,omitempty"`
+	// Metadata about the session.
+	//
+	// If set, this can be used by the runtime and the Ops for debugging,
+	// monitoring, etc.
+	//
+	// NOTE: This is currently used and propagated only by the direct session.
+	SessionMetadata *SessionMetadata `protobuf:"bytes,11,opt,name=session_metadata,json=sessionMetadata,proto3" json:"session_metadata,omitempty"`
+	// If true, the session may treat the graph as being static for optimization
+	// purposes.
+	//
+	// If this option is set to true when a session is created, the full
+	// GraphDef must be passed in a single call to Session::Create(), and
+	// Session::Extend() may not be supported.
+	OptimizeForStaticGraph bool `protobuf:"varint,12,opt,name=optimize_for_static_graph,json=optimizeForStaticGraph,proto3" json:"optimize_for_static_graph,omitempty"`
+	// Whether to enable the MLIR-based TF->XLA bridge.
+	//
+	// This is a replacement to the existing bridge, and not ready for
+	// production usage yet.
+	// If this option is set to true when a session is created, MLIR is used to
+	// perform the set of graph transformations to put the graph in a form that
+	// can be executed with delegation of some computations to an accelerator.
+	// This builds on the model of XLA where a subset of the graph is
+	// encapsulated and attached to a "compile" operation, whose result is fed
+	// to an "execute" operation. The kernel for these operations is responsible
+	// to lower the encapsulated graph to a particular device.
+	EnableMlirBridge bool `protobuf:"varint,13,opt,name=enable_mlir_bridge,json=enableMlirBridge,proto3" json:"enable_mlir_bridge,omitempty"`
+	// If true, the session will not store an additional copy of the graph for
+	// each subgraph.
+	//
+	// If this option is set to true when a session is created, the
+	// `RunOptions.output_partition_graphs` options must not be set.
+	DisableOutputPartitionGraphs bool `protobuf:"varint,14,opt,name=disable_output_partition_graphs,json=disableOutputPartitionGraphs,proto3" json:"disable_output_partition_graphs,omitempty"`
+	// Minimum number of batches run through the XLA graph before XLA fusion
+	// autotuner is enabled. Default value of zero disables the autotuner.
+	//
+	// The XLA fusion autotuner can improve performance by executing a heuristic
+	// search on the compiler parameters.
+	XlaFusionAutotunerThresh int64 `protobuf:"varint,15,opt,name=xla_fusion_autotuner_thresh,json=xlaFusionAutotunerThresh,proto3" json:"xla_fusion_autotuner_thresh,omitempty"`
 }
 
 func (m *ConfigProto_Experimental) Reset()         { *m = ConfigProto_Experimental{} }
 func (m *ConfigProto_Experimental) String() string { return proto.CompactTextString(m) }
 func (*ConfigProto_Experimental) ProtoMessage()    {}
 func (*ConfigProto_Experimental) Descriptor() ([]byte, []int) {
-	return fileDescriptorConfig, []int{5, 1}
+	return fileDescriptor_e2349c44c118036b, []int{6, 1}
 }
+func (m *ConfigProto_Experimental) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ConfigProto_Experimental) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_ConfigProto_Experimental.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *ConfigProto_Experimental) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ConfigProto_Experimental.Merge(m, src)
+}
+func (m *ConfigProto_Experimental) XXX_Size() int {
+	return m.Size()
+}
+func (m *ConfigProto_Experimental) XXX_DiscardUnknown() {
+	xxx_messageInfo_ConfigProto_Experimental.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ConfigProto_Experimental proto.InternalMessageInfo
 
 func (m *ConfigProto_Experimental) GetCollectiveGroupLeader() string {
 	if m != nil {
@@ -822,18 +1341,95 @@ func (m *ConfigProto_Experimental) GetCollectiveGroupLeader() string {
 	return ""
 }
 
-func (m *ConfigProto_Experimental) GetClientHandlesErrorFormatting() bool {
-	if m != nil {
-		return m.ClientHandlesErrorFormatting
-	}
-	return false
-}
-
 func (m *ConfigProto_Experimental) GetExecutorType() string {
 	if m != nil {
 		return m.ExecutorType
 	}
 	return ""
+}
+
+func (m *ConfigProto_Experimental) GetRecvBufMaxChunk() int32 {
+	if m != nil {
+		return m.RecvBufMaxChunk
+	}
+	return 0
+}
+
+func (m *ConfigProto_Experimental) GetUseNumaAffinity() bool {
+	if m != nil {
+		return m.UseNumaAffinity
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetCollectiveDeterministicSequentialExecution() bool {
+	if m != nil {
+		return m.CollectiveDeterministicSequentialExecution
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetCollectiveNccl() bool {
+	if m != nil {
+		return m.CollectiveNccl
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetShareSessionStateInClusterspecPropagation() bool {
+	if m != nil {
+		return m.ShareSessionStateInClusterspecPropagation
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetDisableThreadSpinning() bool {
+	if m != nil {
+		return m.DisableThreadSpinning
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetShareClusterDevicesInSession() bool {
+	if m != nil {
+		return m.ShareClusterDevicesInSession
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetSessionMetadata() *SessionMetadata {
+	if m != nil {
+		return m.SessionMetadata
+	}
+	return nil
+}
+
+func (m *ConfigProto_Experimental) GetOptimizeForStaticGraph() bool {
+	if m != nil {
+		return m.OptimizeForStaticGraph
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetEnableMlirBridge() bool {
+	if m != nil {
+		return m.EnableMlirBridge
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetDisableOutputPartitionGraphs() bool {
+	if m != nil {
+		return m.DisableOutputPartitionGraphs
+	}
+	return false
+}
+
+func (m *ConfigProto_Experimental) GetXlaFusionAutotunerThresh() int64 {
+	if m != nil {
+		return m.XlaFusionAutotunerThresh
+	}
+	return 0
 }
 
 // Options for a single Run() call.
@@ -852,20 +1448,48 @@ type RunOptions struct {
 	// outputted via RunMetadata.
 	OutputPartitionGraphs bool `protobuf:"varint,5,opt,name=output_partition_graphs,json=outputPartitionGraphs,proto3" json:"output_partition_graphs,omitempty"`
 	// EXPERIMENTAL.  Options used to initialize DebuggerState, if enabled.
-	DebugOptions *DebugOptions `protobuf:"bytes,6,opt,name=debug_options,json=debugOptions" json:"debug_options,omitempty"`
+	DebugOptions *DebugOptions `protobuf:"bytes,6,opt,name=debug_options,json=debugOptions,proto3" json:"debug_options,omitempty"`
 	// When enabled, causes tensor allocation information to be included in
 	// the error message when the Run() call fails because the allocator ran
 	// out of memory (OOM).
 	//
 	// Enabling this option can slow down the Run() call.
 	ReportTensorAllocationsUponOom bool                     `protobuf:"varint,7,opt,name=report_tensor_allocations_upon_oom,json=reportTensorAllocationsUponOom,proto3" json:"report_tensor_allocations_upon_oom,omitempty"`
-	Experimental                   *RunOptions_Experimental `protobuf:"bytes,8,opt,name=experimental" json:"experimental,omitempty"`
+	Experimental                   *RunOptions_Experimental `protobuf:"bytes,8,opt,name=experimental,proto3" json:"experimental,omitempty"`
 }
 
-func (m *RunOptions) Reset()                    { *m = RunOptions{} }
-func (m *RunOptions) String() string            { return proto.CompactTextString(m) }
-func (*RunOptions) ProtoMessage()               {}
-func (*RunOptions) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{6} }
+func (m *RunOptions) Reset()         { *m = RunOptions{} }
+func (m *RunOptions) String() string { return proto.CompactTextString(m) }
+func (*RunOptions) ProtoMessage()    {}
+func (*RunOptions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{7}
+}
+func (m *RunOptions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RunOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RunOptions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RunOptions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RunOptions.Merge(m, src)
+}
+func (m *RunOptions) XXX_Size() int {
+	return m.Size()
+}
+func (m *RunOptions) XXX_DiscardUnknown() {
+	xxx_messageInfo_RunOptions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RunOptions proto.InternalMessageInfo
 
 func (m *RunOptions) GetTraceLevel() RunOptions_TraceLevel {
 	if m != nil {
@@ -925,12 +1549,45 @@ type RunOptions_Experimental struct {
 	// same group_key value (in a distributed computation where tasks
 	// run disjoint graphs).
 	CollectiveGraphKey int64 `protobuf:"varint,1,opt,name=collective_graph_key,json=collectiveGraphKey,proto3" json:"collective_graph_key,omitempty"`
+	// If true, then operations (using the inter-op pool) across all
+	// session::run() calls will be centrally scheduled, optimizing for (median
+	// and tail) latency.
+	// Consider using this option for CPU-bound workloads like inference.
+	UseRunHandlerPool bool `protobuf:"varint,2,opt,name=use_run_handler_pool,json=useRunHandlerPool,proto3" json:"use_run_handler_pool,omitempty"`
 }
 
-func (m *RunOptions_Experimental) Reset()                    { *m = RunOptions_Experimental{} }
-func (m *RunOptions_Experimental) String() string            { return proto.CompactTextString(m) }
-func (*RunOptions_Experimental) ProtoMessage()               {}
-func (*RunOptions_Experimental) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{6, 0} }
+func (m *RunOptions_Experimental) Reset()         { *m = RunOptions_Experimental{} }
+func (m *RunOptions_Experimental) String() string { return proto.CompactTextString(m) }
+func (*RunOptions_Experimental) ProtoMessage()    {}
+func (*RunOptions_Experimental) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{7, 0}
+}
+func (m *RunOptions_Experimental) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RunOptions_Experimental) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RunOptions_Experimental.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RunOptions_Experimental) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RunOptions_Experimental.Merge(m, src)
+}
+func (m *RunOptions_Experimental) XXX_Size() int {
+	return m.Size()
+}
+func (m *RunOptions_Experimental) XXX_DiscardUnknown() {
+	xxx_messageInfo_RunOptions_Experimental.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RunOptions_Experimental proto.InternalMessageInfo
 
 func (m *RunOptions_Experimental) GetCollectiveGraphKey() int64 {
 	if m != nil {
@@ -939,40 +1596,154 @@ func (m *RunOptions_Experimental) GetCollectiveGraphKey() int64 {
 	return 0
 }
 
+func (m *RunOptions_Experimental) GetUseRunHandlerPool() bool {
+	if m != nil {
+		return m.UseRunHandlerPool
+	}
+	return false
+}
+
 // Metadata output (i.e., non-Tensor) for a single Run() call.
 type RunMetadata struct {
 	// Statistics traced for this step. Populated if tracing is turned on via the
 	// "RunOptions" proto.
 	// EXPERIMENTAL: The format and set of events may change in future versions.
-	StepStats *tensorflow13.StepStats `protobuf:"bytes,1,opt,name=step_stats,json=stepStats" json:"step_stats,omitempty"`
+	StepStats *framework.StepStats `protobuf:"bytes,1,opt,name=step_stats,json=stepStats,proto3" json:"step_stats,omitempty"`
 	// The cost graph for the computation defined by the run call.
-	CostGraph *tensorflow2.CostGraphDef `protobuf:"bytes,2,opt,name=cost_graph,json=costGraph" json:"cost_graph,omitempty"`
+	CostGraph *framework.CostGraphDef `protobuf:"bytes,2,opt,name=cost_graph,json=costGraph,proto3" json:"cost_graph,omitempty"`
 	// Graphs of the partitions executed by executors.
-	PartitionGraphs []*tensorflow10.GraphDef `protobuf:"bytes,3,rep,name=partition_graphs,json=partitionGraphs" json:"partition_graphs,omitempty"`
+	PartitionGraphs []*framework.GraphDef `protobuf:"bytes,3,rep,name=partition_graphs,json=partitionGraphs,proto3" json:"partition_graphs,omitempty"`
+	// This is only populated for graphs that are run as functions in TensorFlow
+	// V2. There will be an entry below for each function that is traced.
+	// The main use cases of the post_optimization_graph and the partition_graphs
+	// is to give the caller insight into the graphs that were actually run by the
+	// runtime. Additional information (such as those in step_stats) will match
+	// these graphs.
+	// We also include the pre_optimization_graph since it is usually easier to
+	// read, and is helpful in situations where the caller wants to get a high
+	// level idea of what the built graph looks like (since the various graph
+	// optimization passes might change the structure of the graph significantly).
+	FunctionGraphs []*RunMetadata_FunctionGraphs `protobuf:"bytes,4,rep,name=function_graphs,json=functionGraphs,proto3" json:"function_graphs,omitempty"`
 }
 
-func (m *RunMetadata) Reset()                    { *m = RunMetadata{} }
-func (m *RunMetadata) String() string            { return proto.CompactTextString(m) }
-func (*RunMetadata) ProtoMessage()               {}
-func (*RunMetadata) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{7} }
+func (m *RunMetadata) Reset()         { *m = RunMetadata{} }
+func (m *RunMetadata) String() string { return proto.CompactTextString(m) }
+func (*RunMetadata) ProtoMessage()    {}
+func (*RunMetadata) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{8}
+}
+func (m *RunMetadata) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RunMetadata) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RunMetadata.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RunMetadata) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RunMetadata.Merge(m, src)
+}
+func (m *RunMetadata) XXX_Size() int {
+	return m.Size()
+}
+func (m *RunMetadata) XXX_DiscardUnknown() {
+	xxx_messageInfo_RunMetadata.DiscardUnknown(m)
+}
 
-func (m *RunMetadata) GetStepStats() *tensorflow13.StepStats {
+var xxx_messageInfo_RunMetadata proto.InternalMessageInfo
+
+func (m *RunMetadata) GetStepStats() *framework.StepStats {
 	if m != nil {
 		return m.StepStats
 	}
 	return nil
 }
 
-func (m *RunMetadata) GetCostGraph() *tensorflow2.CostGraphDef {
+func (m *RunMetadata) GetCostGraph() *framework.CostGraphDef {
 	if m != nil {
 		return m.CostGraph
 	}
 	return nil
 }
 
-func (m *RunMetadata) GetPartitionGraphs() []*tensorflow10.GraphDef {
+func (m *RunMetadata) GetPartitionGraphs() []*framework.GraphDef {
 	if m != nil {
 		return m.PartitionGraphs
+	}
+	return nil
+}
+
+func (m *RunMetadata) GetFunctionGraphs() []*RunMetadata_FunctionGraphs {
+	if m != nil {
+		return m.FunctionGraphs
+	}
+	return nil
+}
+
+type RunMetadata_FunctionGraphs struct {
+	// TODO(nareshmodi): Include some sort of function/cache-key identifier?
+	PartitionGraphs       []*framework.GraphDef `protobuf:"bytes,1,rep,name=partition_graphs,json=partitionGraphs,proto3" json:"partition_graphs,omitempty"`
+	PreOptimizationGraph  *framework.GraphDef   `protobuf:"bytes,2,opt,name=pre_optimization_graph,json=preOptimizationGraph,proto3" json:"pre_optimization_graph,omitempty"`
+	PostOptimizationGraph *framework.GraphDef   `protobuf:"bytes,3,opt,name=post_optimization_graph,json=postOptimizationGraph,proto3" json:"post_optimization_graph,omitempty"`
+}
+
+func (m *RunMetadata_FunctionGraphs) Reset()         { *m = RunMetadata_FunctionGraphs{} }
+func (m *RunMetadata_FunctionGraphs) String() string { return proto.CompactTextString(m) }
+func (*RunMetadata_FunctionGraphs) ProtoMessage()    {}
+func (*RunMetadata_FunctionGraphs) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{8, 0}
+}
+func (m *RunMetadata_FunctionGraphs) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RunMetadata_FunctionGraphs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RunMetadata_FunctionGraphs.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RunMetadata_FunctionGraphs) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RunMetadata_FunctionGraphs.Merge(m, src)
+}
+func (m *RunMetadata_FunctionGraphs) XXX_Size() int {
+	return m.Size()
+}
+func (m *RunMetadata_FunctionGraphs) XXX_DiscardUnknown() {
+	xxx_messageInfo_RunMetadata_FunctionGraphs.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RunMetadata_FunctionGraphs proto.InternalMessageInfo
+
+func (m *RunMetadata_FunctionGraphs) GetPartitionGraphs() []*framework.GraphDef {
+	if m != nil {
+		return m.PartitionGraphs
+	}
+	return nil
+}
+
+func (m *RunMetadata_FunctionGraphs) GetPreOptimizationGraph() *framework.GraphDef {
+	if m != nil {
+		return m.PreOptimizationGraph
+	}
+	return nil
+}
+
+func (m *RunMetadata_FunctionGraphs) GetPostOptimizationGraph() *framework.GraphDef {
+	if m != nil {
+		return m.PostOptimizationGraph
 	}
 	return nil
 }
@@ -987,10 +1758,38 @@ type TensorConnection struct {
 	ToTensor string `protobuf:"bytes,2,opt,name=to_tensor,json=toTensor,proto3" json:"to_tensor,omitempty"`
 }
 
-func (m *TensorConnection) Reset()                    { *m = TensorConnection{} }
-func (m *TensorConnection) String() string            { return proto.CompactTextString(m) }
-func (*TensorConnection) ProtoMessage()               {}
-func (*TensorConnection) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{8} }
+func (m *TensorConnection) Reset()         { *m = TensorConnection{} }
+func (m *TensorConnection) String() string { return proto.CompactTextString(m) }
+func (*TensorConnection) ProtoMessage()    {}
+func (*TensorConnection) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{9}
+}
+func (m *TensorConnection) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TensorConnection) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TensorConnection.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TensorConnection) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TensorConnection.Merge(m, src)
+}
+func (m *TensorConnection) XXX_Size() int {
+	return m.Size()
+}
+func (m *TensorConnection) XXX_DiscardUnknown() {
+	xxx_messageInfo_TensorConnection.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TensorConnection proto.InternalMessageInfo
 
 func (m *TensorConnection) GetFromTensor() string {
 	if m != nil {
@@ -1012,20 +1811,20 @@ func (m *TensorConnection) GetToTensor() string {
 // Compare with the arguments to `Session::Run()`.
 type CallableOptions struct {
 	// Tensors to be fed in the callable. Each feed is the name of a tensor.
-	Feed []string `protobuf:"bytes,1,rep,name=feed" json:"feed,omitempty"`
+	Feed []string `protobuf:"bytes,1,rep,name=feed,proto3" json:"feed,omitempty"`
 	// Fetches. A list of tensor names. The caller of the callable expects a
 	// tensor to be returned for each fetch[i] (see RunStepResponse.tensor). The
 	// order of specified fetches does not change the execution order.
-	Fetch []string `protobuf:"bytes,2,rep,name=fetch" json:"fetch,omitempty"`
+	Fetch []string `protobuf:"bytes,2,rep,name=fetch,proto3" json:"fetch,omitempty"`
 	// Target Nodes. A list of node names. The named nodes will be run by the
 	// callable but their outputs will not be returned.
-	Target []string `protobuf:"bytes,3,rep,name=target" json:"target,omitempty"`
+	Target []string `protobuf:"bytes,3,rep,name=target,proto3" json:"target,omitempty"`
 	// Options that will be applied to each run.
-	RunOptions *RunOptions `protobuf:"bytes,4,opt,name=run_options,json=runOptions" json:"run_options,omitempty"`
+	RunOptions *RunOptions `protobuf:"bytes,4,opt,name=run_options,json=runOptions,proto3" json:"run_options,omitempty"`
 	// Tensors to be connected in the callable. Each TensorConnection denotes
 	// a pair of tensors in the graph, between which an edge will be created
 	// in the callable.
-	TensorConnection []*TensorConnection `protobuf:"bytes,5,rep,name=tensor_connection,json=tensorConnection" json:"tensor_connection,omitempty"`
+	TensorConnection []*TensorConnection `protobuf:"bytes,5,rep,name=tensor_connection,json=tensorConnection,proto3" json:"tensor_connection,omitempty"`
 	// The Tensor objects fed in the callable and fetched from the callable
 	// are expected to be backed by host (CPU) memory by default.
 	//
@@ -1073,8 +1872,8 @@ type CallableOptions struct {
 	// operation that produced the contents of the tensor has completed, i.e., the
 	// CUDA stream has been synchronized (e.g., via cuCtxSynchronize() or
 	// cuStreamSynchronize()).
-	FeedDevices  map[string]string `protobuf:"bytes,6,rep,name=feed_devices,json=feedDevices" json:"feed_devices,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	FetchDevices map[string]string `protobuf:"bytes,7,rep,name=fetch_devices,json=fetchDevices" json:"fetch_devices,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	FeedDevices  map[string]string `protobuf:"bytes,6,rep,name=feed_devices,json=feedDevices,proto3" json:"feed_devices,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	FetchDevices map[string]string `protobuf:"bytes,7,rep,name=fetch_devices,json=fetchDevices,proto3" json:"fetch_devices,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	// By default, RunCallable() will synchronize the GPU stream before returning
 	// fetched tensors on a GPU device, to ensure that the values in those tensors
 	// have been produced. This simplifies interacting with the tensors, but
@@ -1088,10 +1887,38 @@ type CallableOptions struct {
 	FetchSkipSync bool `protobuf:"varint,8,opt,name=fetch_skip_sync,json=fetchSkipSync,proto3" json:"fetch_skip_sync,omitempty"`
 }
 
-func (m *CallableOptions) Reset()                    { *m = CallableOptions{} }
-func (m *CallableOptions) String() string            { return proto.CompactTextString(m) }
-func (*CallableOptions) ProtoMessage()               {}
-func (*CallableOptions) Descriptor() ([]byte, []int) { return fileDescriptorConfig, []int{9} }
+func (m *CallableOptions) Reset()         { *m = CallableOptions{} }
+func (m *CallableOptions) String() string { return proto.CompactTextString(m) }
+func (*CallableOptions) ProtoMessage()    {}
+func (*CallableOptions) Descriptor() ([]byte, []int) {
+	return fileDescriptor_e2349c44c118036b, []int{10}
+}
+func (m *CallableOptions) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CallableOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CallableOptions.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CallableOptions) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CallableOptions.Merge(m, src)
+}
+func (m *CallableOptions) XXX_Size() int {
+	return m.Size()
+}
+func (m *CallableOptions) XXX_DiscardUnknown() {
+	xxx_messageInfo_CallableOptions.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CallableOptions proto.InternalMessageInfo
 
 func (m *CallableOptions) GetFeed() []string {
 	if m != nil {
@@ -1150,6 +1977,9 @@ func (m *CallableOptions) GetFetchSkipSync() bool {
 }
 
 func init() {
+	proto.RegisterEnum("tensorflow.OptimizerOptions_Level", OptimizerOptions_Level_name, OptimizerOptions_Level_value)
+	proto.RegisterEnum("tensorflow.OptimizerOptions_GlobalJitLevel", OptimizerOptions_GlobalJitLevel_name, OptimizerOptions_GlobalJitLevel_value)
+	proto.RegisterEnum("tensorflow.RunOptions_TraceLevel", RunOptions_TraceLevel_name, RunOptions_TraceLevel_value)
 	proto.RegisterType((*GPUOptions)(nil), "tensorflow.GPUOptions")
 	proto.RegisterType((*GPUOptions_Experimental)(nil), "tensorflow.GPUOptions.Experimental")
 	proto.RegisterType((*GPUOptions_Experimental_VirtualDevices)(nil), "tensorflow.GPUOptions.Experimental.VirtualDevices")
@@ -1157,17 +1987,207 @@ func init() {
 	proto.RegisterType((*GraphOptions)(nil), "tensorflow.GraphOptions")
 	proto.RegisterType((*ThreadPoolOptionProto)(nil), "tensorflow.ThreadPoolOptionProto")
 	proto.RegisterType((*RPCOptions)(nil), "tensorflow.RPCOptions")
+	proto.RegisterType((*SessionMetadata)(nil), "tensorflow.SessionMetadata")
 	proto.RegisterType((*ConfigProto)(nil), "tensorflow.ConfigProto")
+	proto.RegisterMapType((map[string]int32)(nil), "tensorflow.ConfigProto.DeviceCountEntry")
 	proto.RegisterType((*ConfigProto_Experimental)(nil), "tensorflow.ConfigProto.Experimental")
 	proto.RegisterType((*RunOptions)(nil), "tensorflow.RunOptions")
 	proto.RegisterType((*RunOptions_Experimental)(nil), "tensorflow.RunOptions.Experimental")
 	proto.RegisterType((*RunMetadata)(nil), "tensorflow.RunMetadata")
+	proto.RegisterType((*RunMetadata_FunctionGraphs)(nil), "tensorflow.RunMetadata.FunctionGraphs")
 	proto.RegisterType((*TensorConnection)(nil), "tensorflow.TensorConnection")
 	proto.RegisterType((*CallableOptions)(nil), "tensorflow.CallableOptions")
-	proto.RegisterEnum("tensorflow.OptimizerOptions_Level", OptimizerOptions_Level_name, OptimizerOptions_Level_value)
-	proto.RegisterEnum("tensorflow.OptimizerOptions_GlobalJitLevel", OptimizerOptions_GlobalJitLevel_name, OptimizerOptions_GlobalJitLevel_value)
-	proto.RegisterEnum("tensorflow.RunOptions_TraceLevel", RunOptions_TraceLevel_name, RunOptions_TraceLevel_value)
+	proto.RegisterMapType((map[string]string)(nil), "tensorflow.CallableOptions.FeedDevicesEntry")
+	proto.RegisterMapType((map[string]string)(nil), "tensorflow.CallableOptions.FetchDevicesEntry")
 }
+
+func init() {
+	proto.RegisterFile("tensorflow/core/protobuf/config.proto", fileDescriptor_e2349c44c118036b)
+}
+
+var fileDescriptor_e2349c44c118036b = []byte{
+	// 2858 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x59, 0xcf, 0x53, 0x1c, 0xc7,
+	0xf5, 0xd7, 0xb2, 0x0b, 0x5a, 0xde, 0x22, 0x76, 0x69, 0x81, 0x58, 0x23, 0x95, 0x8c, 0xd7, 0x96,
+	0xbe, 0xd8, 0x96, 0x41, 0xc6, 0xb6, 0xe4, 0x6f, 0x5c, 0xb6, 0x0a, 0x2d, 0x2c, 0x46, 0x06, 0xb1,
+	0xd5, 0x8b, 0x92, 0x4a, 0x72, 0xe8, 0x6a, 0x66, 0x7a, 0x96, 0x89, 0x66, 0xa6, 0xc7, 0xdd, 0x3d,
+	0x08, 0x7c, 0xcc, 0x29, 0x47, 0xff, 0x13, 0x39, 0xe4, 0xe2, 0xbf, 0x23, 0x47, 0x1f, 0x73, 0x4c,
+	0xd9, 0xc7, 0x5c, 0x72, 0xcc, 0x21, 0xe5, 0xa4, 0xfa, 0xc7, 0xec, 0xcc, 0x2e, 0x20, 0xc7, 0xba,
+	0x68, 0xe6, 0x7d, 0x3e, 0xef, 0x4d, 0xf7, 0xeb, 0xf7, 0xab, 0x17, 0xb8, 0xa7, 0x58, 0x22, 0xb9,
+	0x08, 0x22, 0xfe, 0x6a, 0xc3, 0xe3, 0x82, 0x6d, 0xa4, 0x82, 0x2b, 0x7e, 0x9c, 0x05, 0x1b, 0x1e,
+	0x4f, 0x82, 0x70, 0xb8, 0x6e, 0xde, 0x11, 0x14, 0xb4, 0x95, 0xf7, 0x26, 0x55, 0x02, 0x41, 0x63,
+	0xf6, 0x8a, 0x8b, 0x97, 0x1b, 0x1e, 0x97, 0x8a, 0x0c, 0x05, 0x4d, 0x4f, 0xac, 0xde, 0xca, 0xbd,
+	0xab, 0xb9, 0x65, 0xda, 0x6b, 0x4c, 0x4a, 0xc5, 0x52, 0x22, 0x15, 0x55, 0xd2, 0x71, 0xef, 0x5f,
+	0xbd, 0xe2, 0x28, 0x93, 0x8a, 0x09, 0xc7, 0x7b, 0xe7, 0x4a, 0x9e, 0xcf, 0x8e, 0x33, 0xb7, 0xb1,
+	0x95, 0xf5, 0x2b, 0x59, 0x82, 0xbd, 0x12, 0xa1, 0x62, 0x82, 0x94, 0x1d, 0xd1, 0xf9, 0xae, 0x0e,
+	0xb0, 0xdb, 0x7f, 0x71, 0x98, 0xaa, 0x90, 0x27, 0x12, 0x6d, 0xc3, 0x9b, 0x29, 0x13, 0x24, 0x15,
+	0xdc, 0x63, 0x52, 0x92, 0x61, 0x9a, 0x91, 0x98, 0xc5, 0x5c, 0x9c, 0x93, 0x40, 0x50, 0x4f, 0x73,
+	0xda, 0x95, 0xd5, 0xca, 0x5a, 0x05, 0xdf, 0x4e, 0x99, 0xe8, 0x5b, 0xd6, 0x6e, 0x9a, 0x1d, 0x18,
+	0x4e, 0xcf, 0x51, 0xd0, 0x5b, 0x30, 0x47, 0xa3, 0x88, 0xbf, 0x22, 0x43, 0xc1, 0x5f, 0xa9, 0x93,
+	0x76, 0x6d, 0xb5, 0xb2, 0x56, 0xc7, 0x0d, 0x23, 0xdb, 0x35, 0x22, 0x74, 0x0f, 0xe6, 0xf5, 0xab,
+	0x47, 0x15, 0x17, 0x44, 0x9d, 0xa7, 0xac, 0x3d, 0xb5, 0x5a, 0x59, 0x9b, 0xc5, 0x37, 0x46, 0xd2,
+	0xa3, 0xf3, 0x94, 0xa1, 0x47, 0xb0, 0xec, 0xb3, 0x80, 0x09, 0xc1, 0x7c, 0xe2, 0xb3, 0x88, 0x69,
+	0xf3, 0xe4, 0xf8, 0x5c, 0x31, 0xd9, 0xae, 0xae, 0x56, 0xd6, 0xaa, 0x78, 0x29, 0x87, 0xb7, 0x1d,
+	0xfa, 0x54, 0x83, 0x68, 0x1d, 0x6e, 0x9e, 0x86, 0x32, 0x3c, 0x8e, 0x18, 0xf1, 0xd9, 0x69, 0xe8,
+	0x31, 0x12, 0x85, 0x52, 0xb5, 0xa7, 0xcd, 0x37, 0x16, 0x1c, 0xb4, 0x6d, 0x90, 0xfd, 0x50, 0x2a,
+	0xf4, 0x19, 0xac, 0xa4, 0x3c, 0x8a, 0xc2, 0x64, 0x48, 0xf4, 0x1e, 0x4e, 0xb5, 0x5a, 0x44, 0xcf,
+	0x49, 0x26, 0x99, 0x27, 0xdb, 0x33, 0xab, 0x95, 0xb5, 0x69, 0xbc, 0xec, 0x18, 0x5b, 0x86, 0xb0,
+	0xad, 0xf1, 0x17, 0x1a, 0x46, 0x4f, 0xe0, 0x4e, 0xae, 0x1c, 0x26, 0x63, 0xea, 0xb1, 0x51, 0xbf,
+	0x6e, 0xd4, 0xdf, 0x70, 0x9c, 0x3d, 0x47, 0x31, 0x06, 0x0e, 0x8c, 0x81, 0x87, 0xb0, 0x18, 0x70,
+	0xe1, 0x31, 0xe3, 0x6f, 0x8f, 0xc7, 0x29, 0x55, 0x7a, 0x7d, 0xed, 0xba, 0xf1, 0x1b, 0x32, 0xd8,
+	0x6e, 0x9a, 0x75, 0x47, 0x08, 0xda, 0x85, 0x39, 0x76, 0x96, 0x32, 0x11, 0xc6, 0x2c, 0x51, 0x34,
+	0x6a, 0xcf, 0xae, 0x56, 0xd6, 0x1a, 0x9b, 0x6f, 0x97, 0x4e, 0x7f, 0xbd, 0x38, 0xd5, 0xf5, 0x9d,
+	0x12, 0x15, 0x8f, 0x29, 0xae, 0x7c, 0x57, 0x83, 0xb9, 0x32, 0x8c, 0x7e, 0x0f, 0xcd, 0xd3, 0x50,
+	0xa8, 0x8c, 0x46, 0xce, 0x73, 0xb2, 0x5d, 0x59, 0xad, 0xae, 0x35, 0x36, 0x37, 0xff, 0x07, 0xe3,
+	0xeb, 0xbf, 0xb6, 0xaa, 0xd6, 0xb3, 0x12, 0xcf, 0x9f, 0x8e, 0xbd, 0xa3, 0x07, 0x80, 0x32, 0xc9,
+	0x48, 0x96, 0x84, 0x41, 0xc8, 0x7c, 0x17, 0x5a, 0xe6, 0xe4, 0xeb, 0xb8, 0x95, 0x49, 0xf6, 0xc2,
+	0x02, 0x36, 0x9c, 0xd0, 0x67, 0x70, 0x3b, 0xc9, 0x62, 0xbd, 0x0c, 0xa2, 0xb8, 0xf9, 0xcf, 0xe3,
+	0xe9, 0x39, 0x91, 0x4a, 0x30, 0x1a, 0xdb, 0x00, 0x98, 0xc6, 0xb7, 0x92, 0x2c, 0xde, 0x66, 0xa7,
+	0x47, 0x7c, 0x9b, 0x9d, 0x76, 0x79, 0x7a, 0x3e, 0xb0, 0x28, 0xda, 0x84, 0x25, 0x8f, 0x47, 0x11,
+	0xb3, 0xc7, 0x21, 0xf4, 0xe1, 0x70, 0xe1, 0x33, 0x61, 0x82, 0x71, 0x16, 0xdf, 0x2c, 0x40, 0x1c,
+	0x26, 0xc3, 0x43, 0x0d, 0xa1, 0x8f, 0x60, 0x49, 0x85, 0x31, 0x93, 0x8a, 0xc6, 0x29, 0xf3, 0xc9,
+	0x28, 0x14, 0x4d, 0xdc, 0xd4, 0xf1, 0x62, 0x09, 0xdc, 0xca, 0x31, 0xf4, 0x39, 0xdc, 0x7e, 0xc9,
+	0x44, 0xc2, 0x22, 0xa2, 0x04, 0xf5, 0x5e, 0x32, 0x41, 0x62, 0x7a, 0x46, 0xc2, 0x44, 0x31, 0x71,
+	0x4a, 0x23, 0x77, 0xf8, 0x6d, 0x4b, 0x39, 0xb2, 0x8c, 0x03, 0x7a, 0xb6, 0xe7, 0x70, 0xf4, 0x18,
+	0xda, 0x97, 0xa8, 0xdb, 0x10, 0xaf, 0x1b, 0xdd, 0xa5, 0x49, 0x5d, 0x1b, 0xe2, 0x9f, 0xc1, 0xca,
+	0x25, 0x8a, 0x29, 0x4b, 0xfc, 0x30, 0x19, 0x9a, 0x80, 0x98, 0xc6, 0xcb, 0x93, 0xaa, 0x7d, 0x0b,
+	0xaf, 0x7c, 0x0a, 0xf3, 0xe3, 0x47, 0x85, 0xee, 0x43, 0xd3, 0x65, 0x7a, 0x14, 0xc6, 0xa1, 0x22,
+	0xf1, 0xb1, 0x39, 0xf7, 0x29, 0x7c, 0xc3, 0x8a, 0xf7, 0xb5, 0xf4, 0xe0, 0xb8, 0xf3, 0xc7, 0x1a,
+	0xb4, 0xf4, 0xd1, 0xc7, 0xe1, 0x37, 0x4c, 0xe4, 0x65, 0xe3, 0x00, 0xde, 0xf6, 0xb9, 0x8e, 0xdc,
+	0x98, 0x27, 0x44, 0x66, 0xc7, 0xec, 0x2c, 0x15, 0x4c, 0x4a, 0x9d, 0xac, 0x4c, 0x9b, 0x4b, 0xe8,
+	0xa8, 0x74, 0xd4, 0xf1, 0xaa, 0xcf, 0xbb, 0x86, 0x39, 0x28, 0x13, 0x77, 0x0a, 0x9e, 0xce, 0x5e,
+	0x63, 0x2e, 0x91, 0x8a, 0x26, 0x8a, 0x04, 0x3c, 0x32, 0x7b, 0xb2, 0x71, 0xb2, 0xa0, 0xd5, 0x2d,
+	0xd2, 0xb3, 0x00, 0xfa, 0x02, 0xee, 0xe8, 0xbd, 0x6b, 0x1e, 0xf3, 0x0b, 0xbd, 0x30, 0x2f, 0x15,
+	0x33, 0xa6, 0x54, 0xb4, 0x63, 0x7a, 0xd6, 0x33, 0x94, 0x5c, 0x7f, 0xcf, 0x55, 0x8b, 0x87, 0xb0,
+	0xe8, 0x73, 0x12, 0x64, 0x89, 0x29, 0x5f, 0x24, 0x4c, 0xa2, 0x30, 0xd1, 0x1f, 0xb4, 0x75, 0x0b,
+	0xf9, 0xbc, 0xe7, 0xa0, 0x3d, 0x87, 0xa0, 0x27, 0x30, 0xcb, 0x53, 0x45, 0x22, 0x76, 0xca, 0x22,
+	0x13, 0x88, 0xf3, 0x9b, 0x9d, 0x72, 0x7e, 0x4c, 0x7a, 0x68, 0x7d, 0x5f, 0x33, 0x71, 0x9d, 0xa7,
+	0xca, 0x3c, 0xa1, 0x17, 0xd0, 0x1a, 0x46, 0xfc, 0x98, 0x46, 0xe4, 0x0f, 0x61, 0x6e, 0x67, 0xda,
+	0xd8, 0x79, 0xff, 0xb5, 0x76, 0x76, 0x8d, 0xd2, 0xb3, 0xd0, 0x9a, 0xc1, 0xf3, 0xc3, 0xb1, 0xf7,
+	0xce, 0x2a, 0x4c, 0x5b, 0xfb, 0x33, 0x30, 0xb5, 0xff, 0x61, 0xeb, 0x1a, 0x6a, 0xc2, 0xd4, 0xfe,
+	0xc3, 0xd6, 0x7f, 0xf2, 0x7f, 0x95, 0x4e, 0x17, 0xe6, 0xc7, 0x6d, 0xa0, 0x06, 0x5c, 0xdf, 0xde,
+	0xe9, 0x6d, 0xbd, 0xd8, 0x3f, 0x6a, 0x5d, 0x43, 0x2d, 0xa8, 0x1e, 0xf6, 0x7a, 0x25, 0x05, 0x54,
+	0x87, 0xda, 0xe1, 0x73, 0xf2, 0x61, 0x2b, 0x7f, 0xda, 0x6c, 0x4d, 0x75, 0xbe, 0xad, 0xc1, 0xdc,
+	0xae, 0xee, 0x77, 0x79, 0x00, 0x7c, 0x0c, 0xb7, 0x58, 0x42, 0x75, 0xb9, 0x15, 0xcc, 0x3b, 0x25,
+	0xd2, 0x3b, 0x61, 0x7e, 0x16, 0x15, 0x87, 0xb6, 0x68, 0x51, 0xcc, 0xbc, 0xd3, 0xc1, 0x08, 0x43,
+	0x7b, 0xb0, 0xc0, 0xf3, 0x0d, 0x12, 0x6e, 0x4d, 0x19, 0x6f, 0x36, 0x36, 0xef, 0xbc, 0xce, 0x0b,
+	0xb8, 0xc5, 0x27, 0x23, 0x70, 0x0d, 0x5a, 0xc7, 0x59, 0x18, 0xe9, 0xd3, 0x97, 0x8a, 0xc4, 0xdc,
+	0x67, 0x91, 0x39, 0xbe, 0x2a, 0x9e, 0x37, 0xf2, 0x2e, 0x97, 0xea, 0x40, 0x4b, 0xd1, 0x47, 0x70,
+	0x6b, 0x92, 0x49, 0x68, 0xa0, 0x98, 0x30, 0x39, 0x53, 0xc5, 0x37, 0xc7, 0xf9, 0x5b, 0x1a, 0xd2,
+	0x1d, 0x2d, 0x4c, 0x02, 0x26, 0x88, 0x3c, 0xa1, 0x29, 0x93, 0xae, 0x20, 0x34, 0x8c, 0x6c, 0x60,
+	0x44, 0xba, 0xb6, 0xa5, 0x11, 0xf5, 0x18, 0x49, 0x45, 0x96, 0x30, 0xdf, 0x8e, 0x0d, 0x26, 0xf4,
+	0xea, 0xb8, 0x65, 0x90, 0xbe, 0x01, 0x8c, 0xdf, 0xd0, 0xa7, 0xd0, 0x76, 0x0e, 0x3b, 0x0e, 0x22,
+	0x4e, 0xd5, 0x87, 0x8f, 0x88, 0x64, 0x89, 0xaf, 0xbd, 0x67, 0x4a, 0x46, 0x1d, 0x3b, 0x87, 0x3e,
+	0x75, 0xf0, 0xc0, 0xa1, 0xe8, 0x6d, 0xb8, 0xa1, 0xeb, 0x50, 0x14, 0x26, 0x8c, 0xe8, 0x61, 0xc2,
+	0x55, 0x89, 0xb9, 0x5c, 0x38, 0x50, 0x2c, 0x45, 0x5d, 0x68, 0xba, 0x7e, 0x3f, 0xf2, 0x2b, 0x18,
+	0xbf, 0x96, 0x07, 0x84, 0x75, 0xec, 0x46, 0x82, 0xae, 0x99, 0x08, 0xf0, 0xbc, 0x53, 0x71, 0x3e,
+	0x7d, 0x56, 0xab, 0x57, 0x5a, 0x53, 0xf8, 0x9e, 0x7c, 0x19, 0xa6, 0x3f, 0x9b, 0xdb, 0x9d, 0xdf,
+	0xc2, 0xd2, 0xd1, 0x89, 0x60, 0xd4, 0xef, 0x73, 0x1e, 0x59, 0x0b, 0x7d, 0x33, 0x6a, 0xbd, 0x09,
+	0x0d, 0x5d, 0xc5, 0x95, 0x01, 0xa5, 0xa9, 0x01, 0xd3, 0x18, 0x92, 0x2c, 0xb6, 0x74, 0xa9, 0x09,
+	0x2e, 0x15, 0x12, 0x1a, 0xe7, 0x73, 0x00, 0x58, 0xd1, 0x73, 0x1a, 0xb3, 0xce, 0x5f, 0xa6, 0x00,
+	0x70, 0xbf, 0x9b, 0x1f, 0xf5, 0x17, 0x70, 0x47, 0x37, 0x11, 0x91, 0x7a, 0x24, 0xe0, 0x82, 0x84,
+	0x49, 0x3e, 0xad, 0xc4, 0x54, 0x8f, 0x4b, 0xae, 0xca, 0xb4, 0x33, 0xc9, 0x70, 0xea, 0xf5, 0xb8,
+	0xd8, 0xcb, 0x09, 0x07, 0x06, 0xd7, 0x55, 0x5e, 0xf7, 0xd8, 0x7c, 0x13, 0x34, 0x1a, 0x72, 0x11,
+	0xaa, 0x93, 0xd8, 0x7d, 0x79, 0xb1, 0x04, 0x6e, 0xe5, 0x18, 0x7a, 0x1f, 0x16, 0xca, 0x4a, 0x45,
+	0xe2, 0x4f, 0xe3, 0x56, 0x09, 0xb0, 0x19, 0xf5, 0x00, 0x90, 0x47, 0xbd, 0x13, 0xbb, 0x46, 0xc1,
+	0x64, 0xca, 0x13, 0xc9, 0x5c, 0x35, 0x69, 0x19, 0x04, 0xa7, 0x1e, 0x76, 0x72, 0xf4, 0x15, 0x74,
+	0xfc, 0x50, 0x9a, 0x58, 0x90, 0xce, 0xbc, 0xc7, 0x93, 0x84, 0xd9, 0x62, 0x24, 0x4f, 0xa8, 0x6e,
+	0x5e, 0x2e, 0xe2, 0xde, 0x74, 0xcc, 0x81, 0x25, 0x76, 0x47, 0xbc, 0x81, 0xa5, 0x75, 0x9e, 0x40,
+	0xd3, 0x61, 0x07, 0x4c, 0x51, 0x9f, 0x2a, 0x8a, 0x10, 0xd4, 0x8c, 0x63, 0x2b, 0x66, 0x7b, 0xe6,
+	0x19, 0xb5, 0xe1, 0xfa, 0x29, 0x13, 0x9a, 0x66, 0x76, 0x5d, 0xc5, 0xf9, 0x6b, 0xe7, 0xa7, 0x79,
+	0x68, 0xd8, 0x78, 0xb0, 0xc7, 0xf7, 0x15, 0xcc, 0xb9, 0x09, 0xca, 0xe3, 0x59, 0xa2, 0xdc, 0x30,
+	0xb0, 0x56, 0x0e, 0xa3, 0x12, 0x7d, 0xdd, 0xb6, 0x93, 0xae, 0xa6, 0xee, 0x24, 0x4a, 0x9c, 0xe3,
+	0x86, 0x5f, 0x48, 0xf4, 0xa4, 0x14, 0x26, 0x4a, 0x50, 0xc2, 0x53, 0x92, 0x52, 0x41, 0xa3, 0x88,
+	0x45, 0xa1, 0x2c, 0x82, 0x63, 0xca, 0x4e, 0x4a, 0x86, 0x73, 0x98, 0xf6, 0x0b, 0x46, 0x1e, 0x2b,
+	0xd6, 0x80, 0xa9, 0x16, 0x97, 0x1a, 0x98, 0x1e, 0x19, 0xd0, 0xa5, 0xe1, 0x12, 0x03, 0x9f, 0xc0,
+	0xb2, 0x0e, 0x1e, 0x3d, 0xe4, 0xe6, 0xce, 0xce, 0x75, 0x67, 0x6d, 0xa5, 0xca, 0x24, 0xeb, 0x33,
+	0xe1, 0x9c, 0x98, 0xab, 0x51, 0xb8, 0x93, 0xd3, 0x47, 0xdf, 0xb7, 0x7a, 0x24, 0xe5, 0x3c, 0x6a,
+	0xcf, 0x19, 0xaf, 0xbc, 0x55, 0xf6, 0xca, 0xa5, 0xd9, 0x80, 0xdb, 0xce, 0xcc, 0x9e, 0x5d, 0x61,
+	0x41, 0x42, 0xef, 0x82, 0xad, 0x12, 0x7a, 0x92, 0xd2, 0xeb, 0x0b, 0xb9, 0xef, 0x02, 0xac, 0x39,
+	0x92, 0xf7, 0x8d, 0x58, 0x0f, 0xcf, 0xee, 0x4c, 0x82, 0x30, 0x52, 0x4c, 0xc8, 0x76, 0x6d, 0xb5,
+	0xaa, 0x87, 0x67, 0x2b, 0xed, 0x59, 0x21, 0x7a, 0x0c, 0x0d, 0x3d, 0x50, 0xe6, 0x05, 0x60, 0xc6,
+	0x14, 0x80, 0x5b, 0x97, 0x8f, 0x71, 0x18, 0x86, 0x69, 0x96, 0x67, 0xd8, 0x43, 0x58, 0xb4, 0xf3,
+	0xbb, 0xe4, 0x81, 0x22, 0xa3, 0xaf, 0xbb, 0xc2, 0x84, 0x0c, 0x36, 0xe0, 0x81, 0xea, 0xe7, 0x88,
+	0xd6, 0x88, 0xf8, 0x30, 0x9f, 0xb5, 0x0b, 0x0d, 0x37, 0xc1, 0x46, 0x7c, 0x68, 0x03, 0xa3, 0xd0,
+	0xf8, 0x1c, 0x6e, 0x98, 0x0a, 0x39, 0x51, 0x9f, 0xda, 0x63, 0xcb, 0x2b, 0xb5, 0x18, 0x3c, 0x37,
+	0x2c, 0x37, 0x9c, 0x4f, 0x60, 0x99, 0xa7, 0x4c, 0x98, 0xda, 0x43, 0x74, 0xe9, 0xe3, 0x99, 0x69,
+	0xf8, 0xb1, 0x6c, 0x37, 0x4c, 0x40, 0x2f, 0x8e, 0xe0, 0x23, 0x8b, 0xee, 0x25, 0x07, 0xc6, 0x25,
+	0x3a, 0x27, 0xf3, 0x6f, 0xde, 0xb8, 0xe8, 0x92, 0xa2, 0xd0, 0x60, 0x10, 0xa9, 0x97, 0x7f, 0xef,
+	0x31, 0x34, 0xdc, 0x75, 0x8c, 0xf8, 0x2c, 0x68, 0xcf, 0x5f, 0x54, 0xec, 0x5a, 0x78, 0x9b, 0x05,
+	0x18, 0xbc, 0xd1, 0xb3, 0x9e, 0x43, 0x43, 0xc9, 0x23, 0xaa, 0x8a, 0xec, 0xd6, 0xb7, 0x3f, 0xd6,
+	0x6e, 0x1a, 0xd7, 0xdc, 0x74, 0xa0, 0x8b, 0xb7, 0x81, 0x86, 0xd0, 0x97, 0x13, 0xd3, 0x7d, 0xcb,
+	0x7c, 0xed, 0x9d, 0xab, 0x72, 0xee, 0x35, 0xe3, 0xfd, 0x17, 0xd0, 0x9a, 0xcc, 0x48, 0xdd, 0xe2,
+	0x5f, 0xb2, 0x73, 0x57, 0x0e, 0xf4, 0x23, 0x5a, 0x84, 0xe9, 0x53, 0x1a, 0x65, 0xcc, 0xe5, 0x9f,
+	0x7d, 0xf9, 0xd5, 0xd4, 0xa7, 0x95, 0x95, 0x7f, 0xce, 0x4c, 0x5c, 0x0f, 0x1e, 0xc1, 0x72, 0x69,
+	0xac, 0x1e, 0x0a, 0x9e, 0xa5, 0x24, 0x62, 0xd4, 0x77, 0x75, 0x77, 0x16, 0x97, 0xa6, 0xee, 0x5d,
+	0x8d, 0xee, 0x1b, 0x50, 0x77, 0x2d, 0x76, 0xc6, 0xbc, 0x6c, 0x74, 0xdd, 0xab, 0x1a, 0xf6, 0x5c,
+	0x2e, 0x34, 0xb7, 0xbd, 0xf7, 0x01, 0x99, 0xf1, 0xe1, 0x38, 0x0b, 0xcc, 0x30, 0xeb, 0x9d, 0x64,
+	0xc9, 0x4b, 0x53, 0x37, 0xa7, 0x71, 0x53, 0x23, 0x4f, 0xb3, 0xe0, 0x80, 0x9e, 0x75, 0xb5, 0x18,
+	0xbd, 0x07, 0x0b, 0x3a, 0x93, 0x93, 0x2c, 0xa6, 0x84, 0x06, 0x41, 0x98, 0x84, 0xea, 0xdc, 0x55,
+	0xc9, 0x66, 0x26, 0xd9, 0xf3, 0x2c, 0xa6, 0x5b, 0x4e, 0x8c, 0x28, 0x7c, 0x50, 0x5a, 0xb5, 0xcf,
+	0x14, 0x13, 0x71, 0x98, 0x84, 0x52, 0x85, 0x1e, 0x91, 0xec, 0xeb, 0x8c, 0x25, 0x2a, 0xa4, 0x11,
+	0xb1, 0x8b, 0xd1, 0x45, 0xd1, 0xb6, 0xed, 0xf7, 0x0a, 0xa5, 0xed, 0xb2, 0xce, 0x60, 0xa4, 0xb2,
+	0x93, 0x6b, 0xa0, 0xff, 0x83, 0x66, 0xe9, 0x13, 0x89, 0xe7, 0x45, 0x2e, 0x5d, 0xe6, 0x0b, 0xf1,
+	0x73, 0xcf, 0x8b, 0x10, 0x85, 0x75, 0x5d, 0xd3, 0x27, 0xc2, 0x41, 0xc7, 0xae, 0x8b, 0x1a, 0x99,
+	0x32, 0x4f, 0xdf, 0xc0, 0x53, 0x3a, 0xb4, 0x63, 0xb3, 0x4d, 0xa2, 0x77, 0x8d, 0x56, 0x39, 0x4e,
+	0xf6, 0x92, 0x6e, 0xa1, 0xd1, 0x2f, 0x14, 0xcc, 0xad, 0xd9, 0x75, 0x14, 0x57, 0xa4, 0x64, 0x1a,
+	0x26, 0x49, 0x7e, 0x2f, 0xa8, 0xe3, 0x25, 0x07, 0xdb, 0xf2, 0x33, 0x70, 0x20, 0xea, 0xc1, 0xaa,
+	0x5d, 0x5a, 0x11, 0xea, 0xe6, 0x72, 0xa0, 0x17, 0xe7, 0x56, 0x6b, 0xd2, 0xb4, 0x8e, 0xef, 0x18,
+	0xde, 0x28, 0xe4, 0x0d, 0x6b, 0x2f, 0x71, 0x8b, 0x43, 0x3d, 0x68, 0xe5, 0x9b, 0x8b, 0x5d, 0x17,
+	0x32, 0x59, 0xd9, 0xd8, 0xbc, 0x5d, 0x8e, 0xe1, 0x89, 0x46, 0x85, 0x9b, 0x72, 0xa2, 0x73, 0xfd,
+	0x3f, 0xbc, 0x91, 0x0f, 0x7a, 0xa6, 0xd5, 0x6b, 0x4f, 0x85, 0x9e, 0x9b, 0xac, 0xe6, 0xec, 0x94,
+	0x94, 0x13, 0x7a, 0x5c, 0x0c, 0x0c, 0x6c, 0xe7, 0xab, 0x07, 0x80, 0xdc, 0x7c, 0x15, 0x47, 0xa1,
+	0x20, 0xc7, 0x22, 0xf4, 0x87, 0xcc, 0xe4, 0x7b, 0x1d, 0xb7, 0x2c, 0x72, 0x10, 0x85, 0xe2, 0xa9,
+	0x91, 0xa3, 0x1d, 0xc8, 0x1b, 0x2b, 0xe1, 0x99, 0x4a, 0x33, 0xa5, 0x9b, 0x8b, 0x0a, 0x4d, 0x71,
+	0x31, 0x5f, 0x93, 0x26, 0xe3, 0xeb, 0xf8, 0x8e, 0xa3, 0x1d, 0x1a, 0x56, 0x3f, 0x27, 0x99, 0x6f,
+	0x4a, 0x7d, 0x15, 0x3c, 0x8b, 0x28, 0x09, 0x32, 0x3b, 0x58, 0x64, 0x8a, 0xab, 0x2c, 0x61, 0xc2,
+	0x1c, 0x82, 0x3c, 0x31, 0x19, 0x5f, 0xc5, 0xed, 0xb3, 0x88, 0xf6, 0x0c, 0x63, 0x2b, 0x27, 0x1c,
+	0x19, 0xfc, 0x59, 0xad, 0x3e, 0xd5, 0xaa, 0x76, 0x7e, 0xaa, 0x01, 0xe0, 0x2c, 0xc9, 0x0b, 0xcf,
+	0x53, 0x68, 0xe8, 0xfb, 0x1d, 0x73, 0x23, 0x47, 0xc5, 0xdc, 0x11, 0xc6, 0x1a, 0x4d, 0x41, 0x5e,
+	0xd7, 0x17, 0x3d, 0x66, 0x6f, 0x06, 0xa0, 0x46, 0xcf, 0xa8, 0x63, 0x47, 0xc6, 0xa2, 0x44, 0xda,
+	0x9e, 0xdf, 0x50, 0xa5, 0xca, 0xb8, 0x01, 0x8b, 0x97, 0x76, 0x36, 0xdb, 0x82, 0x16, 0xc2, 0x0b,
+	0xfd, 0xea, 0x11, 0x2c, 0x5f, 0xe5, 0x2b, 0x9b, 0x85, 0x4b, 0xfc, 0x0a, 0x27, 0xdd, 0x30, 0x3f,
+	0x58, 0x4d, 0xf4, 0xa5, 0xb1, 0xc2, 0xbf, 0xad, 0x09, 0xa3, 0xc2, 0xef, 0x97, 0xde, 0xd0, 0x33,
+	0xe8, 0x08, 0x96, 0x72, 0xa1, 0x88, 0xe5, 0xe7, 0xb7, 0x74, 0x0d, 0x92, 0x2c, 0xe5, 0x09, 0xe1,
+	0x3c, 0x76, 0xa9, 0x77, 0xd7, 0x32, 0x8f, 0x0c, 0x71, 0xab, 0xe0, 0xbd, 0x48, 0x79, 0x72, 0xc8,
+	0xe3, 0x0b, 0xbf, 0xa2, 0xd4, 0x2f, 0xfe, 0x8a, 0x52, 0x72, 0xee, 0x6b, 0xca, 0xec, 0xd7, 0x13,
+	0x55, 0xf2, 0x21, 0x2c, 0x8e, 0x55, 0x49, 0xdd, 0xe7, 0xf2, 0x9a, 0x5b, 0xc5, 0xa8, 0x5c, 0x22,
+	0x69, 0x7a, 0xf2, 0x15, 0x3b, 0xd7, 0xee, 0x37, 0x43, 0x6d, 0x96, 0x90, 0x13, 0x9a, 0xf8, 0x11,
+	0x13, 0xd6, 0xfd, 0xee, 0xce, 0xab, 0x87, 0xd9, 0x2c, 0xf9, 0xd2, 0x22, 0xda, 0xfd, 0x1d, 0x0c,
+	0x50, 0x9c, 0x36, 0x9a, 0x83, 0xfa, 0xf3, 0x43, 0x72, 0x84, 0xb7, 0xba, 0x3b, 0xad, 0x6b, 0x08,
+	0xc1, 0xfc, 0xe0, 0xb0, 0x77, 0xf4, 0x9b, 0x2d, 0xbc, 0xe3, 0x64, 0x15, 0x2d, 0xfb, 0x72, 0x0b,
+	0x6f, 0x97, 0x64, 0x53, 0x68, 0x1e, 0xa0, 0xf7, 0x62, 0x7f, 0xdf, 0xbd, 0x57, 0x9f, 0xd5, 0xea,
+	0xb5, 0xd6, 0x74, 0xe7, 0xdf, 0x55, 0x68, 0xe0, 0xac, 0xc8, 0xc2, 0x8f, 0x01, 0x8a, 0x1f, 0x2d,
+	0xcd, 0x16, 0x1a, 0x9b, 0x4b, 0x63, 0x79, 0xac, 0x58, 0xaa, 0x73, 0x4f, 0xe2, 0x59, 0x99, 0x3f,
+	0xa2, 0xc7, 0x00, 0xc5, 0xaf, 0xa7, 0x66, 0x1b, 0x13, 0x67, 0xac, 0x6f, 0x58, 0x66, 0xfb, 0xba,
+	0x63, 0xce, 0x7a, 0xf9, 0x1b, 0x7a, 0x02, 0xad, 0x0b, 0x01, 0x55, 0x35, 0xe3, 0xd5, 0xe2, 0x85,
+	0xd9, 0x40, 0xab, 0x36, 0xd3, 0x89, 0x00, 0x3b, 0x84, 0xe6, 0xe8, 0x2a, 0xef, 0xf4, 0x6b, 0x46,
+	0xff, 0xfe, 0xc4, 0xc1, 0xe6, 0x3b, 0x5c, 0xcf, 0xaf, 0xf7, 0xd6, 0x00, 0x9e, 0x0f, 0xc6, 0xde,
+	0x57, 0xfe, 0x51, 0x81, 0xf9, 0x71, 0xca, 0xa5, 0x8b, 0xac, 0xfc, 0x92, 0x45, 0x3e, 0x83, 0x5b,
+	0xa9, 0xb0, 0x97, 0xb3, 0x38, 0xfc, 0x86, 0x16, 0x76, 0x9c, 0xab, 0x2e, 0x37, 0xb3, 0x98, 0x0a,
+	0x76, 0x58, 0x52, 0xb1, 0x1e, 0xdb, 0x87, 0xe5, 0x54, 0xbb, 0xfa, 0x12, 0x63, 0xd5, 0xd7, 0x18,
+	0x5b, 0xd2, 0x4a, 0x17, 0xac, 0x75, 0xfa, 0xd0, 0xb2, 0x09, 0x53, 0x5c, 0x2e, 0xf4, 0x15, 0x2d,
+	0x10, 0x3c, 0x76, 0x29, 0xe7, 0x3a, 0x3d, 0x68, 0x91, 0xa5, 0xa2, 0xdb, 0x30, 0xab, 0x78, 0x0e,
+	0xdb, 0x7b, 0x54, 0x5d, 0x71, 0x0b, 0x76, 0xfe, 0x5c, 0x83, 0x66, 0x97, 0x46, 0x91, 0x29, 0x9c,
+	0x2e, 0x8d, 0x11, 0xd4, 0x02, 0xc6, 0x7c, 0xe3, 0xb4, 0x59, 0x6c, 0x9e, 0xf5, 0x18, 0x12, 0x30,
+	0xe5, 0x69, 0x17, 0x68, 0xa1, 0x7d, 0x41, 0xb7, 0x60, 0x46, 0x51, 0x31, 0x64, 0xca, 0x44, 0xc1,
+	0x2c, 0x76, 0x6f, 0x66, 0x94, 0xcb, 0x92, 0x51, 0x15, 0xa9, 0x5d, 0x32, 0xca, 0x8d, 0x72, 0x17,
+	0x83, 0x28, 0x2a, 0xea, 0x1e, 0x2c, 0xb8, 0xd2, 0x51, 0x5c, 0xb3, 0xda, 0xd3, 0xe6, 0xf0, 0xc6,
+	0x7e, 0x75, 0x98, 0xf4, 0x02, 0x6e, 0xa9, 0x49, 0xbf, 0x1c, 0xc2, 0x9c, 0x5e, 0xf9, 0xe8, 0x97,
+	0xd2, 0x19, 0x63, 0xe5, 0xc1, 0x58, 0x98, 0x8f, 0x6f, 0x7c, 0xbd, 0xc7, 0x98, 0xef, 0x1a, 0xa6,
+	0xbb, 0x20, 0x05, 0x85, 0x04, 0x61, 0xb8, 0x61, 0x76, 0x3d, 0xb2, 0x78, 0xdd, 0x58, 0xfc, 0xe0,
+	0xf5, 0x16, 0x95, 0x77, 0x32, 0x66, 0x72, 0x2e, 0x28, 0x89, 0xd0, 0x7d, 0x68, 0x5a, 0x9b, 0xe6,
+	0x22, 0x2f, 0xcf, 0x13, 0xcf, 0x4d, 0x14, 0xf6, 0x53, 0x83, 0x97, 0x61, 0x3a, 0x38, 0x4f, 0x3c,
+	0x3d, 0x2b, 0x4e, 0x2e, 0xee, 0xe7, 0x66, 0xc5, 0xd9, 0xf2, 0xac, 0xf8, 0x04, 0x16, 0x2e, 0x2c,
+	0xe5, 0x97, 0x18, 0x78, 0xfa, 0xa7, 0xca, 0x5f, 0x7f, 0xb8, 0x5b, 0xf9, 0xfe, 0x87, 0xbb, 0x95,
+	0xbf, 0xff, 0x70, 0xb7, 0xf2, 0xed, 0x8f, 0x77, 0xaf, 0x7d, 0xff, 0xe3, 0xdd, 0x6b, 0x7f, 0xfb,
+	0xf1, 0xee, 0x35, 0x68, 0x73, 0x31, 0x2c, 0xfb, 0x60, 0xf4, 0xf7, 0x94, 0xa7, 0x73, 0xa5, 0x49,
+	0x58, 0xf6, 0x2b, 0xbf, 0xdb, 0x1a, 0x86, 0xea, 0x24, 0x3b, 0x5e, 0xf7, 0x78, 0xbc, 0xb1, 0x95,
+	0xa6, 0x51, 0x18, 0x84, 0x4c, 0x6c, 0x0c, 0xf9, 0x07, 0xa5, 0x3f, 0x8c, 0xe8, 0x01, 0x54, 0x6e,
+	0x5c, 0xf5, 0x97, 0x92, 0x7f, 0x55, 0x2a, 0xc7, 0x33, 0xe6, 0xe5, 0xa3, 0xff, 0x06, 0x00, 0x00,
+	0xff, 0xff, 0xf0, 0x39, 0x21, 0x00, 0x4f, 0x1a, 0x00, 0x00,
+}
+
 func (m *GPUOptions) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1186,7 +2206,7 @@ func (m *GPUOptions) MarshalTo(dAtA []byte) (int, error) {
 	if m.PerProcessGpuMemoryFraction != 0 {
 		dAtA[i] = 0x9
 		i++
-		binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.PerProcessGpuMemoryFraction))))
+		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.PerProcessGpuMemoryFraction))))
 		i += 8
 	}
 	if len(m.AllocatorType) > 0 {
@@ -1291,6 +2311,37 @@ func (m *GPUOptions_Experimental) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintConfig(dAtA, i, uint64(m.NumDevToDevCopyStreams))
 	}
+	if len(m.CollectiveRingOrder) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.CollectiveRingOrder)))
+		i += copy(dAtA[i:], m.CollectiveRingOrder)
+	}
+	if m.TimestampedAllocator {
+		dAtA[i] = 0x28
+		i++
+		if m.TimestampedAllocator {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.KernelTrackerMaxInterval != 0 {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.KernelTrackerMaxInterval))
+	}
+	if m.KernelTrackerMaxBytes != 0 {
+		dAtA[i] = 0x40
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.KernelTrackerMaxBytes))
+	}
+	if m.KernelTrackerMaxPending != 0 {
+		dAtA[i] = 0x48
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.KernelTrackerMaxPending))
+	}
 	return i, nil
 }
 
@@ -1315,7 +2366,7 @@ func (m *GPUOptions_Experimental_VirtualDevices) MarshalTo(dAtA []byte) (int, er
 		i = encodeVarintConfig(dAtA, i, uint64(len(m.MemoryLimitMb)*4))
 		for _, num := range m.MemoryLimitMb {
 			f2 := math.Float32bits(float32(num))
-			binary.LittleEndian.PutUint32(dAtA[i:], uint32(f2))
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f2))
 			i += 4
 		}
 	}
@@ -1532,6 +2583,66 @@ func (m *RPCOptions) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i++
 	}
+	if len(m.CompressionAlgorithm) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.CompressionAlgorithm)))
+		i += copy(dAtA[i:], m.CompressionAlgorithm)
+	}
+	if m.CompressionLevel != 0 {
+		dAtA[i] = 0x18
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.CompressionLevel))
+	}
+	if m.CacheRpcResponse {
+		dAtA[i] = 0x20
+		i++
+		if m.CacheRpcResponse {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.DisableSessionConnectionSharing {
+		dAtA[i] = 0x28
+		i++
+		if m.DisableSessionConnectionSharing {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	return i, nil
+}
+
+func (m *SessionMetadata) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SessionMetadata) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Name) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.Name)))
+		i += copy(dAtA[i:], m.Name)
+	}
+	if m.Version != 0 {
+		dAtA[i] = 0x10
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.Version))
+	}
 	return i, nil
 }
 
@@ -1729,21 +2840,121 @@ func (m *ConfigProto_Experimental) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintConfig(dAtA, i, uint64(len(m.CollectiveGroupLeader)))
 		i += copy(dAtA[i:], m.CollectiveGroupLeader)
 	}
-	if m.ClientHandlesErrorFormatting {
-		dAtA[i] = 0x10
+	if len(m.ExecutorType) > 0 {
+		dAtA[i] = 0x1a
 		i++
-		if m.ClientHandlesErrorFormatting {
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.ExecutorType)))
+		i += copy(dAtA[i:], m.ExecutorType)
+	}
+	if m.RecvBufMaxChunk != 0 {
+		dAtA[i] = 0x20
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.RecvBufMaxChunk))
+	}
+	if m.UseNumaAffinity {
+		dAtA[i] = 0x28
+		i++
+		if m.UseNumaAffinity {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
 		i++
 	}
-	if len(m.ExecutorType) > 0 {
-		dAtA[i] = 0x1a
+	if m.CollectiveDeterministicSequentialExecution {
+		dAtA[i] = 0x30
 		i++
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.ExecutorType)))
-		i += copy(dAtA[i:], m.ExecutorType)
+		if m.CollectiveDeterministicSequentialExecution {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.CollectiveNccl {
+		dAtA[i] = 0x38
+		i++
+		if m.CollectiveNccl {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.ShareSessionStateInClusterspecPropagation {
+		dAtA[i] = 0x40
+		i++
+		if m.ShareSessionStateInClusterspecPropagation {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.DisableThreadSpinning {
+		dAtA[i] = 0x48
+		i++
+		if m.DisableThreadSpinning {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.ShareClusterDevicesInSession {
+		dAtA[i] = 0x50
+		i++
+		if m.ShareClusterDevicesInSession {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.SessionMetadata != nil {
+		dAtA[i] = 0x5a
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.SessionMetadata.Size()))
+		n10, err := m.SessionMetadata.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n10
+	}
+	if m.OptimizeForStaticGraph {
+		dAtA[i] = 0x60
+		i++
+		if m.OptimizeForStaticGraph {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.EnableMlirBridge {
+		dAtA[i] = 0x68
+		i++
+		if m.EnableMlirBridge {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.DisableOutputPartitionGraphs {
+		dAtA[i] = 0x70
+		i++
+		if m.DisableOutputPartitionGraphs {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
+	if m.XlaFusionAutotunerThresh != 0 {
+		dAtA[i] = 0x78
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.XlaFusionAutotunerThresh))
 	}
 	return i, nil
 }
@@ -1792,11 +3003,11 @@ func (m *RunOptions) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x32
 		i++
 		i = encodeVarintConfig(dAtA, i, uint64(m.DebugOptions.Size()))
-		n10, err := m.DebugOptions.MarshalTo(dAtA[i:])
+		n11, err := m.DebugOptions.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n10
+		i += n11
 	}
 	if m.ReportTensorAllocationsUponOom {
 		dAtA[i] = 0x38
@@ -1812,11 +3023,11 @@ func (m *RunOptions) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x42
 		i++
 		i = encodeVarintConfig(dAtA, i, uint64(m.Experimental.Size()))
-		n11, err := m.Experimental.MarshalTo(dAtA[i:])
+		n12, err := m.Experimental.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n11
+		i += n12
 	}
 	return i, nil
 }
@@ -1841,6 +3052,16 @@ func (m *RunOptions_Experimental) MarshalTo(dAtA []byte) (int, error) {
 		i++
 		i = encodeVarintConfig(dAtA, i, uint64(m.CollectiveGraphKey))
 	}
+	if m.UseRunHandlerPool {
+		dAtA[i] = 0x10
+		i++
+		if m.UseRunHandlerPool {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i++
+	}
 	return i, nil
 }
 
@@ -1863,21 +3084,21 @@ func (m *RunMetadata) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0xa
 		i++
 		i = encodeVarintConfig(dAtA, i, uint64(m.StepStats.Size()))
-		n12, err := m.StepStats.MarshalTo(dAtA[i:])
+		n13, err := m.StepStats.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n12
+		i += n13
 	}
 	if m.CostGraph != nil {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintConfig(dAtA, i, uint64(m.CostGraph.Size()))
-		n13, err := m.CostGraph.MarshalTo(dAtA[i:])
+		n14, err := m.CostGraph.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n13
+		i += n14
 	}
 	if len(m.PartitionGraphs) > 0 {
 		for _, msg := range m.PartitionGraphs {
@@ -1890,6 +3111,68 @@ func (m *RunMetadata) MarshalTo(dAtA []byte) (int, error) {
 			}
 			i += n
 		}
+	}
+	if len(m.FunctionGraphs) > 0 {
+		for _, msg := range m.FunctionGraphs {
+			dAtA[i] = 0x22
+			i++
+			i = encodeVarintConfig(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	return i, nil
+}
+
+func (m *RunMetadata_FunctionGraphs) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RunMetadata_FunctionGraphs) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.PartitionGraphs) > 0 {
+		for _, msg := range m.PartitionGraphs {
+			dAtA[i] = 0xa
+			i++
+			i = encodeVarintConfig(dAtA, i, uint64(msg.Size()))
+			n, err := msg.MarshalTo(dAtA[i:])
+			if err != nil {
+				return 0, err
+			}
+			i += n
+		}
+	}
+	if m.PreOptimizationGraph != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.PreOptimizationGraph.Size()))
+		n15, err := m.PreOptimizationGraph.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n15
+	}
+	if m.PostOptimizationGraph != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintConfig(dAtA, i, uint64(m.PostOptimizationGraph.Size()))
+		n16, err := m.PostOptimizationGraph.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n16
 	}
 	return i, nil
 }
@@ -1988,11 +3271,11 @@ func (m *CallableOptions) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x22
 		i++
 		i = encodeVarintConfig(dAtA, i, uint64(m.RunOptions.Size()))
-		n14, err := m.RunOptions.MarshalTo(dAtA[i:])
+		n17, err := m.RunOptions.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
-		i += n14
+		i += n17
 	}
 	if len(m.TensorConnection) > 0 {
 		for _, msg := range m.TensorConnection {
@@ -2063,6 +3346,9 @@ func encodeVarintConfig(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *GPUOptions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.PerProcessGpuMemoryFraction != 0 {
@@ -2099,6 +3385,9 @@ func (m *GPUOptions) Size() (n int) {
 }
 
 func (m *GPUOptions_Experimental) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.VirtualDevices) > 0 {
@@ -2113,10 +3402,29 @@ func (m *GPUOptions_Experimental) Size() (n int) {
 	if m.NumDevToDevCopyStreams != 0 {
 		n += 1 + sovConfig(uint64(m.NumDevToDevCopyStreams))
 	}
+	l = len(m.CollectiveRingOrder)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	if m.TimestampedAllocator {
+		n += 2
+	}
+	if m.KernelTrackerMaxInterval != 0 {
+		n += 1 + sovConfig(uint64(m.KernelTrackerMaxInterval))
+	}
+	if m.KernelTrackerMaxBytes != 0 {
+		n += 1 + sovConfig(uint64(m.KernelTrackerMaxBytes))
+	}
+	if m.KernelTrackerMaxPending != 0 {
+		n += 1 + sovConfig(uint64(m.KernelTrackerMaxPending))
+	}
 	return n
 }
 
 func (m *GPUOptions_Experimental_VirtualDevices) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.MemoryLimitMb) > 0 {
@@ -2126,6 +3434,9 @@ func (m *GPUOptions_Experimental_VirtualDevices) Size() (n int) {
 }
 
 func (m *OptimizerOptions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.DoCommonSubexpressionElimination {
@@ -2150,6 +3461,9 @@ func (m *OptimizerOptions) Size() (n int) {
 }
 
 func (m *GraphOptions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.EnableRecvScheduling {
@@ -2185,6 +3499,9 @@ func (m *GraphOptions) Size() (n int) {
 }
 
 func (m *ThreadPoolOptionProto) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.NumThreads != 0 {
@@ -2198,15 +3515,50 @@ func (m *ThreadPoolOptionProto) Size() (n int) {
 }
 
 func (m *RPCOptions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.UseRpcForInprocessMaster {
 		n += 2
 	}
+	l = len(m.CompressionAlgorithm)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	if m.CompressionLevel != 0 {
+		n += 1 + sovConfig(uint64(m.CompressionLevel))
+	}
+	if m.CacheRpcResponse {
+		n += 2
+	}
+	if m.DisableSessionConnectionSharing {
+		n += 2
+	}
+	return n
+}
+
+func (m *SessionMetadata) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	if m.Version != 0 {
+		n += 1 + sovConfig(uint64(m.Version))
+	}
 	return n
 }
 
 func (m *ConfigProto) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.DeviceCount) > 0 {
@@ -2277,23 +3629,63 @@ func (m *ConfigProto) Size() (n int) {
 }
 
 func (m *ConfigProto_Experimental) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.CollectiveGroupLeader)
 	if l > 0 {
 		n += 1 + l + sovConfig(uint64(l))
 	}
-	if m.ClientHandlesErrorFormatting {
-		n += 2
-	}
 	l = len(m.ExecutorType)
 	if l > 0 {
 		n += 1 + l + sovConfig(uint64(l))
+	}
+	if m.RecvBufMaxChunk != 0 {
+		n += 1 + sovConfig(uint64(m.RecvBufMaxChunk))
+	}
+	if m.UseNumaAffinity {
+		n += 2
+	}
+	if m.CollectiveDeterministicSequentialExecution {
+		n += 2
+	}
+	if m.CollectiveNccl {
+		n += 2
+	}
+	if m.ShareSessionStateInClusterspecPropagation {
+		n += 2
+	}
+	if m.DisableThreadSpinning {
+		n += 2
+	}
+	if m.ShareClusterDevicesInSession {
+		n += 2
+	}
+	if m.SessionMetadata != nil {
+		l = m.SessionMetadata.Size()
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	if m.OptimizeForStaticGraph {
+		n += 2
+	}
+	if m.EnableMlirBridge {
+		n += 2
+	}
+	if m.DisableOutputPartitionGraphs {
+		n += 2
+	}
+	if m.XlaFusionAutotunerThresh != 0 {
+		n += 1 + sovConfig(uint64(m.XlaFusionAutotunerThresh))
 	}
 	return n
 }
 
 func (m *RunOptions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.TraceLevel != 0 {
@@ -2323,15 +3715,24 @@ func (m *RunOptions) Size() (n int) {
 }
 
 func (m *RunOptions_Experimental) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.CollectiveGraphKey != 0 {
 		n += 1 + sovConfig(uint64(m.CollectiveGraphKey))
 	}
+	if m.UseRunHandlerPool {
+		n += 2
+	}
 	return n
 }
 
 func (m *RunMetadata) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.StepStats != nil {
@@ -2348,10 +3749,42 @@ func (m *RunMetadata) Size() (n int) {
 			n += 1 + l + sovConfig(uint64(l))
 		}
 	}
+	if len(m.FunctionGraphs) > 0 {
+		for _, e := range m.FunctionGraphs {
+			l = e.Size()
+			n += 1 + l + sovConfig(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *RunMetadata_FunctionGraphs) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.PartitionGraphs) > 0 {
+		for _, e := range m.PartitionGraphs {
+			l = e.Size()
+			n += 1 + l + sovConfig(uint64(l))
+		}
+	}
+	if m.PreOptimizationGraph != nil {
+		l = m.PreOptimizationGraph.Size()
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	if m.PostOptimizationGraph != nil {
+		l = m.PostOptimizationGraph.Size()
+		n += 1 + l + sovConfig(uint64(l))
+	}
 	return n
 }
 
 func (m *TensorConnection) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.FromTensor)
@@ -2366,6 +3799,9 @@ func (m *TensorConnection) Size() (n int) {
 }
 
 func (m *CallableOptions) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if len(m.Feed) > 0 {
@@ -2468,7 +3904,7 @@ func (m *GPUOptions) Unmarshal(dAtA []byte) error {
 			if (iNdEx + 8) > l {
 				return io.ErrUnexpectedEOF
 			}
-			v = uint64(binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
 			iNdEx += 8
 			m.PerProcessGpuMemoryFraction = float64(math.Float64frombits(v))
 		case 2:
@@ -2779,6 +4215,112 @@ func (m *GPUOptions_Experimental) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CollectiveRingOrder", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CollectiveRingOrder = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TimestampedAllocator", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.TimestampedAllocator = bool(v != 0)
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KernelTrackerMaxInterval", wireType)
+			}
+			m.KernelTrackerMaxInterval = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.KernelTrackerMaxInterval |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KernelTrackerMaxBytes", wireType)
+			}
+			m.KernelTrackerMaxBytes = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.KernelTrackerMaxBytes |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KernelTrackerMaxPending", wireType)
+			}
+			m.KernelTrackerMaxPending = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.KernelTrackerMaxPending |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipConfig(dAtA[iNdEx:])
@@ -2835,7 +4377,7 @@ func (m *GPUOptions_Experimental_VirtualDevices) Unmarshal(dAtA []byte) error {
 				if (iNdEx + 4) > l {
 					return io.ErrUnexpectedEOF
 				}
-				v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+				v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 				iNdEx += 4
 				v2 := float32(math.Float32frombits(v))
 				m.MemoryLimitMb = append(m.MemoryLimitMb, v2)
@@ -2862,12 +4404,17 @@ func (m *GPUOptions_Experimental_VirtualDevices) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen / 4
+				if elementCount != 0 && len(m.MemoryLimitMb) == 0 {
+					m.MemoryLimitMb = make([]float32, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint32
 					if (iNdEx + 4) > l {
 						return io.ErrUnexpectedEOF
 					}
-					v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+					v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 					iNdEx += 4
 					v2 := float32(math.Float32frombits(v))
 					m.MemoryLimitMb = append(m.MemoryLimitMb, v2)
@@ -3463,6 +5010,192 @@ func (m *RPCOptions) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.UseRpcForInprocessMaster = bool(v != 0)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CompressionAlgorithm", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CompressionAlgorithm = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CompressionLevel", wireType)
+			}
+			m.CompressionLevel = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CompressionLevel |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CacheRpcResponse", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.CacheRpcResponse = bool(v != 0)
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DisableSessionConnectionSharing", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.DisableSessionConnectionSharing = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipConfig(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthConfig
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *SessionMetadata) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowConfig
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SessionMetadata: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SessionMetadata: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+			}
+			m.Version = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Version |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipConfig(dAtA[iNdEx:])
@@ -4080,26 +5813,6 @@ func (m *ConfigProto_Experimental) Unmarshal(dAtA []byte) error {
 			}
 			m.CollectiveGroupLeader = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ClientHandlesErrorFormatting", wireType)
-			}
-			var v int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowConfig
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				v |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			m.ClientHandlesErrorFormatting = bool(v != 0)
 		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ExecutorType", wireType)
@@ -4129,6 +5842,257 @@ func (m *ConfigProto_Experimental) Unmarshal(dAtA []byte) error {
 			}
 			m.ExecutorType = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RecvBufMaxChunk", wireType)
+			}
+			m.RecvBufMaxChunk = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.RecvBufMaxChunk |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UseNumaAffinity", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.UseNumaAffinity = bool(v != 0)
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CollectiveDeterministicSequentialExecution", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.CollectiveDeterministicSequentialExecution = bool(v != 0)
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CollectiveNccl", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.CollectiveNccl = bool(v != 0)
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ShareSessionStateInClusterspecPropagation", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.ShareSessionStateInClusterspecPropagation = bool(v != 0)
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DisableThreadSpinning", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.DisableThreadSpinning = bool(v != 0)
+		case 10:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ShareClusterDevicesInSession", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.ShareClusterDevicesInSession = bool(v != 0)
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SessionMetadata", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.SessionMetadata == nil {
+				m.SessionMetadata = &SessionMetadata{}
+			}
+			if err := m.SessionMetadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 12:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OptimizeForStaticGraph", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.OptimizeForStaticGraph = bool(v != 0)
+		case 13:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EnableMlirBridge", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.EnableMlirBridge = bool(v != 0)
+		case 14:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DisableOutputPartitionGraphs", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.DisableOutputPartitionGraphs = bool(v != 0)
+		case 15:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field XlaFusionAutotunerThresh", wireType)
+			}
+			m.XlaFusionAutotunerThresh = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.XlaFusionAutotunerThresh |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipConfig(dAtA[iNdEx:])
@@ -4411,6 +6375,26 @@ func (m *RunOptions_Experimental) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UseRunHandlerPool", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.UseRunHandlerPool = bool(v != 0)
 		default:
 			iNdEx = preIndex
 			skippy, err := skipConfig(dAtA[iNdEx:])
@@ -4488,7 +6472,7 @@ func (m *RunMetadata) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.StepStats == nil {
-				m.StepStats = &tensorflow13.StepStats{}
+				m.StepStats = &framework.StepStats{}
 			}
 			if err := m.StepStats.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -4521,7 +6505,7 @@ func (m *RunMetadata) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.CostGraph == nil {
-				m.CostGraph = &tensorflow2.CostGraphDef{}
+				m.CostGraph = &framework.CostGraphDef{}
 			}
 			if err := m.CostGraph.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -4553,8 +6537,186 @@ func (m *RunMetadata) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.PartitionGraphs = append(m.PartitionGraphs, &tensorflow10.GraphDef{})
+			m.PartitionGraphs = append(m.PartitionGraphs, &framework.GraphDef{})
 			if err := m.PartitionGraphs[len(m.PartitionGraphs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FunctionGraphs", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FunctionGraphs = append(m.FunctionGraphs, &RunMetadata_FunctionGraphs{})
+			if err := m.FunctionGraphs[len(m.FunctionGraphs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipConfig(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthConfig
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RunMetadata_FunctionGraphs) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowConfig
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: FunctionGraphs: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: FunctionGraphs: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PartitionGraphs", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PartitionGraphs = append(m.PartitionGraphs, &framework.GraphDef{})
+			if err := m.PartitionGraphs[len(m.PartitionGraphs)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PreOptimizationGraph", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PreOptimizationGraph == nil {
+				m.PreOptimizationGraph = &framework.GraphDef{}
+			}
+			if err := m.PreOptimizationGraph.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PostOptimizationGraph", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PostOptimizationGraph == nil {
+				m.PostOptimizationGraph = &framework.GraphDef{}
+			}
+			if err := m.PostOptimizationGraph.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -5248,148 +7410,3 @@ var (
 	ErrInvalidLengthConfig = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowConfig   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow/core/protobuf/config.proto", fileDescriptorConfig) }
-
-var fileDescriptorConfig = []byte{
-	// 2223 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x58, 0xdd, 0x52, 0x1b, 0xc9,
-	0x15, 0xf6, 0x80, 0xc0, 0xd2, 0x91, 0x00, 0xd1, 0x06, 0xa3, 0x60, 0xca, 0x66, 0xe5, 0xf5, 0x16,
-	0x49, 0x76, 0x85, 0xcd, 0xee, 0xda, 0xae, 0x6c, 0xc5, 0x0e, 0x16, 0x08, 0xe3, 0x05, 0xa3, 0x6a,
-	0x41, 0x52, 0x49, 0x2e, 0xba, 0x46, 0x33, 0x3d, 0x62, 0xe2, 0x99, 0xe9, 0xa9, 0xee, 0x1e, 0x6c,
-	0xe5, 0x2a, 0x95, 0x27, 0xf0, 0x4b, 0xe4, 0x05, 0x72, 0x9f, 0xaa, 0x5c, 0xe6, 0x26, 0x55, 0x79,
-	0x84, 0x94, 0xf3, 0x12, 0xb9, 0x4b, 0xaa, 0x7f, 0x46, 0x1a, 0x89, 0x9f, 0x4d, 0xb8, 0x61, 0xe6,
-	0x7c, 0x5f, 0xf7, 0x9c, 0x73, 0xfa, 0xfc, 0xb5, 0xe0, 0x91, 0xa4, 0x89, 0x60, 0x3c, 0x88, 0xd8,
-	0xfb, 0x6d, 0x8f, 0x71, 0xba, 0x9d, 0x72, 0x26, 0x59, 0x3f, 0x0b, 0xb6, 0x3d, 0x96, 0x04, 0xe1,
-	0xa0, 0xa5, 0xdf, 0x11, 0x8c, 0x69, 0xeb, 0x3f, 0x99, 0x5e, 0x12, 0x70, 0x37, 0xa6, 0xef, 0x19,
-	0x7f, 0xb7, 0xed, 0x31, 0x21, 0xc9, 0x80, 0xbb, 0xe9, 0xb9, 0x59, 0xb7, 0xfe, 0xe8, 0x7a, 0x6e,
-	0x91, 0x76, 0xc3, 0x96, 0x42, 0xd2, 0x94, 0x08, 0xe9, 0x4a, 0x61, 0xb9, 0x9f, 0x5f, 0xab, 0xb1,
-	0x4f, 0xfb, 0x99, 0x55, 0x78, 0xfd, 0x8b, 0xeb, 0xed, 0x8a, 0x32, 0x21, 0x29, 0xb7, 0xbc, 0xd6,
-	0xb5, 0x3c, 0x4e, 0xdf, 0xf3, 0x50, 0x52, 0x4e, 0x8a, 0x8e, 0x68, 0x7e, 0x9c, 0x07, 0x38, 0xe8,
-	0x9e, 0x9d, 0xa4, 0x32, 0x64, 0x89, 0x40, 0x7b, 0xf0, 0x20, 0xa5, 0x9c, 0xa4, 0x9c, 0x79, 0x54,
-	0x08, 0x32, 0x48, 0x33, 0x12, 0xd3, 0x98, 0xf1, 0x21, 0x09, 0xb8, 0xeb, 0x29, 0x4e, 0xc3, 0xd9,
-	0x74, 0xb6, 0x1c, 0x7c, 0x2f, 0xa5, 0xbc, 0x6b, 0x58, 0x07, 0x69, 0x76, 0xac, 0x39, 0x1d, 0x4b,
-	0x41, 0x8f, 0x60, 0xd1, 0x8d, 0x22, 0xe6, 0xb9, 0x92, 0x71, 0x22, 0x87, 0x29, 0x6d, 0xcc, 0x6c,
-	0x3a, 0x5b, 0x15, 0xbc, 0x30, 0x92, 0x9e, 0x0e, 0x53, 0x8a, 0x9e, 0xc2, 0x9a, 0x4f, 0x03, 0xca,
-	0x39, 0xf5, 0x89, 0x4f, 0x23, 0xaa, 0xd6, 0x92, 0xfe, 0x50, 0x52, 0xd1, 0x98, 0xdd, 0x74, 0xb6,
-	0x66, 0xf1, 0x6a, 0x0e, 0xef, 0x59, 0xf4, 0x95, 0x02, 0xd1, 0x67, 0x50, 0x53, 0x1b, 0xbd, 0x27,
-	0x03, 0xce, 0xde, 0xcb, 0xf3, 0x46, 0x69, 0xd3, 0xd9, 0x2a, 0xe3, 0xaa, 0x96, 0x1d, 0x68, 0x11,
-	0x6a, 0xc1, 0x9d, 0x8b, 0x50, 0x84, 0xfd, 0x88, 0x12, 0x9f, 0x5e, 0x84, 0x1e, 0x25, 0x51, 0x28,
-	0x64, 0x63, 0x4e, 0xab, 0xb1, 0x6c, 0xa1, 0x3d, 0x8d, 0x1c, 0x85, 0x42, 0xa2, 0xef, 0x60, 0x3d,
-	0x65, 0x51, 0x14, 0x26, 0x03, 0xa2, 0x6c, 0xb8, 0x50, 0xcb, 0x22, 0x77, 0x48, 0x32, 0x41, 0x3d,
-	0xd1, 0x98, 0xdf, 0x74, 0xb6, 0xe6, 0xf0, 0x9a, 0x65, 0xec, 0x6a, 0xc2, 0x9e, 0xc2, 0xcf, 0x14,
-	0x8c, 0x5e, 0xc2, 0x46, 0xbe, 0x38, 0x4c, 0x26, 0x96, 0xc7, 0x7a, 0xf9, 0x6d, 0xbd, 0xfc, 0x47,
-	0x96, 0x73, 0x68, 0x29, 0x7a, 0x83, 0x63, 0xbd, 0xc1, 0x63, 0x58, 0x09, 0x18, 0xf7, 0xa8, 0xf6,
-	0xb7, 0xc7, 0xe2, 0xd4, 0x95, 0x4a, 0xbf, 0x46, 0x59, 0x1b, 0x86, 0x34, 0x76, 0x90, 0x66, 0xed,
-	0x11, 0x82, 0x0e, 0xa0, 0x46, 0x3f, 0xa4, 0x94, 0x87, 0x31, 0x4d, 0xa4, 0x1b, 0x35, 0x2a, 0x9b,
-	0xce, 0x56, 0x75, 0xe7, 0x61, 0xe1, 0xf4, 0x5b, 0xe3, 0x53, 0x6d, 0xed, 0x17, 0xa8, 0x78, 0x62,
-	0xe1, 0xfa, 0xc7, 0x19, 0xa8, 0x15, 0x61, 0xf4, 0x5b, 0x58, 0xba, 0x08, 0xb9, 0xcc, 0xdc, 0xc8,
-	0x7a, 0x4e, 0x34, 0x9c, 0xcd, 0xd9, 0xad, 0xea, 0xce, 0xce, 0xff, 0xb0, 0x79, 0xeb, 0x97, 0x66,
-	0xa9, 0xf1, 0xac, 0xc0, 0x8b, 0x17, 0x13, 0xef, 0xe8, 0x4b, 0x40, 0x99, 0xa0, 0x24, 0x4b, 0xc2,
-	0x20, 0xa4, 0xbe, 0x0d, 0x2d, 0x1d, 0x1c, 0x65, 0x5c, 0xcf, 0x04, 0x3d, 0x33, 0x80, 0x09, 0x27,
-	0xf4, 0x1d, 0xdc, 0x4b, 0xb2, 0x58, 0xa9, 0x41, 0x24, 0xd3, 0xff, 0x3c, 0x96, 0x0e, 0x89, 0x90,
-	0x9c, 0xba, 0xb1, 0x89, 0x91, 0x39, 0x7c, 0x37, 0xc9, 0xe2, 0x3d, 0x7a, 0x71, 0xca, 0xf6, 0xe8,
-	0x45, 0x9b, 0xa5, 0xc3, 0x9e, 0x41, 0xd7, 0x9f, 0xc3, 0xe2, 0xa4, 0x32, 0xe8, 0x0b, 0x58, 0xb2,
-	0xb1, 0x1c, 0x85, 0x71, 0x28, 0x49, 0xdc, 0xd7, 0x96, 0xcd, 0xe0, 0x05, 0x23, 0x3e, 0x52, 0xd2,
-	0xe3, 0x7e, 0xf3, 0x8f, 0x25, 0xa8, 0x2b, 0xe3, 0xe2, 0xf0, 0xf7, 0x94, 0xe7, 0x89, 0x71, 0x0c,
-	0x0f, 0x7d, 0xa6, 0xce, 0x26, 0x66, 0x09, 0x11, 0x59, 0x9f, 0x7e, 0x48, 0x39, 0x15, 0x42, 0x45,
-	0x2c, 0x55, 0xdb, 0x25, 0xee, 0x28, 0x39, 0xca, 0x78, 0xd3, 0x67, 0x6d, 0xcd, 0xec, 0x15, 0x89,
-	0xfb, 0x63, 0x9e, 0x8a, 0x4f, 0xbd, 0x5d, 0x22, 0xa4, 0x9b, 0x48, 0x12, 0xb0, 0xc8, 0x0f, 0x93,
-	0x81, 0xf5, 0xc4, 0xb2, 0x5a, 0x6e, 0x90, 0x8e, 0x01, 0xd0, 0x4b, 0xa8, 0xb0, 0x54, 0x92, 0x88,
-	0x5e, 0xd0, 0x48, 0x1b, 0xbe, 0xb8, 0xd3, 0x2c, 0x9e, 0xc7, 0xb4, 0xbe, 0xad, 0x23, 0xc5, 0xc4,
-	0x65, 0x96, 0x4a, 0xfd, 0xa4, 0x42, 0xcc, 0x67, 0x24, 0xc8, 0x12, 0x9d, 0xa1, 0x24, 0x4c, 0xa2,
-	0x30, 0x51, 0x5f, 0x34, 0xb9, 0x83, 0x7c, 0xd6, 0xb1, 0xd0, 0xa1, 0x45, 0xd0, 0x19, 0xd4, 0x07,
-	0x11, 0xeb, 0xbb, 0x11, 0xf9, 0x5d, 0x98, 0x7f, 0x79, 0x4e, 0x7f, 0xf9, 0xa7, 0x37, 0x7e, 0xf9,
-	0x40, 0x2f, 0x7a, 0x13, 0x9a, 0x0f, 0xe3, 0xc5, 0xc1, 0xc4, 0x3b, 0x7a, 0x01, 0x1b, 0xb1, 0xfb,
-	0x41, 0x5b, 0x4c, 0xfd, 0xb1, 0x07, 0xc2, 0x3c, 0xf3, 0xe7, 0x75, 0xe6, 0x37, 0x62, 0xf7, 0x43,
-	0x47, 0x53, 0x72, 0x4f, 0x1c, 0x9a, 0xe4, 0x6f, 0x6e, 0xc2, 0x9c, 0xd9, 0x68, 0x1e, 0x66, 0x8e,
-	0x9e, 0xd4, 0x6f, 0xa1, 0x25, 0x98, 0x39, 0x7a, 0x5c, 0xff, 0x4f, 0xfe, 0xe7, 0x34, 0xdb, 0xb0,
-	0x38, 0xa9, 0x03, 0xaa, 0xc2, 0xed, 0xbd, 0xfd, 0xce, 0xee, 0xd9, 0xd1, 0x69, 0xfd, 0x16, 0xaa,
-	0xc3, 0xec, 0x49, 0xa7, 0x53, 0x58, 0x80, 0xca, 0x50, 0x3a, 0x79, 0x4b, 0x9e, 0xd4, 0xf3, 0xa7,
-	0x9d, 0xfa, 0x4c, 0xf3, 0x63, 0x09, 0x6a, 0x07, 0xaa, 0xa2, 0xe7, 0x01, 0xf0, 0x0d, 0xdc, 0xa5,
-	0x89, 0xab, 0x0a, 0x0a, 0xa7, 0xde, 0x05, 0x11, 0xde, 0x39, 0xf5, 0xb3, 0x68, 0x7c, 0x68, 0x2b,
-	0x06, 0xc5, 0xd4, 0xbb, 0xe8, 0x8d, 0x30, 0x74, 0x08, 0xcb, 0x2c, 0x77, 0x10, 0x61, 0x66, 0x2b,
-	0x7d, 0x7e, 0xd5, 0x9d, 0x8d, 0x9b, 0xbc, 0x88, 0xeb, 0x6c, 0x3a, 0x02, 0xb7, 0xa0, 0xde, 0xcf,
-	0xc2, 0x48, 0xf9, 0x4c, 0x48, 0x12, 0x33, 0x9f, 0x46, 0xfa, 0xf4, 0x66, 0xf1, 0xa2, 0x96, 0xb7,
-	0x99, 0x90, 0xc7, 0x4a, 0xaa, 0xea, 0x63, 0x98, 0x04, 0x94, 0x13, 0x71, 0xee, 0xa6, 0x54, 0xe8,
-	0x53, 0x2b, 0xe3, 0xaa, 0x96, 0xf5, 0xb4, 0x48, 0x25, 0x62, 0x1a, 0xb9, 0x1e, 0x25, 0x29, 0xcf,
-	0x12, 0xea, 0x9b, 0x1e, 0xa7, 0x7d, 0x5f, 0xc6, 0x75, 0x8d, 0x74, 0x35, 0xa0, 0x5d, 0x80, 0x9e,
-	0x43, 0xc3, 0xda, 0xde, 0x0f, 0x22, 0xe6, 0xca, 0x27, 0x4f, 0x89, 0xa0, 0x89, 0xaf, 0x1c, 0xa1,
-	0x8b, 0x5b, 0x19, 0x5b, 0xdf, 0xbc, 0xb2, 0x70, 0xcf, 0xa2, 0xe8, 0x21, 0x2c, 0xc8, 0x30, 0xa6,
-	0x51, 0x98, 0x50, 0xa2, 0x3a, 0x9f, 0x2e, 0x69, 0x73, 0xb8, 0x96, 0x0b, 0x7b, 0x92, 0xa6, 0xe8,
-	0x6b, 0xb8, 0x3b, 0x6d, 0x19, 0x71, 0x03, 0x49, 0xb9, 0x2e, 0x6b, 0xb3, 0xf8, 0xce, 0xa4, 0x7d,
-	0xbb, 0x0a, 0x42, 0x6d, 0x58, 0xb2, 0x1d, 0x6d, 0xe4, 0x57, 0xd0, 0x7e, 0x2d, 0xb6, 0xc0, 0x16,
-	0xb6, 0x4d, 0xaf, 0xad, 0x7b, 0x1e, 0x5e, 0xb4, 0x4b, 0xac, 0x4f, 0xdf, 0x94, 0xca, 0x4e, 0x7d,
-	0x06, 0x3f, 0x12, 0xef, 0xc2, 0xf4, 0x07, 0x73, 0xbb, 0xf9, 0x6b, 0x58, 0x3d, 0x3d, 0xe7, 0xd4,
-	0xf5, 0xbb, 0x8c, 0x45, 0x66, 0x87, 0xae, 0x1e, 0x26, 0x1e, 0x40, 0x55, 0xd5, 0x29, 0xa9, 0x41,
-	0xa1, 0x6b, 0xc0, 0x1c, 0x86, 0x24, 0x8b, 0x0d, 0x5d, 0x28, 0x82, 0x4d, 0xa5, 0xc4, 0x8d, 0xf3,
-	0x66, 0x08, 0x46, 0xf4, 0xd6, 0x8d, 0x69, 0xf3, 0x08, 0x00, 0x77, 0xdb, 0xf9, 0x49, 0xbf, 0x80,
-	0x0d, 0x55, 0x25, 0x79, 0xea, 0x91, 0x80, 0x71, 0x12, 0x26, 0x79, 0x3b, 0x8e, 0x5d, 0xd5, 0xe9,
-	0x6d, 0x91, 0x69, 0x64, 0x82, 0xe2, 0xd4, 0xeb, 0x30, 0x7e, 0x98, 0x13, 0x8e, 0x35, 0xde, 0xfc,
-	0x6b, 0x05, 0xaa, 0xc6, 0x60, 0xa3, 0xdf, 0xf7, 0x50, 0xb3, 0x4d, 0xd0, 0x63, 0x59, 0x22, 0x6d,
-	0x3d, 0xdf, 0x2a, 0xfa, 0xa9, 0x40, 0x6f, 0x99, 0x7a, 0xd9, 0x56, 0xd4, 0xfd, 0x44, 0xf2, 0x21,
-	0xae, 0xfa, 0x63, 0x89, 0x6a, 0x76, 0x61, 0x22, 0xb9, 0x4b, 0x58, 0x4a, 0x52, 0x97, 0xbb, 0x51,
-	0x44, 0xa3, 0x50, 0x8c, 0xad, 0x9f, 0x31, 0xcd, 0x4e, 0x73, 0x4e, 0xd2, 0xee, 0x98, 0x91, 0x3b,
-	0xe3, 0xc7, 0x60, 0x02, 0x4c, 0x75, 0x0c, 0xa2, 0x5a, 0x07, 0xf3, 0x6d, 0x29, 0x5f, 0x1a, 0xc9,
-	0xbb, 0x5a, 0xac, 0xe6, 0x08, 0xab, 0x78, 0x10, 0x46, 0x92, 0x72, 0xd1, 0x28, 0x6d, 0xce, 0xaa,
-	0x39, 0xc2, 0x48, 0x3b, 0x46, 0x68, 0x55, 0xd2, 0x09, 0x76, 0xa5, 0x4a, 0x73, 0x23, 0x95, 0x54,
-	0x36, 0x5d, 0xa1, 0xd2, 0x33, 0xa8, 0xaa, 0xce, 0x9b, 0xc7, 0xd1, 0xbc, 0x8e, 0xa3, 0xbb, 0x57,
-	0xf7, 0x3b, 0x0c, 0x83, 0x34, 0xcb, 0x4f, 0xea, 0x31, 0xac, 0x98, 0x49, 0x44, 0xb0, 0x40, 0x92,
-	0x91, 0xfa, 0x36, 0x29, 0x90, 0xc6, 0x7a, 0x2c, 0x90, 0xdd, 0x1c, 0x51, 0x2b, 0x22, 0x36, 0xc8,
-	0x87, 0x92, 0xf1, 0x0a, 0xdb, 0xea, 0x23, 0x36, 0x30, 0xee, 0x1f, 0xaf, 0xf8, 0x16, 0xd6, 0x54,
-	0x34, 0xa8, 0xb1, 0x4c, 0xd8, 0xa8, 0xcc, 0x0d, 0xab, 0x98, 0xca, 0x93, 0x09, 0xda, 0xa5, 0xbc,
-	0x67, 0xc0, 0xdc, 0xa6, 0x9f, 0xc3, 0x82, 0x4e, 0xea, 0xa9, 0xec, 0x68, 0x4c, 0x58, 0x55, 0x28,
-	0x70, 0xb8, 0x36, 0x28, 0x96, 0xbb, 0x6f, 0x61, 0x8d, 0xa5, 0x94, 0xeb, 0xc8, 0x27, 0x2a, 0x5b,
-	0x59, 0xa6, 0x8b, 0x74, 0x2c, 0x1a, 0x55, 0x9d, 0x94, 0x2b, 0x23, 0xf8, 0xd4, 0xa0, 0x87, 0xc9,
-	0xb1, 0x40, 0x2e, 0x6c, 0xe4, 0x4a, 0x8e, 0x8e, 0xc4, 0x68, 0x4b, 0x52, 0xc6, 0xa2, 0x46, 0x4d,
-	0x87, 0xde, 0x67, 0x45, 0x25, 0xae, 0xcc, 0x29, 0xdc, 0xb0, 0xdb, 0x1c, 0x9a, 0x43, 0x1b, 0x93,
-	0xd4, 0x61, 0xa9, 0xcc, 0xc8, 0xcd, 0x5a, 0xb8, 0x7c, 0x58, 0xe3, 0x54, 0xc2, 0xc0, 0x53, 0x2f,
-	0x37, 0xe9, 0x19, 0x54, 0xed, 0xac, 0x4c, 0x7c, 0x1a, 0x34, 0x16, 0x2f, 0x2f, 0x6c, 0x1b, 0x78,
-	0x8f, 0x06, 0x18, 0xbc, 0xd1, 0x33, 0xda, 0x81, 0xd5, 0x50, 0xb0, 0xc8, 0x95, 0x74, 0x74, 0x02,
-	0x6a, 0x80, 0xa7, 0x8d, 0x25, 0xed, 0xff, 0x3b, 0x16, 0xb4, 0x07, 0xd0, 0x53, 0x10, 0x7a, 0x3d,
-	0x35, 0xa0, 0xd5, 0xf5, 0xd7, 0x3e, 0xbf, 0x2e, 0xe7, 0x6e, 0x98, 0xd0, 0x5e, 0x40, 0x7d, 0x3a,
-	0x23, 0x55, 0x0f, 0x7b, 0x47, 0x87, 0xba, 0x10, 0x54, 0xb0, 0x7a, 0x44, 0x2b, 0x30, 0x77, 0xe1,
-	0x46, 0x19, 0xb5, 0xf9, 0x67, 0x5e, 0x7e, 0x36, 0xf3, 0xdc, 0x59, 0xff, 0xb3, 0x33, 0x35, 0xe1,
-	0x3d, 0x85, 0x35, 0x8f, 0x45, 0x11, 0x35, 0x83, 0xea, 0x80, 0xb3, 0x2c, 0x25, 0x11, 0x75, 0x7d,
-	0x5b, 0x59, 0x2a, 0x78, 0x75, 0x0c, 0x1f, 0x28, 0xf4, 0x48, 0x83, 0x68, 0x1f, 0x1e, 0x78, 0x51,
-	0xa8, 0xb2, 0xf6, 0xdc, 0x4d, 0xfc, 0x88, 0x0a, 0x42, 0x39, 0x67, 0x5c, 0xd5, 0xa8, 0xd8, 0x95,
-	0x72, 0xdc, 0x0a, 0x37, 0x0c, 0xed, 0xb5, 0x61, 0xed, 0x2b, 0x52, 0x67, 0xc4, 0x51, 0x2d, 0x81,
-	0x7e, 0xa0, 0x5e, 0x36, 0xba, 0x1b, 0xcc, 0xea, 0x8f, 0xd6, 0x72, 0xa1, 0xba, 0x1a, 0x34, 0xff,
-	0x5e, 0x02, 0xc0, 0x59, 0x92, 0x1f, 0xdd, 0x2b, 0xa8, 0x4a, 0xae, 0xda, 0x95, 0x19, 0x43, 0x1c,
-	0x3d, 0x86, 0x4c, 0x44, 0xd1, 0x98, 0xdc, 0x3a, 0x55, 0x4c, 0x33, 0x7c, 0x80, 0x1c, 0x3d, 0xa3,
-	0xa6, 0x69, 0x45, 0xe3, 0x38, 0x9e, 0xd1, 0x71, 0x5c, 0x95, 0x85, 0xf0, 0xdd, 0x86, 0x95, 0x2b,
-	0xc3, 0xd6, 0xd4, 0xa7, 0xe5, 0xf0, 0x52, 0x30, 0x3e, 0x85, 0x35, 0x96, 0xc9, 0x34, 0x93, 0xaa,
-	0xf0, 0xc8, 0x50, 0x67, 0x8b, 0xce, 0xa3, 0xbc, 0xeb, 0xae, 0x1a, 0xb8, 0x9b, 0xa3, 0x3a, 0xe5,
-	0x74, 0x76, 0xea, 0xdb, 0xdd, 0x54, 0xcd, 0x99, 0xc8, 0xce, 0x3d, 0x45, 0x18, 0x65, 0xa7, 0x5f,
-	0x78, 0x43, 0x6f, 0xa0, 0xc9, 0x69, 0xca, 0xb8, 0x24, 0x86, 0x4f, 0xec, 0xc5, 0x4a, 0x81, 0x24,
-	0x4b, 0x59, 0x42, 0x18, 0x8b, 0x6d, 0x15, 0xba, 0x6f, 0x98, 0xa7, 0x9a, 0xb8, 0x3b, 0xe6, 0x9d,
-	0xa5, 0x2c, 0x39, 0x61, 0xf1, 0xa5, 0xab, 0x44, 0xf9, 0xf2, 0x55, 0xa2, 0xe0, 0xdc, 0x1b, 0x02,
-	0xf5, 0x17, 0x53, 0x71, 0xf6, 0x18, 0x56, 0x26, 0xe2, 0x4c, 0x15, 0xa3, 0x3c, 0x6a, 0x67, 0x31,
-	0x2a, 0x06, 0x99, 0x9b, 0x9e, 0x7f, 0x4f, 0x87, 0x4d, 0x0c, 0x30, 0x3e, 0x3c, 0x54, 0x83, 0xf2,
-	0xdb, 0x13, 0x72, 0x8a, 0x77, 0xdb, 0xfb, 0xf5, 0x5b, 0x08, 0xc1, 0x62, 0xef, 0xa4, 0x73, 0xfa,
-	0xab, 0x5d, 0xbc, 0x6f, 0x65, 0x8e, 0x92, 0xbd, 0xde, 0xc5, 0x7b, 0x05, 0xd9, 0x0c, 0x5a, 0x04,
-	0xe8, 0x9c, 0x1d, 0x1d, 0xd9, 0xf7, 0xd9, 0x37, 0xa5, 0x72, 0xa9, 0x3e, 0xd7, 0xfc, 0x8b, 0x03,
-	0x55, 0x9c, 0x25, 0xc7, 0x54, 0xba, 0xbe, 0x2b, 0x5d, 0xf4, 0x0d, 0xc0, 0xf8, 0x22, 0xae, 0x35,
-	0xaa, 0xee, 0xac, 0x16, 0x4d, 0x56, 0x83, 0x89, 0xca, 0x64, 0x81, 0x2b, 0x22, 0x7f, 0x44, 0xcf,
-	0x00, 0xc6, 0xbf, 0x08, 0xe8, 0xf8, 0x99, 0x3a, 0x32, 0x35, 0xa3, 0x68, 0x6b, 0x54, 0x09, 0xa9,
-	0x78, 0xf9, 0x1b, 0x7a, 0x09, 0xf5, 0x4b, 0xf1, 0x31, 0xab, 0x4b, 0xe1, 0xca, 0xa5, 0x7a, 0xac,
-	0x96, 0x2e, 0xa5, 0x93, 0xf1, 0xd2, 0xec, 0x42, 0xdd, 0x1c, 0x60, 0x9b, 0x25, 0x09, 0x35, 0xb7,
-	0xec, 0x07, 0x50, 0x0d, 0x38, 0x8b, 0x6d, 0x08, 0xd8, 0xdc, 0x05, 0x25, 0x32, 0x54, 0x74, 0x0f,
-	0x2a, 0x92, 0xe5, 0xb0, 0x19, 0x3a, 0xca, 0x92, 0x19, 0xb0, 0xf9, 0xa7, 0x12, 0x2c, 0xb5, 0xdd,
-	0x28, 0x52, 0x63, 0x5b, 0x1e, 0x56, 0x08, 0x4a, 0x01, 0xa5, 0xbe, 0x1e, 0x10, 0x2a, 0x58, 0x3f,
-	0xab, 0xc2, 0x12, 0x50, 0xe9, 0x29, 0x73, 0x95, 0xd0, 0xbc, 0xa0, 0xbb, 0x30, 0x2f, 0x5d, 0x3e,
-	0xa0, 0x52, 0x9b, 0x51, 0xc1, 0xf6, 0x4d, 0x17, 0xe7, 0x2c, 0x19, 0x45, 0x75, 0xe9, 0x8a, 0xe2,
-	0x3c, 0x8a, 0x25, 0x0c, 0x7c, 0x9c, 0xe1, 0x87, 0xb0, 0x6c, 0x43, 0xd9, 0x1b, 0x59, 0xd8, 0x98,
-	0xd3, 0x2e, 0x9a, 0x18, 0x94, 0xa7, 0xbd, 0x80, 0xeb, 0x72, 0xda, 0x2f, 0x27, 0x50, 0x53, 0x9a,
-	0x8f, 0xae, 0xaf, 0xf3, 0x7a, 0x97, 0x2f, 0x27, 0xce, 0x69, 0xd2, 0xf0, 0x56, 0x87, 0x52, 0xdf,
-	0x5e, 0x13, 0xed, 0xc8, 0x13, 0x8c, 0x25, 0x08, 0xc3, 0x82, 0xb6, 0x7a, 0xb4, 0xe3, 0x6d, 0xbd,
-	0xe3, 0x57, 0x37, 0xef, 0x28, 0xbd, 0xf3, 0x89, 0x2d, 0x6b, 0x41, 0x41, 0xa4, 0x2e, 0xa3, 0x66,
-	0x4f, 0x3d, 0x7b, 0x8a, 0x61, 0xe2, 0xd9, 0x11, 0xc0, 0x7c, 0xaa, 0xf7, 0x2e, 0x4c, 0x7b, 0xc3,
-	0xc4, 0x53, 0xd5, 0x7f, 0x5a, 0xb9, 0x1f, 0xaa, 0xfe, 0x95, 0x62, 0xf5, 0x7f, 0x09, 0xcb, 0x97,
-	0x54, 0xf9, 0x7f, 0x36, 0x78, 0xf5, 0x07, 0xe7, 0x6f, 0x9f, 0xee, 0x3b, 0xff, 0xf8, 0x74, 0xdf,
-	0xf9, 0xe7, 0xa7, 0xfb, 0xce, 0xc7, 0x7f, 0xdd, 0xbf, 0x05, 0x0d, 0xc6, 0x07, 0x45, 0xdb, 0x47,
-	0x3f, 0x6e, 0xbd, 0xaa, 0x15, 0x7a, 0x9a, 0xe8, 0x3a, 0xbf, 0xd9, 0x1d, 0x84, 0xf2, 0x3c, 0xeb,
-	0xb7, 0x3c, 0x16, 0x6f, 0xef, 0xa6, 0x69, 0xa4, 0x6e, 0xf7, 0x7c, 0x7b, 0xc0, 0xbe, 0x2a, 0xfc,
-	0x4a, 0xa5, 0x7a, 0x80, 0xd8, 0xbe, 0xee, 0x67, 0xab, 0x7f, 0x3b, 0x4e, 0x7f, 0x5e, 0xbf, 0x7c,
-	0xfd, 0xdf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x0c, 0xfb, 0x35, 0xc8, 0xdc, 0x13, 0x00, 0x00,
-}

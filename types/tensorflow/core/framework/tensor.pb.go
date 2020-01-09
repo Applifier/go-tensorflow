@@ -3,24 +3,30 @@
 
 package framework
 
-import proto "github.com/gogo/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
-import binary "encoding/binary"
-
-import io "io"
+import (
+	encoding_binary "encoding/binary"
+	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
+	io "io"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+
 // Protocol buffer representing a tensor.
 type TensorProto struct {
 	Dtype DataType `protobuf:"varint,1,opt,name=dtype,proto3,enum=tensorflow.DataType" json:"dtype,omitempty"`
 	// Shape of the tensor.  TODO(touts): sort out the 0-rank issues.
-	TensorShape *TensorShapeProto `protobuf:"bytes,2,opt,name=tensor_shape,json=tensorShape" json:"tensor_shape,omitempty"`
+	TensorShape *TensorShapeProto `protobuf:"bytes,2,opt,name=tensor_shape,json=tensorShape,proto3" json:"tensor_shape,omitempty"`
 	// Version number.
 	//
 	// In version 0, if the "repeated xxx" representations contain only one
@@ -35,39 +41,67 @@ type TensorProto struct {
 	TensorContent []byte `protobuf:"bytes,4,opt,name=tensor_content,json=tensorContent,proto3" json:"tensor_content,omitempty"`
 	// DT_HALF, DT_BFLOAT16. Note that since protobuf has no int16 type, we'll
 	// have some pointless zero padding for each value here.
-	HalfVal []int32 `protobuf:"varint,13,rep,packed,name=half_val,json=halfVal" json:"half_val,omitempty"`
+	HalfVal []int32 `protobuf:"varint,13,rep,packed,name=half_val,json=halfVal,proto3" json:"half_val,omitempty"`
 	// DT_FLOAT.
-	FloatVal []float32 `protobuf:"fixed32,5,rep,packed,name=float_val,json=floatVal" json:"float_val,omitempty"`
+	FloatVal []float32 `protobuf:"fixed32,5,rep,packed,name=float_val,json=floatVal,proto3" json:"float_val,omitempty"`
 	// DT_DOUBLE.
-	DoubleVal []float64 `protobuf:"fixed64,6,rep,packed,name=double_val,json=doubleVal" json:"double_val,omitempty"`
+	DoubleVal []float64 `protobuf:"fixed64,6,rep,packed,name=double_val,json=doubleVal,proto3" json:"double_val,omitempty"`
 	// DT_INT32, DT_INT16, DT_INT8, DT_UINT8.
-	IntVal []int32 `protobuf:"varint,7,rep,packed,name=int_val,json=intVal" json:"int_val,omitempty"`
+	IntVal []int32 `protobuf:"varint,7,rep,packed,name=int_val,json=intVal,proto3" json:"int_val,omitempty"`
 	// DT_STRING
-	StringVal [][]byte `protobuf:"bytes,8,rep,name=string_val,json=stringVal" json:"string_val,omitempty"`
+	StringVal [][]byte `protobuf:"bytes,8,rep,name=string_val,json=stringVal,proto3" json:"string_val,omitempty"`
 	// DT_COMPLEX64. scomplex_val(2*i) and scomplex_val(2*i+1) are real
 	// and imaginary parts of i-th single precision complex.
-	ScomplexVal []float32 `protobuf:"fixed32,9,rep,packed,name=scomplex_val,json=scomplexVal" json:"scomplex_val,omitempty"`
+	ScomplexVal []float32 `protobuf:"fixed32,9,rep,packed,name=scomplex_val,json=scomplexVal,proto3" json:"scomplex_val,omitempty"`
 	// DT_INT64
-	Int64Val []int64 `protobuf:"varint,10,rep,packed,name=int64_val,json=int64Val" json:"int64_val,omitempty"`
+	Int64Val []int64 `protobuf:"varint,10,rep,packed,name=int64_val,json=int64Val,proto3" json:"int64_val,omitempty"`
 	// DT_BOOL
-	BoolVal []bool `protobuf:"varint,11,rep,packed,name=bool_val,json=boolVal" json:"bool_val,omitempty"`
+	BoolVal []bool `protobuf:"varint,11,rep,packed,name=bool_val,json=boolVal,proto3" json:"bool_val,omitempty"`
 	// DT_COMPLEX128. dcomplex_val(2*i) and dcomplex_val(2*i+1) are real
 	// and imaginary parts of i-th double precision complex.
-	DcomplexVal []float64 `protobuf:"fixed64,12,rep,packed,name=dcomplex_val,json=dcomplexVal" json:"dcomplex_val,omitempty"`
+	DcomplexVal []float64 `protobuf:"fixed64,12,rep,packed,name=dcomplex_val,json=dcomplexVal,proto3" json:"dcomplex_val,omitempty"`
 	// DT_RESOURCE
-	ResourceHandleVal []*ResourceHandleProto `protobuf:"bytes,14,rep,name=resource_handle_val,json=resourceHandleVal" json:"resource_handle_val,omitempty"`
+	ResourceHandleVal []*ResourceHandleProto `protobuf:"bytes,14,rep,name=resource_handle_val,json=resourceHandleVal,proto3" json:"resource_handle_val,omitempty"`
 	// DT_VARIANT
-	VariantVal []*VariantTensorDataProto `protobuf:"bytes,15,rep,name=variant_val,json=variantVal" json:"variant_val,omitempty"`
+	VariantVal []*VariantTensorDataProto `protobuf:"bytes,15,rep,name=variant_val,json=variantVal,proto3" json:"variant_val,omitempty"`
 	// DT_UINT32
-	Uint32Val []uint32 `protobuf:"varint,16,rep,packed,name=uint32_val,json=uint32Val" json:"uint32_val,omitempty"`
+	Uint32Val []uint32 `protobuf:"varint,16,rep,packed,name=uint32_val,json=uint32Val,proto3" json:"uint32_val,omitempty"`
 	// DT_UINT64
-	Uint64Val []uint64 `protobuf:"varint,17,rep,packed,name=uint64_val,json=uint64Val" json:"uint64_val,omitempty"`
+	Uint64Val []uint64 `protobuf:"varint,17,rep,packed,name=uint64_val,json=uint64Val,proto3" json:"uint64_val,omitempty"`
 }
 
-func (m *TensorProto) Reset()                    { *m = TensorProto{} }
-func (m *TensorProto) String() string            { return proto.CompactTextString(m) }
-func (*TensorProto) ProtoMessage()               {}
-func (*TensorProto) Descriptor() ([]byte, []int) { return fileDescriptorTensor, []int{0} }
+func (m *TensorProto) Reset()         { *m = TensorProto{} }
+func (m *TensorProto) String() string { return proto.CompactTextString(m) }
+func (*TensorProto) ProtoMessage()    {}
+func (*TensorProto) Descriptor() ([]byte, []int) {
+	return fileDescriptor_efa68180bc31e4fc, []int{0}
+}
+func (m *TensorProto) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TensorProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_TensorProto.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *TensorProto) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TensorProto.Merge(m, src)
+}
+func (m *TensorProto) XXX_Size() int {
+	return m.Size()
+}
+func (m *TensorProto) XXX_DiscardUnknown() {
+	xxx_messageInfo_TensorProto.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TensorProto proto.InternalMessageInfo
 
 func (m *TensorProto) GetDtype() DataType {
 	if m != nil {
@@ -195,13 +229,41 @@ type VariantTensorDataProto struct {
 	// Portions of the object that are not Tensors.
 	Metadata []byte `protobuf:"bytes,2,opt,name=metadata,proto3" json:"metadata,omitempty"`
 	// Tensors contained within objects being serialized.
-	Tensors []*TensorProto `protobuf:"bytes,3,rep,name=tensors" json:"tensors,omitempty"`
+	Tensors []*TensorProto `protobuf:"bytes,3,rep,name=tensors,proto3" json:"tensors,omitempty"`
 }
 
-func (m *VariantTensorDataProto) Reset()                    { *m = VariantTensorDataProto{} }
-func (m *VariantTensorDataProto) String() string            { return proto.CompactTextString(m) }
-func (*VariantTensorDataProto) ProtoMessage()               {}
-func (*VariantTensorDataProto) Descriptor() ([]byte, []int) { return fileDescriptorTensor, []int{1} }
+func (m *VariantTensorDataProto) Reset()         { *m = VariantTensorDataProto{} }
+func (m *VariantTensorDataProto) String() string { return proto.CompactTextString(m) }
+func (*VariantTensorDataProto) ProtoMessage()    {}
+func (*VariantTensorDataProto) Descriptor() ([]byte, []int) {
+	return fileDescriptor_efa68180bc31e4fc, []int{1}
+}
+func (m *VariantTensorDataProto) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *VariantTensorDataProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_VariantTensorDataProto.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *VariantTensorDataProto) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_VariantTensorDataProto.Merge(m, src)
+}
+func (m *VariantTensorDataProto) XXX_Size() int {
+	return m.Size()
+}
+func (m *VariantTensorDataProto) XXX_DiscardUnknown() {
+	xxx_messageInfo_VariantTensorDataProto.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_VariantTensorDataProto proto.InternalMessageInfo
 
 func (m *VariantTensorDataProto) GetTypeName() string {
 	if m != nil {
@@ -228,6 +290,53 @@ func init() {
 	proto.RegisterType((*TensorProto)(nil), "tensorflow.TensorProto")
 	proto.RegisterType((*VariantTensorDataProto)(nil), "tensorflow.VariantTensorDataProto")
 }
+
+func init() {
+	proto.RegisterFile("tensorflow/core/framework/tensor.proto", fileDescriptor_efa68180bc31e4fc)
+}
+
+var fileDescriptor_efa68180bc31e4fc = []byte{
+	// 606 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x94, 0xcf, 0x6f, 0xd3, 0x30,
+	0x14, 0xc7, 0xe7, 0x79, 0x5d, 0x53, 0x27, 0x1d, 0x5b, 0x40, 0x10, 0x6d, 0xac, 0x33, 0x93, 0x86,
+	0x2c, 0x04, 0xad, 0xe8, 0x10, 0x57, 0x44, 0xc7, 0x81, 0xd3, 0x98, 0xc2, 0xb4, 0x03, 0x97, 0xca,
+	0x6d, 0xdd, 0x36, 0x22, 0xb1, 0x23, 0xc7, 0xdd, 0xd8, 0x9d, 0x0b, 0x37, 0xfe, 0x2c, 0x8e, 0xe3,
+	0xc6, 0x11, 0x6d, 0xff, 0x04, 0x47, 0xe4, 0xe7, 0xac, 0x0d, 0x3f, 0x06, 0xc7, 0x7e, 0xdf, 0xe7,
+	0x7d, 0xbf, 0x7e, 0xf1, 0x73, 0xc9, 0x43, 0x23, 0x64, 0xa1, 0xf4, 0x38, 0x55, 0x67, 0x9d, 0xa1,
+	0xd2, 0xa2, 0x33, 0xd6, 0x3c, 0x13, 0x67, 0x4a, 0xbf, 0xef, 0xb8, 0x4a, 0x3b, 0xd7, 0xca, 0xa8,
+	0x90, 0x2c, 0xb8, 0xcd, 0xce, 0xcd, 0x3d, 0x5a, 0x14, 0x6a, 0xa6, 0x87, 0xa2, 0x3f, 0xe5, 0x72,
+	0x94, 0x0a, 0xd7, 0xbc, 0xf9, 0xf8, 0x7f, 0x21, 0xfd, 0x62, 0xca, 0xf3, 0x6b, 0x7a, 0xef, 0x1f,
+	0xf4, 0x79, 0x2e, 0x0a, 0x87, 0xed, 0x7e, 0xad, 0x11, 0xff, 0x18, 0xc8, 0x23, 0x38, 0xe1, 0x23,
+	0x52, 0x1b, 0xd9, 0x7a, 0x84, 0x28, 0x62, 0x6b, 0xdd, 0x3b, 0xed, 0x85, 0x4d, 0xfb, 0x15, 0x37,
+	0xfc, 0xf8, 0x3c, 0x17, 0xb1, 0x43, 0xc2, 0x17, 0x24, 0xa8, 0x06, 0x47, 0xcb, 0x14, 0x31, 0xbf,
+	0x7b, 0xbf, 0xda, 0xe2, 0xac, 0xdf, 0xda, 0x32, 0xf8, 0xc7, 0xbe, 0x59, 0x28, 0xe1, 0x1e, 0x59,
+	0x3b, 0x15, 0xba, 0x48, 0x94, 0xec, 0xcb, 0x59, 0x36, 0x10, 0x3a, 0xc2, 0x14, 0xb1, 0x5a, 0xdc,
+	0x2c, 0xd5, 0x43, 0x10, 0x2d, 0x56, 0xe6, 0x0c, 0x95, 0x34, 0x42, 0x9a, 0x68, 0x85, 0x22, 0x16,
+	0xc4, 0x4d, 0xa7, 0x1e, 0x38, 0x31, 0xdc, 0x26, 0xde, 0x94, 0xa7, 0xe3, 0xfe, 0x29, 0x4f, 0xa3,
+	0x26, 0xc5, 0xac, 0xd6, 0x5b, 0x5e, 0x47, 0x71, 0xdd, 0x6a, 0x27, 0x3c, 0x0d, 0x77, 0x48, 0x63,
+	0x9c, 0x2a, 0x6e, 0xa0, 0x5e, 0xa3, 0x98, 0x2d, 0x43, 0xdd, 0x03, 0xd1, 0x02, 0x0f, 0x08, 0x19,
+	0xa9, 0xd9, 0x20, 0x15, 0x40, 0xac, 0x52, 0xcc, 0x10, 0x10, 0x0d, 0xa7, 0x5a, 0x64, 0x8b, 0xd4,
+	0x13, 0xe9, 0x1c, 0xea, 0xf3, 0x84, 0xd5, 0x44, 0x42, 0xff, 0x36, 0x21, 0x85, 0xd1, 0x89, 0x9c,
+	0x40, 0xdd, 0xa3, 0x98, 0x05, 0x71, 0xc3, 0x29, 0xb6, 0xbc, 0x47, 0x82, 0x62, 0xa8, 0xb2, 0x3c,
+	0x15, 0x1f, 0x00, 0x68, 0xcc, 0x8f, 0xe0, 0x5f, 0xeb, 0xe5, 0x31, 0x13, 0x69, 0x9e, 0x3f, 0x03,
+	0x86, 0x50, 0xcc, 0xb0, 0x3b, 0x26, 0x88, 0x2e, 0xc6, 0x1b, 0x28, 0x95, 0x42, 0xdd, 0xa7, 0x98,
+	0x79, 0x6e, 0x4c, 0xab, 0x95, 0x31, 0xa3, 0x6a, 0x4c, 0x30, 0x9f, 0xc3, 0x1f, 0x55, 0x62, 0xde,
+	0x90, 0xdb, 0xbf, 0x6d, 0x19, 0xd0, 0x6b, 0x14, 0x33, 0xbf, 0xbb, 0x53, 0xbd, 0xc2, 0xb8, 0xc4,
+	0x5e, 0x03, 0xe5, 0x6e, 0x71, 0x43, 0xff, 0x22, 0x5a, 0xc3, 0x03, 0xe2, 0x9f, 0x72, 0x9d, 0xf0,
+	0xf2, 0xf3, 0xdc, 0x02, 0xa3, 0xdd, 0xaa, 0xd1, 0x89, 0x2b, 0xbb, 0x95, 0xb0, 0xbb, 0xe4, 0xbc,
+	0x48, 0xd9, 0x56, 0x5e, 0xc1, 0x2c, 0x91, 0x66, 0xbf, 0x0b, 0x1e, 0xeb, 0x14, 0xb3, 0xa6, 0xbb,
+	0x02, 0xa7, 0x56, 0x90, 0xf2, 0x03, 0x6d, 0x50, 0xcc, 0x56, 0x16, 0x08, 0x7c, 0xa1, 0xdd, 0x8f,
+	0x88, 0xdc, 0xfd, 0x7b, 0x58, 0xb8, 0x45, 0x1a, 0x76, 0x75, 0xfb, 0x92, 0x67, 0x6e, 0xc5, 0x1b,
+	0xb1, 0x67, 0x85, 0x43, 0x9e, 0x89, 0x70, 0x93, 0x78, 0x99, 0x30, 0x7c, 0xc4, 0x0d, 0x87, 0x5d,
+	0x0e, 0xe2, 0xf9, 0xef, 0xf0, 0x29, 0xa9, 0xbb, 0x51, 0x8a, 0x08, 0xc3, 0x68, 0xf7, 0xfe, 0x5c,
+	0x73, 0x37, 0xcf, 0x35, 0xd7, 0xfb, 0x84, 0xbe, 0x5c, 0xb6, 0xd0, 0xc5, 0x65, 0x0b, 0x7d, 0xbf,
+	0x6c, 0xa1, 0xcf, 0x57, 0xad, 0xa5, 0x8b, 0xab, 0xd6, 0xd2, 0xb7, 0xab, 0xd6, 0x12, 0x89, 0x94,
+	0x9e, 0x54, 0xfb, 0xe7, 0x6f, 0xb3, 0x17, 0x54, 0xac, 0x8a, 0x23, 0xf4, 0xae, 0x37, 0x49, 0xcc,
+	0x74, 0x36, 0x68, 0x0f, 0x55, 0xd6, 0x79, 0x99, 0xe7, 0x69, 0x32, 0x4e, 0x84, 0xee, 0x4c, 0xd4,
+	0x93, 0xca, 0xf3, 0x86, 0xf7, 0x7c, 0xf3, 0xdf, 0xc9, 0x0f, 0x84, 0x06, 0xab, 0xf0, 0xda, 0xf7,
+	0x7f, 0x06, 0x00, 0x00, 0xff, 0xff, 0xa0, 0xfb, 0x67, 0x64, 0xa9, 0x04, 0x00, 0x00,
+}
+
 func (m *TensorProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -275,7 +384,7 @@ func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintTensor(dAtA, i, uint64(len(m.FloatVal)*4))
 		for _, num := range m.FloatVal {
 			f2 := math.Float32bits(float32(num))
-			binary.LittleEndian.PutUint32(dAtA[i:], uint32(f2))
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f2))
 			i += 4
 		}
 	}
@@ -285,7 +394,7 @@ func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintTensor(dAtA, i, uint64(len(m.DoubleVal)*8))
 		for _, num := range m.DoubleVal {
 			f3 := math.Float64bits(float64(num))
-			binary.LittleEndian.PutUint64(dAtA[i:], uint64(f3))
+			encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(f3))
 			i += 8
 		}
 	}
@@ -321,7 +430,7 @@ func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintTensor(dAtA, i, uint64(len(m.ScomplexVal)*4))
 		for _, num := range m.ScomplexVal {
 			f6 := math.Float32bits(float32(num))
-			binary.LittleEndian.PutUint32(dAtA[i:], uint32(f6))
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f6))
 			i += 4
 		}
 	}
@@ -362,7 +471,7 @@ func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintTensor(dAtA, i, uint64(len(m.DcomplexVal)*8))
 		for _, num := range m.DcomplexVal {
 			f9 := math.Float64bits(float64(num))
-			binary.LittleEndian.PutUint64(dAtA[i:], uint64(f9))
+			encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(f9))
 			i += 8
 		}
 	}
@@ -501,6 +610,9 @@ func encodeVarintTensor(dAtA []byte, offset int, v uint64) int {
 	return offset + 1
 }
 func (m *TensorProto) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	if m.Dtype != 0 {
@@ -589,6 +701,9 @@ func (m *TensorProto) Size() (n int) {
 }
 
 func (m *VariantTensorDataProto) Size() (n int) {
+	if m == nil {
+		return 0
+	}
 	var l int
 	_ = l
 	l = len(m.TypeName)
@@ -758,7 +873,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if (iNdEx + 4) > l {
 					return io.ErrUnexpectedEOF
 				}
-				v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+				v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 				iNdEx += 4
 				v2 := float32(math.Float32frombits(v))
 				m.FloatVal = append(m.FloatVal, v2)
@@ -785,12 +900,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen / 4
+				if elementCount != 0 && len(m.FloatVal) == 0 {
+					m.FloatVal = make([]float32, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint32
 					if (iNdEx + 4) > l {
 						return io.ErrUnexpectedEOF
 					}
-					v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+					v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 					iNdEx += 4
 					v2 := float32(math.Float32frombits(v))
 					m.FloatVal = append(m.FloatVal, v2)
@@ -804,7 +924,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if (iNdEx + 8) > l {
 					return io.ErrUnexpectedEOF
 				}
-				v = uint64(binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+				v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
 				iNdEx += 8
 				v2 := float64(math.Float64frombits(v))
 				m.DoubleVal = append(m.DoubleVal, v2)
@@ -831,12 +951,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen / 8
+				if elementCount != 0 && len(m.DoubleVal) == 0 {
+					m.DoubleVal = make([]float64, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint64
 					if (iNdEx + 8) > l {
 						return io.ErrUnexpectedEOF
 					}
-					v = uint64(binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+					v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
 					iNdEx += 8
 					v2 := float64(math.Float64frombits(v))
 					m.DoubleVal = append(m.DoubleVal, v2)
@@ -884,6 +1009,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.IntVal) == 0 {
+					m.IntVal = make([]int32, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int32
@@ -941,7 +1077,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if (iNdEx + 4) > l {
 					return io.ErrUnexpectedEOF
 				}
-				v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+				v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 				iNdEx += 4
 				v2 := float32(math.Float32frombits(v))
 				m.ScomplexVal = append(m.ScomplexVal, v2)
@@ -968,12 +1104,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen / 4
+				if elementCount != 0 && len(m.ScomplexVal) == 0 {
+					m.ScomplexVal = make([]float32, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint32
 					if (iNdEx + 4) > l {
 						return io.ErrUnexpectedEOF
 					}
-					v = uint32(binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+					v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
 					iNdEx += 4
 					v2 := float32(math.Float32frombits(v))
 					m.ScomplexVal = append(m.ScomplexVal, v2)
@@ -1021,6 +1162,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Int64Val) == 0 {
+					m.Int64Val = make([]int64, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int64
@@ -1084,6 +1236,11 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen
+				if elementCount != 0 && len(m.BoolVal) == 0 {
+					m.BoolVal = make([]bool, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v int
 					for shift := uint(0); ; shift += 7 {
@@ -1111,7 +1268,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if (iNdEx + 8) > l {
 					return io.ErrUnexpectedEOF
 				}
-				v = uint64(binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+				v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
 				iNdEx += 8
 				v2 := float64(math.Float64frombits(v))
 				m.DcomplexVal = append(m.DcomplexVal, v2)
@@ -1138,12 +1295,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				elementCount = packedLen / 8
+				if elementCount != 0 && len(m.DcomplexVal) == 0 {
+					m.DcomplexVal = make([]float64, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint64
 					if (iNdEx + 8) > l {
 						return io.ErrUnexpectedEOF
 					}
-					v = uint64(binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+					v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
 					iNdEx += 8
 					v2 := float64(math.Float64frombits(v))
 					m.DcomplexVal = append(m.DcomplexVal, v2)
@@ -1191,6 +1353,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.HalfVal) == 0 {
+					m.HalfVal = make([]int32, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v int32
@@ -1316,6 +1489,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Uint32Val) == 0 {
+					m.Uint32Val = make([]uint32, 0, elementCount)
+				}
 				for iNdEx < postIndex {
 					var v uint32
 					for shift := uint(0); ; shift += 7 {
@@ -1377,6 +1561,17 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				postIndex := iNdEx + packedLen
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Uint64Val) == 0 {
+					m.Uint64Val = make([]uint64, 0, elementCount)
 				}
 				for iNdEx < postIndex {
 					var v uint64
@@ -1665,47 +1860,3 @@ var (
 	ErrInvalidLengthTensor = fmt.Errorf("proto: negative length found during unmarshaling")
 	ErrIntOverflowTensor   = fmt.Errorf("proto: integer overflow")
 )
-
-func init() { proto.RegisterFile("tensorflow/core/framework/tensor.proto", fileDescriptorTensor) }
-
-var fileDescriptorTensor = []byte{
-	// 600 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x94, 0xcf, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0xd9, 0xba, 0x69, 0xec, 0xb1, 0x53, 0x5a, 0x83, 0xc0, 0x6a, 0x69, 0xba, 0x54, 0x2a,
-	0x5a, 0x21, 0x48, 0x44, 0x8a, 0xb8, 0x22, 0x52, 0x0e, 0x9c, 0x4a, 0x65, 0xaa, 0x1e, 0xb8, 0x44,
-	0x9b, 0x64, 0x93, 0x58, 0xd8, 0x5e, 0x6b, 0xbd, 0x69, 0xe9, 0x11, 0x89, 0x07, 0xe0, 0xb1, 0x38,
-	0xc2, 0x1b, 0xa0, 0xf2, 0x12, 0x1c, 0xd1, 0xce, 0xba, 0x89, 0xf9, 0x53, 0x38, 0xe6, 0xfb, 0x7e,
-	0xf3, 0x8d, 0x67, 0x77, 0x36, 0xf0, 0x40, 0x8b, 0xbc, 0x94, 0x6a, 0x92, 0xca, 0xf3, 0xee, 0x48,
-	0x2a, 0xd1, 0x9d, 0x28, 0x9e, 0x89, 0x73, 0xa9, 0xde, 0x75, 0xad, 0xd3, 0x29, 0x94, 0xd4, 0x32,
-	0x84, 0x25, 0xb7, 0xd5, 0xbd, 0xbe, 0x46, 0x89, 0x52, 0xce, 0xd5, 0x48, 0x0c, 0x66, 0x3c, 0x1f,
-	0xa7, 0xc2, 0x16, 0x6f, 0x3d, 0xfa, 0x5f, 0x93, 0x41, 0x39, 0xe3, 0xc5, 0x15, 0xbd, 0xff, 0x0f,
-	0xfa, 0xa2, 0x10, 0xa5, 0xc5, 0xf6, 0xbe, 0x36, 0xc0, 0x3f, 0x41, 0xf2, 0x18, 0xbf, 0xf0, 0x21,
-	0x34, 0xc6, 0xc6, 0x8f, 0x08, 0x25, 0x6c, 0xbd, 0x77, 0xbb, 0xb3, 0x8c, 0xe9, 0xbc, 0xe4, 0x9a,
-	0x9f, 0x5c, 0x14, 0x22, 0xb6, 0x48, 0xf8, 0x1c, 0x82, 0x7a, 0xe3, 0x68, 0x85, 0x12, 0xe6, 0xf7,
-	0xee, 0xd5, 0x4b, 0x6c, 0xf4, 0x1b, 0x63, 0x63, 0x7e, 0xec, 0xeb, 0xa5, 0x12, 0xee, 0xc3, 0xfa,
-	0x99, 0x50, 0x65, 0x22, 0xf3, 0x41, 0x3e, 0xcf, 0x86, 0x42, 0x45, 0x0e, 0x25, 0xac, 0x11, 0xb7,
-	0x2a, 0xf5, 0x08, 0x45, 0x83, 0x55, 0x7d, 0x46, 0x32, 0xd7, 0x22, 0xd7, 0xd1, 0x2a, 0x25, 0x2c,
-	0x88, 0x5b, 0x56, 0x3d, 0xb4, 0x62, 0xb8, 0x0b, 0xde, 0x24, 0x95, 0x5c, 0x0f, 0xce, 0x78, 0x1a,
-	0x35, 0xa8, 0xc3, 0x56, 0xfa, 0x2b, 0x1b, 0x24, 0x76, 0x51, 0x3c, 0xe5, 0x69, 0x78, 0x1f, 0x60,
-	0x2c, 0xe7, 0xc3, 0x54, 0x20, 0xb1, 0x46, 0x1d, 0x46, 0x90, 0xf0, 0xac, 0x6a, 0x90, 0x6d, 0x68,
-	0x26, 0xb9, 0x4d, 0x68, 0x52, 0x87, 0x35, 0xd0, 0x5f, 0x4b, 0x72, 0xac, 0xdf, 0x01, 0x28, 0xb5,
-	0x4a, 0xf2, 0x29, 0xfa, 0x2e, 0x75, 0x58, 0x10, 0x7b, 0x56, 0x31, 0xf6, 0x3e, 0x04, 0xe5, 0x48,
-	0x66, 0x45, 0x2a, 0xde, 0x23, 0xe0, 0x2d, 0x3e, 0xc1, 0xbf, 0xd2, 0x0d, 0xb6, 0x0b, 0x5e, 0x92,
-	0xeb, 0x67, 0x4f, 0x91, 0x01, 0xea, 0x30, 0xc7, 0x7e, 0x26, 0x8a, 0xb6, 0x8d, 0x3b, 0x94, 0x32,
-	0x45, 0xdf, 0xa7, 0x0e, 0x73, 0xd1, 0x6f, 0x1a, 0xad, 0x6a, 0x33, 0xae, 0xb7, 0x09, 0x16, 0x73,
-	0xf8, 0xe3, 0x5a, 0x9b, 0x1d, 0x70, 0x67, 0x3c, 0x9d, 0x20, 0xd2, 0x5a, 0x8c, 0xd2, 0x34, 0x9a,
-	0xb1, 0x5f, 0xc3, 0xad, 0xdf, 0xb6, 0x0c, 0xc9, 0x75, 0xea, 0x30, 0xbf, 0xb7, 0x5b, 0xbf, 0xc2,
-	0xb8, 0xc2, 0x5e, 0x21, 0x65, 0x6f, 0x71, 0x53, 0xfd, 0x22, 0x9a, 0xc0, 0x43, 0xf0, 0xcf, 0xb8,
-	0x4a, 0x78, 0x75, 0x7a, 0x37, 0x31, 0x68, 0xaf, 0x1e, 0x74, 0x6a, 0x6d, 0xbb, 0x12, 0x66, 0x97,
-	0x6c, 0x16, 0x54, 0x65, 0xd5, 0x0d, 0xcd, 0x93, 0x5c, 0x1f, 0xf4, 0x30, 0x63, 0x83, 0x3a, 0xac,
-	0x65, 0x6f, 0xc8, 0xaa, 0x35, 0xa4, 0x3a, 0xbf, 0x4d, 0xea, 0xb0, 0xd5, 0x25, 0x82, 0x07, 0xb8,
-	0xf7, 0x91, 0xc0, 0x9d, 0xbf, 0x37, 0x0b, 0xb7, 0xc1, 0x33, 0xab, 0x3b, 0xc8, 0x79, 0x66, 0x57,
-	0xdc, 0x8b, 0x5d, 0x23, 0x1c, 0xf1, 0x4c, 0x84, 0x5b, 0xe0, 0x66, 0x42, 0xf3, 0x31, 0xd7, 0x1c,
-	0x77, 0x39, 0x88, 0x17, 0xbf, 0xc3, 0x27, 0xd0, 0xb4, 0xa3, 0x94, 0x91, 0x83, 0xa3, 0xdd, 0xfd,
-	0x73, 0xcd, 0xed, 0x3c, 0x57, 0x5c, 0xff, 0x03, 0xf9, 0x7c, 0xd9, 0x26, 0x5f, 0x2e, 0xdb, 0xe4,
-	0xdb, 0x65, 0x9b, 0x7c, 0xfa, 0xde, 0xbe, 0x01, 0x91, 0x54, 0xd3, 0x7a, 0xdd, 0xe2, 0x4d, 0xf6,
-	0x83, 0x5a, 0x44, 0x79, 0x4c, 0xde, 0xf6, 0xa7, 0x89, 0x9e, 0xcd, 0x87, 0x9d, 0x91, 0xcc, 0xba,
-	0x2f, 0x8a, 0x22, 0x4d, 0x26, 0x89, 0x50, 0xdd, 0xa9, 0x7c, 0x5c, 0x7b, 0xd6, 0xf8, 0x8e, 0xaf,
-	0xff, 0x1b, 0xf9, 0x41, 0xc8, 0x70, 0x0d, 0x5f, 0xf9, 0xc1, 0xcf, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0x99, 0x68, 0x26, 0xe9, 0xa1, 0x04, 0x00, 0x00,
-}
