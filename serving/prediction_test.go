@@ -167,8 +167,8 @@ func TestMultiPrediction(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !reflect.DeepEqual(scores, []float32{0.5461207, 0.45387933, 0.4891461, 0.5108539}) {
-		t.Error("multi prediction result did not match expected")
+	if !reflect.DeepEqual(scores, []float32{0.54612094, 0.4538791, 0.4891459, 0.5108541}) {
+		t.Error("multi prediction result did not match expected", scores)
 	}
 }
 
