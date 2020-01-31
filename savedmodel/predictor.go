@@ -337,7 +337,7 @@ func (ep *savedModelPredictor) GetModelInfo(ctx context.Context) (predict.ModelI
 }
 
 func (ep *savedModelPredictor) Close(ctx context.Context) error {
-	return ep.model.Close()
+	return ep.model.Session.Close()
 }
 
 type savedModelPredictorTensor struct {
