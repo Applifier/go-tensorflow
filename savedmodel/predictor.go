@@ -22,6 +22,7 @@ type savedModelPredictor struct {
 	runner  *Runner
 	name    string
 	version int
+	model 	*tf.SavedModel
 
 	bufferPool sync.Pool
 }
@@ -55,6 +56,7 @@ func NewPredictor(modelsDir string, name string, version int, signature string) 
 		runner:  runner,
 		name:    name,
 		version: version,
+		model: model,
 
 		bufferPool: sync.Pool{
 			New: func() interface{} {
@@ -332,6 +334,10 @@ func (ep *savedModelPredictor) GetModelInfo(ctx context.Context) (predict.ModelI
 		Name:    ep.name,
 		Version: ep.version,
 	}, nil
+}
+
+func (ep *savedModelPredictor) Close(ctx context.Context) error {
+	return ep.model.Session.Close()
 }
 
 type savedModelPredictorTensor struct {
