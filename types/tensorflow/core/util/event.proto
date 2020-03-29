@@ -1,4 +1,5 @@
 syntax = "proto3";
+option go_package = "github.com/Applifier/go-tensorflow/types/tensorflow/core/util";
 
 package tensorflow;
 

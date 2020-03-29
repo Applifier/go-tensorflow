@@ -50,8 +50,21 @@ find types/tensorflow -type f -name '*.proto' -exec sed -i '' 's/github.com\/ten
 find types/tensorflow -type f -name '*.proto' -exec sed -i '' 's/\(\/[a-zA-Z_]*_go_proto\)//g' {} \;
 find types/tensorflow/core/protobuf -type f -name '*.proto' -exec sed -i '' 's/types\/tensorflow\/core/types\/tensorflow\/core\/protobuf/g' {} \;
 
+function addPackage () {
+    pkg=$1
+    set +e 
+    files=$(find $pkg -type f -name '*.proto' | xargs grep -iL "go_package")
+    set -e
 
+    for file in $files
+    do  
+        line=$(awk '/syntax/ {print NR}' $file)
+        let "line=line+1"
+        echo -e "syntax = \"proto3\";\noption go_package = \"github.com/Applifier/go-tensorflow/$pkg\";\n$(cat $file | tail -n +$line)" > $file
+    done
+}
 
+addPackage types/tensorflow/core/util
 
 PROTOC_OPTS='-I types --gogofaster_out=plugins=grpc,paths=source_relative,\
 Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types,\

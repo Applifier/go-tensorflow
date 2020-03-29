@@ -1,21 +1,5 @@
-// Protocol buffers for saved tensor slices. It's used for the brain tensor
-// ops checkpoints and the V3 checkpoints in dist_belief.
-
-// A checkpoint file is an sstable. The value for each record is a serialized
-// SavedTensorSlices message (defined below).
-//
-// Each checkpoint file has a record with the empty key (""), which corresponds
-// to a SavedTensorSlices message that contains a "meta", that serves as a
-// table of contents on all the tensor slices saved in this file. Since the key
-// is "", it's always the first record in each file.
-//
-// Each of the rest of the records in a checkpoint stores the raw data of a
-// particular tensor slice, in SavedSlice format. The corresponding key is an
-// ordered code that encodes the name of the tensor and the slice
-// information. The name is also stored in the SaveSlice message for ease of
-// debugging and manual examination.
-
 syntax = "proto3";
+option go_package = "github.com/Applifier/go-tensorflow/types/tensorflow/core/util";
 
 package tensorflow;
 option cc_enable_arenas = true;

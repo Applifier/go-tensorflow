@@ -1,5 +1,5 @@
-// Protocol messages for describing the results of benchmarks and unit tests.
 syntax = "proto3";
+option go_package = "github.com/Applifier/go-tensorflow/types/tensorflow/core/util";
 
 import "google/protobuf/any.proto";
 import "google/protobuf/wrappers.proto";
