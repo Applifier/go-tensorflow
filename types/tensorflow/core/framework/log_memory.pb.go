@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type MemoryLogStep struct {
 	// Process-unique step id.
@@ -42,7 +43,7 @@ func (m *MemoryLogStep) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_MemoryLogStep.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -99,7 +100,7 @@ func (m *MemoryLogTensorAllocation) XXX_Marshal(b []byte, deterministic bool) ([
 		return xxx_messageInfo_MemoryLogTensorAllocation.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -161,7 +162,7 @@ func (m *MemoryLogTensorDeallocation) XXX_Marshal(b []byte, deterministic bool) 
 		return xxx_messageInfo_MemoryLogTensorDeallocation.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -220,7 +221,7 @@ func (m *MemoryLogTensorOutput) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return xxx_messageInfo_MemoryLogTensorOutput.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -297,7 +298,7 @@ func (m *MemoryLogRawAllocation) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_MemoryLogRawAllocation.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -387,7 +388,7 @@ func (m *MemoryLogRawDeallocation) XXX_Marshal(b []byte, deterministic bool) ([]
 		return xxx_messageInfo_MemoryLogRawDeallocation.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -492,7 +493,7 @@ var fileDescriptor_4f52e83a3ef81427 = []byte{
 func (m *MemoryLogStep) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -500,28 +501,34 @@ func (m *MemoryLogStep) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MemoryLogStep) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MemoryLogStep) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.StepId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
-	}
 	if len(m.Handle) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.Handle)
+		copy(dAtA[i:], m.Handle)
 		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.Handle)))
-		i += copy(dAtA[i:], m.Handle)
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.StepId != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MemoryLogTensorAllocation) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -529,38 +536,46 @@ func (m *MemoryLogTensorAllocation) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MemoryLogTensorAllocation) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MemoryLogTensorAllocation) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.StepId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
+	if m.Tensor != nil {
+		{
+			size, err := m.Tensor.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintLogMemory(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.KernelName) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.KernelName)
+		copy(dAtA[i:], m.KernelName)
 		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.KernelName)))
-		i += copy(dAtA[i:], m.KernelName)
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.Tensor != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.Tensor.Size()))
-		n1, err := m.Tensor.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
+	if m.StepId != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *MemoryLogTensorDeallocation) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -568,28 +583,34 @@ func (m *MemoryLogTensorDeallocation) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MemoryLogTensorDeallocation) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MemoryLogTensorDeallocation) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.AllocationId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.AllocationId))
-	}
 	if len(m.AllocatorName) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.AllocatorName)
+		copy(dAtA[i:], m.AllocatorName)
 		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.AllocatorName)))
-		i += copy(dAtA[i:], m.AllocatorName)
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.AllocationId != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.AllocationId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MemoryLogTensorOutput) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -597,43 +618,51 @@ func (m *MemoryLogTensorOutput) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MemoryLogTensorOutput) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MemoryLogTensorOutput) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.StepId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
-	}
-	if len(m.KernelName) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.KernelName)))
-		i += copy(dAtA[i:], m.KernelName)
+	if m.Tensor != nil {
+		{
+			size, err := m.Tensor.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintLogMemory(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
 	}
 	if m.Index != 0 {
-		dAtA[i] = 0x18
-		i++
 		i = encodeVarintLogMemory(dAtA, i, uint64(m.Index))
+		i--
+		dAtA[i] = 0x18
 	}
-	if m.Tensor != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.Tensor.Size()))
-		n2, err := m.Tensor.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
+	if len(m.KernelName) > 0 {
+		i -= len(m.KernelName)
+		copy(dAtA[i:], m.KernelName)
+		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.KernelName)))
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.StepId != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MemoryLogRawAllocation) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -641,49 +670,56 @@ func (m *MemoryLogRawAllocation) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MemoryLogRawAllocation) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MemoryLogRawAllocation) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.StepId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
-	}
-	if len(m.Operation) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.Operation)))
-		i += copy(dAtA[i:], m.Operation)
-	}
-	if m.NumBytes != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.NumBytes))
-	}
-	if m.Ptr != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.Ptr))
+	if len(m.AllocatorName) > 0 {
+		i -= len(m.AllocatorName)
+		copy(dAtA[i:], m.AllocatorName)
+		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.AllocatorName)))
+		i--
+		dAtA[i] = 0x32
 	}
 	if m.AllocationId != 0 {
-		dAtA[i] = 0x28
-		i++
 		i = encodeVarintLogMemory(dAtA, i, uint64(m.AllocationId))
+		i--
+		dAtA[i] = 0x28
 	}
-	if len(m.AllocatorName) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.AllocatorName)))
-		i += copy(dAtA[i:], m.AllocatorName)
+	if m.Ptr != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.Ptr))
+		i--
+		dAtA[i] = 0x20
 	}
-	return i, nil
+	if m.NumBytes != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.NumBytes))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Operation) > 0 {
+		i -= len(m.Operation)
+		copy(dAtA[i:], m.Operation)
+		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.Operation)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.StepId != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MemoryLogRawDeallocation) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -691,53 +727,62 @@ func (m *MemoryLogRawDeallocation) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MemoryLogRawDeallocation) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MemoryLogRawDeallocation) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.StepId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
-	}
-	if len(m.Operation) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.Operation)))
-		i += copy(dAtA[i:], m.Operation)
-	}
-	if m.AllocationId != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(m.AllocationId))
-	}
-	if len(m.AllocatorName) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.AllocatorName)))
-		i += copy(dAtA[i:], m.AllocatorName)
-	}
 	if m.Deferred {
-		dAtA[i] = 0x28
-		i++
+		i--
 		if m.Deferred {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x28
 	}
-	return i, nil
+	if len(m.AllocatorName) > 0 {
+		i -= len(m.AllocatorName)
+		copy(dAtA[i:], m.AllocatorName)
+		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.AllocatorName)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.AllocationId != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.AllocationId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Operation) > 0 {
+		i -= len(m.Operation)
+		copy(dAtA[i:], m.Operation)
+		i = encodeVarintLogMemory(dAtA, i, uint64(len(m.Operation)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.StepId != 0 {
+		i = encodeVarintLogMemory(dAtA, i, uint64(m.StepId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintLogMemory(dAtA []byte, offset int, v uint64) int {
+	offset -= sovLogMemory(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *MemoryLogStep) Size() (n int) {
 	if m == nil {
@@ -870,14 +915,7 @@ func (m *MemoryLogRawDeallocation) Size() (n int) {
 }
 
 func sovLogMemory(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozLogMemory(x uint64) (n int) {
 	return sovLogMemory(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -897,7 +935,7 @@ func (m *MemoryLogStep) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -925,7 +963,7 @@ func (m *MemoryLogStep) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.StepId |= (int64(b) & 0x7F) << shift
+				m.StepId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -944,7 +982,7 @@ func (m *MemoryLogStep) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -954,6 +992,9 @@ func (m *MemoryLogStep) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -966,6 +1007,9 @@ func (m *MemoryLogStep) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthLogMemory
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthLogMemory
 			}
 			if (iNdEx + skippy) > l {
@@ -995,7 +1039,7 @@ func (m *MemoryLogTensorAllocation) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1023,7 +1067,7 @@ func (m *MemoryLogTensorAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.StepId |= (int64(b) & 0x7F) << shift
+				m.StepId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1042,7 +1086,7 @@ func (m *MemoryLogTensorAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1052,6 +1096,9 @@ func (m *MemoryLogTensorAllocation) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1071,7 +1118,7 @@ func (m *MemoryLogTensorAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1080,6 +1127,9 @@ func (m *MemoryLogTensorAllocation) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1097,6 +1147,9 @@ func (m *MemoryLogTensorAllocation) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthLogMemory
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthLogMemory
 			}
 			if (iNdEx + skippy) > l {
@@ -1126,7 +1179,7 @@ func (m *MemoryLogTensorDeallocation) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1154,7 +1207,7 @@ func (m *MemoryLogTensorDeallocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllocationId |= (int64(b) & 0x7F) << shift
+				m.AllocationId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1173,7 +1226,7 @@ func (m *MemoryLogTensorDeallocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1183,6 +1236,9 @@ func (m *MemoryLogTensorDeallocation) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1195,6 +1251,9 @@ func (m *MemoryLogTensorDeallocation) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthLogMemory
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthLogMemory
 			}
 			if (iNdEx + skippy) > l {
@@ -1224,7 +1283,7 @@ func (m *MemoryLogTensorOutput) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1252,7 +1311,7 @@ func (m *MemoryLogTensorOutput) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.StepId |= (int64(b) & 0x7F) << shift
+				m.StepId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1271,7 +1330,7 @@ func (m *MemoryLogTensorOutput) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1281,6 +1340,9 @@ func (m *MemoryLogTensorOutput) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1300,7 +1362,7 @@ func (m *MemoryLogTensorOutput) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Index |= (int32(b) & 0x7F) << shift
+				m.Index |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1319,7 +1381,7 @@ func (m *MemoryLogTensorOutput) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1328,6 +1390,9 @@ func (m *MemoryLogTensorOutput) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1345,6 +1410,9 @@ func (m *MemoryLogTensorOutput) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthLogMemory
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthLogMemory
 			}
 			if (iNdEx + skippy) > l {
@@ -1374,7 +1442,7 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1402,7 +1470,7 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.StepId |= (int64(b) & 0x7F) << shift
+				m.StepId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1421,7 +1489,7 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1431,6 +1499,9 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1450,7 +1521,7 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NumBytes |= (int64(b) & 0x7F) << shift
+				m.NumBytes |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1469,7 +1540,7 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Ptr |= (uint64(b) & 0x7F) << shift
+				m.Ptr |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1488,7 +1559,7 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllocationId |= (int64(b) & 0x7F) << shift
+				m.AllocationId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1507,7 +1578,7 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1517,6 +1588,9 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1529,6 +1603,9 @@ func (m *MemoryLogRawAllocation) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthLogMemory
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthLogMemory
 			}
 			if (iNdEx + skippy) > l {
@@ -1558,7 +1635,7 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1586,7 +1663,7 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.StepId |= (int64(b) & 0x7F) << shift
+				m.StepId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1605,7 +1682,7 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1615,6 +1692,9 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1634,7 +1714,7 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllocationId |= (int64(b) & 0x7F) << shift
+				m.AllocationId |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1653,7 +1733,7 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1663,6 +1743,9 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogMemory
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogMemory
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1682,7 +1765,7 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1695,6 +1778,9 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthLogMemory
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthLogMemory
 			}
 			if (iNdEx + skippy) > l {
@@ -1712,6 +1798,7 @@ func (m *MemoryLogRawDeallocation) Unmarshal(dAtA []byte) error {
 func skipLogMemory(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1743,10 +1830,8 @@ func skipLogMemory(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1763,53 +1848,34 @@ func skipLogMemory(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthLogMemory
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowLogMemory
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipLogMemory(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupLogMemory
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthLogMemory
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthLogMemory = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowLogMemory   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthLogMemory        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowLogMemory          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupLogMemory = fmt.Errorf("proto: unexpected end of group")
 )

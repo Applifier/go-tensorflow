@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Config proto for FileSystemStoragePathSource.
 type FileSystemStoragePathSourceConfig struct {
@@ -67,7 +68,7 @@ func (m *FileSystemStoragePathSourceConfig) XXX_Marshal(b []byte, deterministic 
 		return xxx_messageInfo_FileSystemStoragePathSourceConfig.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -158,7 +159,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) XXX_Marshal(b 
 		return xxx_messageInfo_FileSystemStoragePathSourceConfig_ServableVersionPolicy.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -184,13 +185,13 @@ type isFileSystemStoragePathSourceConfig_ServableVersionPolicy_PolicyChoice inte
 }
 
 type FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest_ struct {
-	Latest *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest `protobuf:"bytes,100,opt,name=latest,proto3,oneof"`
+	Latest *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest `protobuf:"bytes,100,opt,name=latest,proto3,oneof" json:"latest,omitempty"`
 }
 type FileSystemStoragePathSourceConfig_ServableVersionPolicy_All_ struct {
-	All *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All `protobuf:"bytes,101,opt,name=all,proto3,oneof"`
+	All *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All `protobuf:"bytes,101,opt,name=all,proto3,oneof" json:"all,omitempty"`
 }
 type FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific_ struct {
-	Specific *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific `protobuf:"bytes,102,opt,name=specific,proto3,oneof"`
+	Specific *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific `protobuf:"bytes,102,opt,name=specific,proto3,oneof" json:"specific,omitempty"`
 }
 
 func (*FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest_) isFileSystemStoragePathSourceConfig_ServableVersionPolicy_PolicyChoice() {
@@ -228,97 +229,13 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) GetSpecific() 
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*FileSystemStoragePathSourceConfig_ServableVersionPolicy) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _FileSystemStoragePathSourceConfig_ServableVersionPolicy_OneofMarshaler, _FileSystemStoragePathSourceConfig_ServableVersionPolicy_OneofUnmarshaler, _FileSystemStoragePathSourceConfig_ServableVersionPolicy_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*FileSystemStoragePathSourceConfig_ServableVersionPolicy) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest_)(nil),
 		(*FileSystemStoragePathSourceConfig_ServableVersionPolicy_All_)(nil),
 		(*FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific_)(nil),
 	}
-}
-
-func _FileSystemStoragePathSourceConfig_ServableVersionPolicy_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*FileSystemStoragePathSourceConfig_ServableVersionPolicy)
-	// policy_choice
-	switch x := m.PolicyChoice.(type) {
-	case *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest_:
-		_ = b.EncodeVarint(100<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Latest); err != nil {
-			return err
-		}
-	case *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All_:
-		_ = b.EncodeVarint(101<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.All); err != nil {
-			return err
-		}
-	case *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific_:
-		_ = b.EncodeVarint(102<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Specific); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("FileSystemStoragePathSourceConfig_ServableVersionPolicy.PolicyChoice has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _FileSystemStoragePathSourceConfig_ServableVersionPolicy_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*FileSystemStoragePathSourceConfig_ServableVersionPolicy)
-	switch tag {
-	case 100: // policy_choice.latest
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest)
-		err := b.DecodeMessage(msg)
-		m.PolicyChoice = &FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest_{msg}
-		return true, err
-	case 101: // policy_choice.all
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(FileSystemStoragePathSourceConfig_ServableVersionPolicy_All)
-		err := b.DecodeMessage(msg)
-		m.PolicyChoice = &FileSystemStoragePathSourceConfig_ServableVersionPolicy_All_{msg}
-		return true, err
-	case 102: // policy_choice.specific
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific)
-		err := b.DecodeMessage(msg)
-		m.PolicyChoice = &FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific_{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _FileSystemStoragePathSourceConfig_ServableVersionPolicy_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*FileSystemStoragePathSourceConfig_ServableVersionPolicy)
-	// policy_choice
-	switch x := m.PolicyChoice.(type) {
-	case *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest_:
-		s := proto.Size(x.Latest)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All_:
-		s := proto.Size(x.All)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific_:
-		s := proto.Size(x.Specific)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 // Serve the latest versions (i.e. the ones with the highest version
@@ -348,7 +265,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest) XXX_Mar
 		return xxx_messageInfo_FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -396,7 +313,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All) XXX_Marsha
 		return xxx_messageInfo_FileSystemStoragePathSourceConfig_ServableVersionPolicy_All.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -443,7 +360,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) XXX_M
 		return xxx_messageInfo_FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -499,7 +416,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) XXX_Marshal(b []by
 		return xxx_messageInfo_FileSystemStoragePathSourceConfig_ServableToMonitor.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -594,7 +511,7 @@ var fileDescriptor_f0f33e50a146036d = []byte{
 func (m *FileSystemStoragePathSourceConfig) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -602,66 +519,75 @@ func (m *FileSystemStoragePathSourceConfig) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *FileSystemStoragePathSourceConfig) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.ServableName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(len(m.ServableName)))
-		i += copy(dAtA[i:], m.ServableName)
-	}
-	if len(m.BasePath) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(len(m.BasePath)))
-		i += copy(dAtA[i:], m.BasePath)
-	}
-	if m.FileSystemPollWaitSeconds != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(m.FileSystemPollWaitSeconds))
-	}
-	if m.FailIfZeroVersionsAtStartup {
-		dAtA[i] = 0x20
-		i++
-		if m.FailIfZeroVersionsAtStartup {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	if len(m.Servables) > 0 {
-		for _, msg := range m.Servables {
-			dAtA[i] = 0x2a
-			i++
-			i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
 	if m.ServableVersionsAlwaysPresent {
-		dAtA[i] = 0x30
-		i++
+		i--
 		if m.ServableVersionsAlwaysPresent {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x30
 	}
-	return i, nil
+	if len(m.Servables) > 0 {
+		for iNdEx := len(m.Servables) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Servables[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if m.FailIfZeroVersionsAtStartup {
+		i--
+		if m.FailIfZeroVersionsAtStartup {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.FileSystemPollWaitSeconds != 0 {
+		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(m.FileSystemPollWaitSeconds))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.BasePath) > 0 {
+		i -= len(m.BasePath)
+		copy(dAtA[i:], m.BasePath)
+		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(len(m.BasePath)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ServableName) > 0 {
+		i -= len(m.ServableName)
+		copy(dAtA[i:], m.ServableName)
+		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(len(m.ServableName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -669,72 +595,100 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Marshal() (dAt
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.PolicyChoice != nil {
-		nn1, err := m.PolicyChoice.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.PolicyChoice.Size()
+			i -= size
+			if _, err := m.PolicyChoice.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn1
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Latest != nil {
-		dAtA[i] = 0xa2
-		i++
-		dAtA[i] = 0x6
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(m.Latest.Size()))
-		n2, err := m.Latest.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Latest.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(size))
 		}
-		i += n2
+		i--
+		dAtA[i] = 0x6
+		i--
+		dAtA[i] = 0xa2
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.All != nil {
-		dAtA[i] = 0xaa
-		i++
-		dAtA[i] = 0x6
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(m.All.Size()))
-		n3, err := m.All.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.All.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0x6
+		i--
+		dAtA[i] = 0xaa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Specific != nil {
-		dAtA[i] = 0xb2
-		i++
-		dAtA[i] = 0x6
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(m.Specific.Size()))
-		n4, err := m.Specific.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Specific.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x6
+		i--
+		dAtA[i] = 0xb2
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -742,22 +696,27 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest) Marshal
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.NumVersions != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(m.NumVersions))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -765,17 +724,22 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All) Marshal() 
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -783,35 +747,41 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) Marsh
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Versions) > 0 {
-		dAtA6 := make([]byte, len(m.Versions)*10)
-		var j5 int
+		dAtA5 := make([]byte, len(m.Versions)*10)
+		var j4 int
 		for _, num1 := range m.Versions {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA5[j4] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j5++
+				j4++
 			}
-			dAtA6[j5] = uint8(num)
-			j5++
+			dAtA5[j4] = uint8(num)
+			j4++
 		}
+		i -= j4
+		copy(dAtA[i:], dAtA5[:j4])
+		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(j4))
+		i--
 		dAtA[i] = 0xa
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(j5))
-		i += copy(dAtA[i:], dAtA6[:j5])
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -819,43 +789,54 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Marshal() (dAtA []
 }
 
 func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.ServableName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(len(m.ServableName)))
-		i += copy(dAtA[i:], m.ServableName)
+	if m.ServableVersionPolicy != nil {
+		{
+			size, err := m.ServableVersionPolicy.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
 	}
 	if len(m.BasePath) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.BasePath)
+		copy(dAtA[i:], m.BasePath)
 		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(len(m.BasePath)))
-		i += copy(dAtA[i:], m.BasePath)
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.ServableVersionPolicy != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(m.ServableVersionPolicy.Size()))
-		n7, err := m.ServableVersionPolicy.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n7
+	if len(m.ServableName) > 0 {
+		i -= len(m.ServableName)
+		copy(dAtA[i:], m.ServableName)
+		i = encodeVarintFileSystemStoragePathSource(dAtA, i, uint64(len(m.ServableName)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintFileSystemStoragePathSource(dAtA []byte, offset int, v uint64) int {
+	offset -= sovFileSystemStoragePathSource(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *FileSystemStoragePathSourceConfig) Size() (n int) {
 	if m == nil {
@@ -996,14 +977,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Size() (n int) {
 }
 
 func sovFileSystemStoragePathSource(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozFileSystemStoragePathSource(x uint64) (n int) {
 	return sovFileSystemStoragePathSource(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1023,7 +997,7 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1051,7 +1025,7 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1061,6 +1035,9 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1080,7 +1057,7 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1090,6 +1067,9 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1109,7 +1089,7 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.FileSystemPollWaitSeconds |= (int64(b) & 0x7F) << shift
+				m.FileSystemPollWaitSeconds |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1128,7 +1108,7 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1148,7 +1128,7 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1157,6 +1137,9 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1179,7 +1162,7 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1192,6 +1175,9 @@ func (m *FileSystemStoragePathSourceConfig) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			if (iNdEx + skippy) > l {
@@ -1221,7 +1207,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Unmarshal(dAtA
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1249,7 +1235,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Unmarshal(dAtA
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1258,6 +1244,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Unmarshal(dAtA
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1281,7 +1270,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Unmarshal(dAtA
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1290,6 +1279,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Unmarshal(dAtA
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1313,7 +1305,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Unmarshal(dAtA
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1322,6 +1314,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Unmarshal(dAtA
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1338,6 +1333,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy) Unmarshal(dAtA
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			if (iNdEx + skippy) > l {
@@ -1367,7 +1365,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest) Unmarsh
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1395,7 +1393,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest) Unmarsh
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NumVersions |= (uint32(b) & 0x7F) << shift
+				m.NumVersions |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1407,6 +1405,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Latest) Unmarsh
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			if (iNdEx + skippy) > l {
@@ -1436,7 +1437,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All) Unmarshal(
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1457,6 +1458,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_All) Unmarshal(
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			if (iNdEx + skippy) > l {
@@ -1486,7 +1490,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) Unmar
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1512,7 +1516,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) Unmar
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1529,7 +1533,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) Unmar
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1538,12 +1542,15 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) Unmar
 					return ErrInvalidLengthFileSystemStoragePathSource
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthFileSystemStoragePathSource
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1563,7 +1570,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) Unmar
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1580,6 +1587,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableVersionPolicy_Specific) Unmar
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			if (iNdEx + skippy) > l {
@@ -1609,7 +1619,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1637,7 +1647,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1647,6 +1657,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1666,7 +1679,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1676,6 +1689,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1695,7 +1711,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1704,6 +1720,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1723,6 +1742,9 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 			if skippy < 0 {
 				return ErrInvalidLengthFileSystemStoragePathSource
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthFileSystemStoragePathSource
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1738,6 +1760,7 @@ func (m *FileSystemStoragePathSourceConfig_ServableToMonitor) Unmarshal(dAtA []b
 func skipFileSystemStoragePathSource(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1769,10 +1792,8 @@ func skipFileSystemStoragePathSource(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1789,53 +1810,34 @@ func skipFileSystemStoragePathSource(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthFileSystemStoragePathSource
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowFileSystemStoragePathSource
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipFileSystemStoragePathSource(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupFileSystemStoragePathSource
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthFileSystemStoragePathSource
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthFileSystemStoragePathSource = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowFileSystemStoragePathSource   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthFileSystemStoragePathSource        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowFileSystemStoragePathSource          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupFileSystemStoragePathSource = fmt.Errorf("proto: unexpected end of group")
 )

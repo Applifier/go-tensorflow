@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -20,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 func init() {
 	proto.RegisterFile("tensorflow_serving/model_service.proto", fileDescriptor_a748e692ffc85eda)
@@ -104,6 +106,17 @@ type ModelServiceServer interface {
 	// so if a model is omitted from the new config it will be unloaded and no
 	// longer served.
 	HandleReloadConfigRequest(context.Context, *ReloadConfigRequest) (*ReloadConfigResponse, error)
+}
+
+// UnimplementedModelServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedModelServiceServer struct {
+}
+
+func (*UnimplementedModelServiceServer) GetModelStatus(ctx context.Context, req *GetModelStatusRequest) (*GetModelStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetModelStatus not implemented")
+}
+func (*UnimplementedModelServiceServer) HandleReloadConfigRequest(ctx context.Context, req *ReloadConfigRequest) (*ReloadConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HandleReloadConfigRequest not implemented")
 }
 
 func RegisterModelServiceServer(s *grpc.Server, srv ModelServiceServer) {

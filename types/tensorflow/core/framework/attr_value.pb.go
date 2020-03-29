@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Protocol buffer representing the value for an attr used to configure an Op.
 // Comment indicates the corresponding attr type.  Only the field matching the
@@ -54,7 +55,7 @@ func (m *AttrValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_AttrValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -80,34 +81,34 @@ type isAttrValue_Value interface {
 }
 
 type AttrValue_S struct {
-	S []byte `protobuf:"bytes,2,opt,name=s,proto3,oneof"`
+	S []byte `protobuf:"bytes,2,opt,name=s,proto3,oneof" json:"s,omitempty"`
 }
 type AttrValue_I struct {
-	I int64 `protobuf:"varint,3,opt,name=i,proto3,oneof"`
+	I int64 `protobuf:"varint,3,opt,name=i,proto3,oneof" json:"i,omitempty"`
 }
 type AttrValue_F struct {
-	F float32 `protobuf:"fixed32,4,opt,name=f,proto3,oneof"`
+	F float32 `protobuf:"fixed32,4,opt,name=f,proto3,oneof" json:"f,omitempty"`
 }
 type AttrValue_B struct {
-	B bool `protobuf:"varint,5,opt,name=b,proto3,oneof"`
+	B bool `protobuf:"varint,5,opt,name=b,proto3,oneof" json:"b,omitempty"`
 }
 type AttrValue_Type struct {
-	Type DataType `protobuf:"varint,6,opt,name=type,proto3,enum=tensorflow.DataType,oneof"`
+	Type DataType `protobuf:"varint,6,opt,name=type,proto3,enum=tensorflow.DataType,oneof" json:"type,omitempty"`
 }
 type AttrValue_Shape struct {
-	Shape *TensorShapeProto `protobuf:"bytes,7,opt,name=shape,proto3,oneof"`
+	Shape *TensorShapeProto `protobuf:"bytes,7,opt,name=shape,proto3,oneof" json:"shape,omitempty"`
 }
 type AttrValue_Tensor struct {
-	Tensor *TensorProto `protobuf:"bytes,8,opt,name=tensor,proto3,oneof"`
+	Tensor *TensorProto `protobuf:"bytes,8,opt,name=tensor,proto3,oneof" json:"tensor,omitempty"`
 }
 type AttrValue_List struct {
-	List *AttrValue_ListValue `protobuf:"bytes,1,opt,name=list,proto3,oneof"`
+	List *AttrValue_ListValue `protobuf:"bytes,1,opt,name=list,proto3,oneof" json:"list,omitempty"`
 }
 type AttrValue_Func struct {
-	Func *NameAttrList `protobuf:"bytes,10,opt,name=func,proto3,oneof"`
+	Func *NameAttrList `protobuf:"bytes,10,opt,name=func,proto3,oneof" json:"func,omitempty"`
 }
 type AttrValue_Placeholder struct {
-	Placeholder string `protobuf:"bytes,9,opt,name=placeholder,proto3,oneof"`
+	Placeholder string `protobuf:"bytes,9,opt,name=placeholder,proto3,oneof" json:"placeholder,omitempty"`
 }
 
 func (*AttrValue_S) isAttrValue_Value()           {}
@@ -198,9 +199,9 @@ func (m *AttrValue) GetPlaceholder() string {
 	return ""
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*AttrValue) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _AttrValue_OneofMarshaler, _AttrValue_OneofUnmarshaler, _AttrValue_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*AttrValue) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*AttrValue_S)(nil),
 		(*AttrValue_I)(nil),
 		(*AttrValue_F)(nil),
@@ -212,192 +213,6 @@ func (*AttrValue) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) err
 		(*AttrValue_Func)(nil),
 		(*AttrValue_Placeholder)(nil),
 	}
-}
-
-func _AttrValue_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*AttrValue)
-	// value
-	switch x := m.Value.(type) {
-	case *AttrValue_S:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		_ = b.EncodeRawBytes(x.S)
-	case *AttrValue_I:
-		_ = b.EncodeVarint(3<<3 | proto.WireVarint)
-		_ = b.EncodeVarint(uint64(x.I))
-	case *AttrValue_F:
-		_ = b.EncodeVarint(4<<3 | proto.WireFixed32)
-		_ = b.EncodeFixed32(uint64(math.Float32bits(x.F)))
-	case *AttrValue_B:
-		t := uint64(0)
-		if x.B {
-			t = 1
-		}
-		_ = b.EncodeVarint(5<<3 | proto.WireVarint)
-		_ = b.EncodeVarint(t)
-	case *AttrValue_Type:
-		_ = b.EncodeVarint(6<<3 | proto.WireVarint)
-		_ = b.EncodeVarint(uint64(x.Type))
-	case *AttrValue_Shape:
-		_ = b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Shape); err != nil {
-			return err
-		}
-	case *AttrValue_Tensor:
-		_ = b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Tensor); err != nil {
-			return err
-		}
-	case *AttrValue_List:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.List); err != nil {
-			return err
-		}
-	case *AttrValue_Func:
-		_ = b.EncodeVarint(10<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Func); err != nil {
-			return err
-		}
-	case *AttrValue_Placeholder:
-		_ = b.EncodeVarint(9<<3 | proto.WireBytes)
-		_ = b.EncodeStringBytes(x.Placeholder)
-	case nil:
-	default:
-		return fmt.Errorf("AttrValue.Value has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _AttrValue_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*AttrValue)
-	switch tag {
-	case 2: // value.s
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeRawBytes(true)
-		m.Value = &AttrValue_S{x}
-		return true, err
-	case 3: // value.i
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &AttrValue_I{int64(x)}
-		return true, err
-	case 4: // value.f
-		if wire != proto.WireFixed32 {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeFixed32()
-		m.Value = &AttrValue_F{math.Float32frombits(uint32(x))}
-		return true, err
-	case 5: // value.b
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &AttrValue_B{x != 0}
-		return true, err
-	case 6: // value.type
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &AttrValue_Type{DataType(x)}
-		return true, err
-	case 7: // value.shape
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(TensorShapeProto)
-		err := b.DecodeMessage(msg)
-		m.Value = &AttrValue_Shape{msg}
-		return true, err
-	case 8: // value.tensor
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(TensorProto)
-		err := b.DecodeMessage(msg)
-		m.Value = &AttrValue_Tensor{msg}
-		return true, err
-	case 1: // value.list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(AttrValue_ListValue)
-		err := b.DecodeMessage(msg)
-		m.Value = &AttrValue_List{msg}
-		return true, err
-	case 10: // value.func
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(NameAttrList)
-		err := b.DecodeMessage(msg)
-		m.Value = &AttrValue_Func{msg}
-		return true, err
-	case 9: // value.placeholder
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeStringBytes()
-		m.Value = &AttrValue_Placeholder{x}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _AttrValue_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*AttrValue)
-	// value
-	switch x := m.Value.(type) {
-	case *AttrValue_S:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.S)))
-		n += len(x.S)
-	case *AttrValue_I:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.I))
-	case *AttrValue_F:
-		n += 1 // tag and wire
-		n += 4
-	case *AttrValue_B:
-		n += 1 // tag and wire
-		n += 1
-	case *AttrValue_Type:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Type))
-	case *AttrValue_Shape:
-		s := proto.Size(x.Shape)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *AttrValue_Tensor:
-		s := proto.Size(x.Tensor)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *AttrValue_List:
-		s := proto.Size(x.List)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *AttrValue_Func:
-		s := proto.Size(x.Func)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *AttrValue_Placeholder:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.Placeholder)))
-		n += len(x.Placeholder)
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 // LINT.IfChange
@@ -426,7 +241,7 @@ func (m *AttrValue_ListValue) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return xxx_messageInfo_AttrValue_ListValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -522,7 +337,7 @@ func (m *NameAttrList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_NameAttrList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -609,7 +424,7 @@ var fileDescriptor_06e758bf81984406 = []byte{
 func (m *AttrValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -617,132 +432,199 @@ func (m *AttrValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *AttrValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Value != nil {
-		nn1, err := m.Value.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Value.Size()
+			i -= size
+			if _, err := m.Value.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn1
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *AttrValue_List) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_List) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.List != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(m.List.Size()))
-		n2, err := m.List.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.List.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintAttrValue(dAtA, i, uint64(size))
 		}
-		i += n2
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_S) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_S) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.S != nil {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.S)
+		copy(dAtA[i:], m.S)
 		i = encodeVarintAttrValue(dAtA, i, uint64(len(m.S)))
-		i += copy(dAtA[i:], m.S)
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_I) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x18
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_I) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	i = encodeVarintAttrValue(dAtA, i, uint64(m.I))
-	return i, nil
+	i--
+	dAtA[i] = 0x18
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_F) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x25
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_F) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= 4
 	encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.F))))
-	i += 4
-	return i, nil
+	i--
+	dAtA[i] = 0x25
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_B) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x28
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_B) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i--
 	if m.B {
 		dAtA[i] = 1
 	} else {
 		dAtA[i] = 0
 	}
-	i++
-	return i, nil
+	i--
+	dAtA[i] = 0x28
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_Type) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x30
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_Type) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	i = encodeVarintAttrValue(dAtA, i, uint64(m.Type))
-	return i, nil
+	i--
+	dAtA[i] = 0x30
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_Shape) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_Shape) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Shape != nil {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(m.Shape.Size()))
-		n3, err := m.Shape.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Shape.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintAttrValue(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0x3a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_Tensor) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_Tensor) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Tensor != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(m.Tensor.Size()))
-		n4, err := m.Tensor.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Tensor.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintAttrValue(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x42
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_Placeholder) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x4a
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_Placeholder) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.Placeholder)
+	copy(dAtA[i:], m.Placeholder)
 	i = encodeVarintAttrValue(dAtA, i, uint64(len(m.Placeholder)))
-	i += copy(dAtA[i:], m.Placeholder)
-	return i, nil
+	i--
+	dAtA[i] = 0x4a
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_Func) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_Func) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Func != nil {
-		dAtA[i] = 0x52
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(m.Func.Size()))
-		n5, err := m.Func.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Func.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintAttrValue(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0x52
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *AttrValue_ListValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -750,119 +632,133 @@ func (m *AttrValue_ListValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *AttrValue_ListValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AttrValue_ListValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.S) > 0 {
-		for _, b := range m.S {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintAttrValue(dAtA, i, uint64(len(b)))
-			i += copy(dAtA[i:], b)
-		}
-	}
-	if len(m.I) > 0 {
-		dAtA7 := make([]byte, len(m.I)*10)
-		var j6 int
-		for _, num1 := range m.I {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA7[j6] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j6++
+	if len(m.Func) > 0 {
+		for iNdEx := len(m.Func) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Func[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintAttrValue(dAtA, i, uint64(size))
 			}
-			dAtA7[j6] = uint8(num)
-			j6++
+			i--
+			dAtA[i] = 0x4a
 		}
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(j6))
-		i += copy(dAtA[i:], dAtA7[:j6])
 	}
-	if len(m.F) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(len(m.F)*4))
-		for _, num := range m.F {
-			f8 := math.Float32bits(float32(num))
-			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f8))
-			i += 4
+	if len(m.Tensor) > 0 {
+		for iNdEx := len(m.Tensor) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Tensor[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintAttrValue(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x42
 		}
+	}
+	if len(m.Shape) > 0 {
+		for iNdEx := len(m.Shape) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Shape[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintAttrValue(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x3a
+		}
+	}
+	if len(m.Type) > 0 {
+		dAtA6 := make([]byte, len(m.Type)*10)
+		var j5 int
+		for _, num := range m.Type {
+			for num >= 1<<7 {
+				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j5++
+			}
+			dAtA6[j5] = uint8(num)
+			j5++
+		}
+		i -= j5
+		copy(dAtA[i:], dAtA6[:j5])
+		i = encodeVarintAttrValue(dAtA, i, uint64(j5))
+		i--
+		dAtA[i] = 0x32
 	}
 	if len(m.B) > 0 {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(len(m.B)))
-		for _, b := range m.B {
-			if b {
+		for iNdEx := len(m.B) - 1; iNdEx >= 0; iNdEx-- {
+			i--
+			if m.B[iNdEx] {
 				dAtA[i] = 1
 			} else {
 				dAtA[i] = 0
 			}
-			i++
 		}
+		i = encodeVarintAttrValue(dAtA, i, uint64(len(m.B)))
+		i--
+		dAtA[i] = 0x2a
 	}
-	if len(m.Type) > 0 {
-		dAtA10 := make([]byte, len(m.Type)*10)
-		var j9 int
-		for _, num := range m.Type {
+	if len(m.F) > 0 {
+		for iNdEx := len(m.F) - 1; iNdEx >= 0; iNdEx-- {
+			f7 := math.Float32bits(float32(m.F[iNdEx]))
+			i -= 4
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f7))
+		}
+		i = encodeVarintAttrValue(dAtA, i, uint64(len(m.F)*4))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.I) > 0 {
+		dAtA9 := make([]byte, len(m.I)*10)
+		var j8 int
+		for _, num1 := range m.I {
+			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA10[j9] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA9[j8] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j9++
+				j8++
 			}
-			dAtA10[j9] = uint8(num)
-			j9++
+			dAtA9[j8] = uint8(num)
+			j8++
 		}
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(j9))
-		i += copy(dAtA[i:], dAtA10[:j9])
+		i -= j8
+		copy(dAtA[i:], dAtA9[:j8])
+		i = encodeVarintAttrValue(dAtA, i, uint64(j8))
+		i--
+		dAtA[i] = 0x1a
 	}
-	if len(m.Shape) > 0 {
-		for _, msg := range m.Shape {
-			dAtA[i] = 0x3a
-			i++
-			i = encodeVarintAttrValue(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
+	if len(m.S) > 0 {
+		for iNdEx := len(m.S) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.S[iNdEx])
+			copy(dAtA[i:], m.S[iNdEx])
+			i = encodeVarintAttrValue(dAtA, i, uint64(len(m.S[iNdEx])))
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	if len(m.Tensor) > 0 {
-		for _, msg := range m.Tensor {
-			dAtA[i] = 0x42
-			i++
-			i = encodeVarintAttrValue(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.Func) > 0 {
-		for _, msg := range m.Func {
-			dAtA[i] = 0x4a
-			i++
-			i = encodeVarintAttrValue(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *NameAttrList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -870,55 +766,61 @@ func (m *NameAttrList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *NameAttrList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *NameAttrList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintAttrValue(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
 	if len(m.Attr) > 0 {
-		for k, _ := range m.Attr {
-			dAtA[i] = 0x12
-			i++
+		for k := range m.Attr {
 			v := m.Attr[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovAttrValue(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovAttrValue(uint64(len(k))) + msgSize
-			i = encodeVarintAttrValue(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintAttrValue(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintAttrValue(dAtA, i, uint64(v.Size()))
-				n11, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintAttrValue(dAtA, i, uint64(size))
 				}
-				i += n11
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintAttrValue(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintAttrValue(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	return i, nil
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintAttrValue(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintAttrValue(dAtA []byte, offset int, v uint64) int {
+	offset -= sovAttrValue(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *AttrValue) Size() (n int) {
 	if m == nil {
@@ -1118,14 +1020,7 @@ func (m *NameAttrList) Size() (n int) {
 }
 
 func sovAttrValue(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozAttrValue(x uint64) (n int) {
 	return sovAttrValue(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1145,7 +1040,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1173,7 +1068,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1182,6 +1077,9 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1205,7 +1103,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1214,6 +1112,9 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1235,7 +1136,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int64(b) & 0x7F) << shift
+				v |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1266,7 +1167,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1287,7 +1188,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (DataType(b) & 0x7F) << shift
+				v |= DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1307,7 +1208,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1316,6 +1217,9 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1339,7 +1243,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1348,6 +1252,9 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1371,7 +1278,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1381,6 +1288,9 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1400,7 +1310,7 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1409,6 +1319,9 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1425,6 +1338,9 @@ func (m *AttrValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthAttrValue
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthAttrValue
 			}
 			if (iNdEx + skippy) > l {
@@ -1454,7 +1370,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1482,7 +1398,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1491,6 +1407,9 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1509,7 +1428,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1526,7 +1445,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1535,12 +1454,15 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthAttrValue
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthAttrValue
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1560,7 +1482,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1591,7 +1513,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1600,6 +1522,9 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthAttrValue
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthAttrValue
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -1633,7 +1558,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int(b) & 0x7F) << shift
+					v |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1650,7 +1575,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1659,6 +1584,9 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthAttrValue
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthAttrValue
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -1678,7 +1606,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int(b) & 0x7F) << shift
+						v |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1700,7 +1628,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (DataType(b) & 0x7F) << shift
+					v |= DataType(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1717,7 +1645,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1726,6 +1654,9 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthAttrValue
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthAttrValue
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -1744,7 +1675,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (DataType(b) & 0x7F) << shift
+						v |= DataType(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1768,7 +1699,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1777,6 +1708,9 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1799,7 +1733,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1808,6 +1742,9 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1830,7 +1767,7 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1839,6 +1776,9 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1854,6 +1794,9 @@ func (m *AttrValue_ListValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthAttrValue
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthAttrValue
 			}
 			if (iNdEx + skippy) > l {
@@ -1883,7 +1826,7 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1911,7 +1854,7 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1921,6 +1864,9 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1940,7 +1886,7 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1949,6 +1895,9 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthAttrValue
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1969,7 +1918,7 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1986,7 +1935,7 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1996,6 +1945,9 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthAttrValue
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthAttrValue
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -2012,7 +1964,7 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2021,7 +1973,7 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthAttrValue
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthAttrValue
 					}
 					if postmsgIndex > l {
@@ -2058,6 +2010,9 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthAttrValue
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthAttrValue
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2073,6 +2028,7 @@ func (m *NameAttrList) Unmarshal(dAtA []byte) error {
 func skipAttrValue(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -2104,10 +2060,8 @@ func skipAttrValue(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -2124,53 +2078,34 @@ func skipAttrValue(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthAttrValue
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowAttrValue
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipAttrValue(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupAttrValue
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthAttrValue
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthAttrValue = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowAttrValue   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthAttrValue        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowAttrValue          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupAttrValue = fmt.Errorf("proto: unexpected end of group")
 )

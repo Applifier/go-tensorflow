@@ -9,6 +9,7 @@ import (
 	types "github.com/gogo/protobuf/types"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // The type of model.
 // TODO(b/31336131): DEPRECATED.
@@ -109,7 +110,7 @@ func (m *ModelConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_ModelConfig.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -197,7 +198,7 @@ func (m *ModelConfigList) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_ModelConfigList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -249,7 +250,7 @@ func (m *ModelServerConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_ModelServerConfig.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -275,10 +276,10 @@ type isModelServerConfig_Config interface {
 }
 
 type ModelServerConfig_ModelConfigList struct {
-	ModelConfigList *ModelConfigList `protobuf:"bytes,1,opt,name=model_config_list,json=modelConfigList,proto3,oneof"`
+	ModelConfigList *ModelConfigList `protobuf:"bytes,1,opt,name=model_config_list,json=modelConfigList,proto3,oneof" json:"model_config_list,omitempty"`
 }
 type ModelServerConfig_CustomModelConfig struct {
-	CustomModelConfig *types.Any `protobuf:"bytes,2,opt,name=custom_model_config,json=customModelConfig,proto3,oneof"`
+	CustomModelConfig *types.Any `protobuf:"bytes,2,opt,name=custom_model_config,json=customModelConfig,proto3,oneof" json:"custom_model_config,omitempty"`
 }
 
 func (*ModelServerConfig_ModelConfigList) isModelServerConfig_Config()   {}
@@ -305,78 +306,12 @@ func (m *ModelServerConfig) GetCustomModelConfig() *types.Any {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*ModelServerConfig) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _ModelServerConfig_OneofMarshaler, _ModelServerConfig_OneofUnmarshaler, _ModelServerConfig_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*ModelServerConfig) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*ModelServerConfig_ModelConfigList)(nil),
 		(*ModelServerConfig_CustomModelConfig)(nil),
 	}
-}
-
-func _ModelServerConfig_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*ModelServerConfig)
-	// config
-	switch x := m.Config.(type) {
-	case *ModelServerConfig_ModelConfigList:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ModelConfigList); err != nil {
-			return err
-		}
-	case *ModelServerConfig_CustomModelConfig:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.CustomModelConfig); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("ModelServerConfig.Config has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _ModelServerConfig_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*ModelServerConfig)
-	switch tag {
-	case 1: // config.model_config_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ModelConfigList)
-		err := b.DecodeMessage(msg)
-		m.Config = &ModelServerConfig_ModelConfigList{msg}
-		return true, err
-	case 2: // config.custom_model_config
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(types.Any)
-		err := b.DecodeMessage(msg)
-		m.Config = &ModelServerConfig_CustomModelConfig{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _ModelServerConfig_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*ModelServerConfig)
-	// config
-	switch x := m.Config.(type) {
-	case *ModelServerConfig_ModelConfigList:
-		s := proto.Size(x.ModelConfigList)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ModelServerConfig_CustomModelConfig:
-		s := proto.Size(x.CustomModelConfig)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 func init() {
@@ -436,7 +371,7 @@ var fileDescriptor_8317b20b2b826bad = []byte{
 func (m *ModelConfig) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -444,76 +379,89 @@ func (m *ModelConfig) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ModelConfig) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ModelConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintModelServerConfig(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if len(m.BasePath) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintModelServerConfig(dAtA, i, uint64(len(m.BasePath)))
-		i += copy(dAtA[i:], m.BasePath)
-	}
-	if m.ModelType != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintModelServerConfig(dAtA, i, uint64(m.ModelType))
-	}
-	if len(m.ModelPlatform) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintModelServerConfig(dAtA, i, uint64(len(m.ModelPlatform)))
-		i += copy(dAtA[i:], m.ModelPlatform)
-	}
-	if m.LoggingConfig != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintModelServerConfig(dAtA, i, uint64(m.LoggingConfig.Size()))
-		n1, err := m.LoggingConfig.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.VersionLabels) > 0 {
+		for k := range m.VersionLabels {
+			v := m.VersionLabels[k]
+			baseI := i
+			i = encodeVarintModelServerConfig(dAtA, i, uint64(v))
+			i--
+			dAtA[i] = 0x10
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintModelServerConfig(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintModelServerConfig(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x42
 		}
-		i += n1
 	}
 	if m.ModelVersionPolicy != nil {
+		{
+			size, err := m.ModelVersionPolicy.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintModelServerConfig(dAtA, i, uint64(size))
+		}
+		i--
 		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintModelServerConfig(dAtA, i, uint64(m.ModelVersionPolicy.Size()))
-		n2, err := m.ModelVersionPolicy.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
 	}
-	if len(m.VersionLabels) > 0 {
-		for k, _ := range m.VersionLabels {
-			dAtA[i] = 0x42
-			i++
-			v := m.VersionLabels[k]
-			mapSize := 1 + len(k) + sovModelServerConfig(uint64(len(k))) + 1 + sovModelServerConfig(uint64(v))
-			i = encodeVarintModelServerConfig(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintModelServerConfig(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			dAtA[i] = 0x10
-			i++
-			i = encodeVarintModelServerConfig(dAtA, i, uint64(v))
+	if m.LoggingConfig != nil {
+		{
+			size, err := m.LoggingConfig.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintModelServerConfig(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0x32
 	}
-	return i, nil
+	if len(m.ModelPlatform) > 0 {
+		i -= len(m.ModelPlatform)
+		copy(dAtA[i:], m.ModelPlatform)
+		i = encodeVarintModelServerConfig(dAtA, i, uint64(len(m.ModelPlatform)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.ModelType != 0 {
+		i = encodeVarintModelServerConfig(dAtA, i, uint64(m.ModelType))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.BasePath) > 0 {
+		i -= len(m.BasePath)
+		copy(dAtA[i:], m.BasePath)
+		i = encodeVarintModelServerConfig(dAtA, i, uint64(len(m.BasePath)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintModelServerConfig(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *ModelConfigList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -521,29 +469,36 @@ func (m *ModelConfigList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ModelConfigList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ModelConfigList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Config) > 0 {
-		for _, msg := range m.Config {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintModelServerConfig(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Config) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Config[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintModelServerConfig(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ModelServerConfig) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -551,56 +506,79 @@ func (m *ModelServerConfig) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ModelServerConfig) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ModelServerConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Config != nil {
-		nn3, err := m.Config.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Config.Size()
+			i -= size
+			if _, err := m.Config.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn3
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ModelServerConfig_ModelConfigList) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ModelServerConfig_ModelConfigList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ModelConfigList != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintModelServerConfig(dAtA, i, uint64(m.ModelConfigList.Size()))
-		n4, err := m.ModelConfigList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ModelConfigList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintModelServerConfig(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ModelServerConfig_CustomModelConfig) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ModelServerConfig_CustomModelConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.CustomModelConfig != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintModelServerConfig(dAtA, i, uint64(m.CustomModelConfig.Size()))
-		n5, err := m.CustomModelConfig.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.CustomModelConfig.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintModelServerConfig(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func encodeVarintModelServerConfig(dAtA []byte, offset int, v uint64) int {
+	offset -= sovModelServerConfig(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *ModelConfig) Size() (n int) {
 	if m == nil {
@@ -695,14 +673,7 @@ func (m *ModelServerConfig_CustomModelConfig) Size() (n int) {
 }
 
 func sovModelServerConfig(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozModelServerConfig(x uint64) (n int) {
 	return sovModelServerConfig(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -722,7 +693,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -750,7 +721,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -760,6 +731,9 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -779,7 +753,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -789,6 +763,9 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -808,7 +785,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ModelType |= (ModelType(b) & 0x7F) << shift
+				m.ModelType |= ModelType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -827,7 +804,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -837,6 +814,9 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -856,7 +836,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -865,6 +845,9 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -889,7 +872,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -898,6 +881,9 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -922,7 +908,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -931,6 +917,9 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -951,7 +940,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -968,7 +957,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -978,6 +967,9 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthModelServerConfig
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthModelServerConfig
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -993,7 +985,7 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapvalue |= (int64(b) & 0x7F) << shift
+						mapvalue |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1024,6 +1016,9 @@ func (m *ModelConfig) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthModelServerConfig
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1051,7 +1046,7 @@ func (m *ModelConfigList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1079,7 +1074,7 @@ func (m *ModelConfigList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1088,6 +1083,9 @@ func (m *ModelConfigList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1103,6 +1101,9 @@ func (m *ModelConfigList) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthModelServerConfig
 			}
 			if (iNdEx + skippy) > l {
@@ -1132,7 +1133,7 @@ func (m *ModelServerConfig) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1160,7 +1161,7 @@ func (m *ModelServerConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1169,6 +1170,9 @@ func (m *ModelServerConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1192,7 +1196,7 @@ func (m *ModelServerConfig) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1201,6 +1205,9 @@ func (m *ModelServerConfig) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthModelServerConfig
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1219,6 +1226,9 @@ func (m *ModelServerConfig) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthModelServerConfig
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthModelServerConfig
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1234,6 +1244,7 @@ func (m *ModelServerConfig) Unmarshal(dAtA []byte) error {
 func skipModelServerConfig(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1265,10 +1276,8 @@ func skipModelServerConfig(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1285,53 +1294,34 @@ func skipModelServerConfig(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthModelServerConfig
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowModelServerConfig
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipModelServerConfig(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupModelServerConfig
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthModelServerConfig
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthModelServerConfig = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowModelServerConfig   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthModelServerConfig        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowModelServerConfig          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupModelServerConfig = fmt.Errorf("proto: unexpected end of group")
 )

@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Protocol buffer representing a tensor.
 type TensorProto struct {
@@ -84,7 +85,7 @@ func (m *TensorProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_TensorProto.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -246,7 +247,7 @@ func (m *VariantTensorDataProto) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_VariantTensorDataProto.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -340,7 +341,7 @@ var fileDescriptor_efa68180bc31e4fc = []byte{
 func (m *TensorProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -348,220 +349,238 @@ func (m *TensorProto) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TensorProto) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorProto) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Dtype != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(m.Dtype))
-	}
-	if m.TensorShape != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(m.TensorShape.Size()))
-		n1, err := m.TensorShape.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.Uint64Val) > 0 {
+		dAtA2 := make([]byte, len(m.Uint64Val)*10)
+		var j1 int
+		for _, num := range m.Uint64Val {
+			for num >= 1<<7 {
+				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j1++
+			}
+			dAtA2[j1] = uint8(num)
+			j1++
 		}
-		i += n1
+		i -= j1
+		copy(dAtA[i:], dAtA2[:j1])
+		i = encodeVarintTensor(dAtA, i, uint64(j1))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x8a
 	}
-	if m.VersionNumber != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(m.VersionNumber))
+	if len(m.Uint32Val) > 0 {
+		dAtA4 := make([]byte, len(m.Uint32Val)*10)
+		var j3 int
+		for _, num := range m.Uint32Val {
+			for num >= 1<<7 {
+				dAtA4[j3] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j3++
+			}
+			dAtA4[j3] = uint8(num)
+			j3++
+		}
+		i -= j3
+		copy(dAtA[i:], dAtA4[:j3])
+		i = encodeVarintTensor(dAtA, i, uint64(j3))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x82
 	}
-	if len(m.TensorContent) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(len(m.TensorContent)))
-		i += copy(dAtA[i:], m.TensorContent)
-	}
-	if len(m.FloatVal) > 0 {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(len(m.FloatVal)*4))
-		for _, num := range m.FloatVal {
-			f2 := math.Float32bits(float32(num))
-			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f2))
-			i += 4
+	if len(m.VariantVal) > 0 {
+		for iNdEx := len(m.VariantVal) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.VariantVal[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTensor(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x7a
 		}
 	}
-	if len(m.DoubleVal) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(len(m.DoubleVal)*8))
-		for _, num := range m.DoubleVal {
-			f3 := math.Float64bits(float64(num))
-			encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(f3))
-			i += 8
+	if len(m.ResourceHandleVal) > 0 {
+		for iNdEx := len(m.ResourceHandleVal) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ResourceHandleVal[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTensor(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x72
 		}
 	}
-	if len(m.IntVal) > 0 {
-		dAtA5 := make([]byte, len(m.IntVal)*10)
-		var j4 int
-		for _, num1 := range m.IntVal {
+	if len(m.HalfVal) > 0 {
+		dAtA6 := make([]byte, len(m.HalfVal)*10)
+		var j5 int
+		for _, num1 := range m.HalfVal {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA5[j4] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA6[j5] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j4++
+				j5++
 			}
-			dAtA5[j4] = uint8(num)
-			j4++
+			dAtA6[j5] = uint8(num)
+			j5++
 		}
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(j4))
-		i += copy(dAtA[i:], dAtA5[:j4])
+		i -= j5
+		copy(dAtA[i:], dAtA6[:j5])
+		i = encodeVarintTensor(dAtA, i, uint64(j5))
+		i--
+		dAtA[i] = 0x6a
 	}
-	if len(m.StringVal) > 0 {
-		for _, b := range m.StringVal {
-			dAtA[i] = 0x42
-			i++
-			i = encodeVarintTensor(dAtA, i, uint64(len(b)))
-			i += copy(dAtA[i:], b)
+	if len(m.DcomplexVal) > 0 {
+		for iNdEx := len(m.DcomplexVal) - 1; iNdEx >= 0; iNdEx-- {
+			f7 := math.Float64bits(float64(m.DcomplexVal[iNdEx]))
+			i -= 8
+			encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(f7))
 		}
-	}
-	if len(m.ScomplexVal) > 0 {
-		dAtA[i] = 0x4a
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(len(m.ScomplexVal)*4))
-		for _, num := range m.ScomplexVal {
-			f6 := math.Float32bits(float32(num))
-			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f6))
-			i += 4
-		}
-	}
-	if len(m.Int64Val) > 0 {
-		dAtA8 := make([]byte, len(m.Int64Val)*10)
-		var j7 int
-		for _, num1 := range m.Int64Val {
-			num := uint64(num1)
-			for num >= 1<<7 {
-				dAtA8[j7] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j7++
-			}
-			dAtA8[j7] = uint8(num)
-			j7++
-		}
-		dAtA[i] = 0x52
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(j7))
-		i += copy(dAtA[i:], dAtA8[:j7])
+		i = encodeVarintTensor(dAtA, i, uint64(len(m.DcomplexVal)*8))
+		i--
+		dAtA[i] = 0x62
 	}
 	if len(m.BoolVal) > 0 {
-		dAtA[i] = 0x5a
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(len(m.BoolVal)))
-		for _, b := range m.BoolVal {
-			if b {
+		for iNdEx := len(m.BoolVal) - 1; iNdEx >= 0; iNdEx-- {
+			i--
+			if m.BoolVal[iNdEx] {
 				dAtA[i] = 1
 			} else {
 				dAtA[i] = 0
 			}
-			i++
 		}
+		i = encodeVarintTensor(dAtA, i, uint64(len(m.BoolVal)))
+		i--
+		dAtA[i] = 0x5a
 	}
-	if len(m.DcomplexVal) > 0 {
-		dAtA[i] = 0x62
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(len(m.DcomplexVal)*8))
-		for _, num := range m.DcomplexVal {
-			f9 := math.Float64bits(float64(num))
-			encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(f9))
-			i += 8
-		}
-	}
-	if len(m.HalfVal) > 0 {
-		dAtA11 := make([]byte, len(m.HalfVal)*10)
-		var j10 int
-		for _, num1 := range m.HalfVal {
+	if len(m.Int64Val) > 0 {
+		dAtA9 := make([]byte, len(m.Int64Val)*10)
+		var j8 int
+		for _, num1 := range m.Int64Val {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA11[j10] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA9[j8] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j10++
+				j8++
 			}
-			dAtA11[j10] = uint8(num)
-			j10++
+			dAtA9[j8] = uint8(num)
+			j8++
 		}
-		dAtA[i] = 0x6a
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(j10))
-		i += copy(dAtA[i:], dAtA11[:j10])
+		i -= j8
+		copy(dAtA[i:], dAtA9[:j8])
+		i = encodeVarintTensor(dAtA, i, uint64(j8))
+		i--
+		dAtA[i] = 0x52
 	}
-	if len(m.ResourceHandleVal) > 0 {
-		for _, msg := range m.ResourceHandleVal {
-			dAtA[i] = 0x72
-			i++
-			i = encodeVarintTensor(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+	if len(m.ScomplexVal) > 0 {
+		for iNdEx := len(m.ScomplexVal) - 1; iNdEx >= 0; iNdEx-- {
+			f10 := math.Float32bits(float32(m.ScomplexVal[iNdEx]))
+			i -= 4
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f10))
+		}
+		i = encodeVarintTensor(dAtA, i, uint64(len(m.ScomplexVal)*4))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if len(m.StringVal) > 0 {
+		for iNdEx := len(m.StringVal) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.StringVal[iNdEx])
+			copy(dAtA[i:], m.StringVal[iNdEx])
+			i = encodeVarintTensor(dAtA, i, uint64(len(m.StringVal[iNdEx])))
+			i--
+			dAtA[i] = 0x42
+		}
+	}
+	if len(m.IntVal) > 0 {
+		dAtA12 := make([]byte, len(m.IntVal)*10)
+		var j11 int
+		for _, num1 := range m.IntVal {
+			num := uint64(num1)
+			for num >= 1<<7 {
+				dAtA12[j11] = uint8(uint64(num)&0x7f | 0x80)
+				num >>= 7
+				j11++
+			}
+			dAtA12[j11] = uint8(num)
+			j11++
+		}
+		i -= j11
+		copy(dAtA[i:], dAtA12[:j11])
+		i = encodeVarintTensor(dAtA, i, uint64(j11))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.DoubleVal) > 0 {
+		for iNdEx := len(m.DoubleVal) - 1; iNdEx >= 0; iNdEx-- {
+			f13 := math.Float64bits(float64(m.DoubleVal[iNdEx]))
+			i -= 8
+			encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(f13))
+		}
+		i = encodeVarintTensor(dAtA, i, uint64(len(m.DoubleVal)*8))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.FloatVal) > 0 {
+		for iNdEx := len(m.FloatVal) - 1; iNdEx >= 0; iNdEx-- {
+			f14 := math.Float32bits(float32(m.FloatVal[iNdEx]))
+			i -= 4
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f14))
+		}
+		i = encodeVarintTensor(dAtA, i, uint64(len(m.FloatVal)*4))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.TensorContent) > 0 {
+		i -= len(m.TensorContent)
+		copy(dAtA[i:], m.TensorContent)
+		i = encodeVarintTensor(dAtA, i, uint64(len(m.TensorContent)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.VersionNumber != 0 {
+		i = encodeVarintTensor(dAtA, i, uint64(m.VersionNumber))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.TensorShape != nil {
+		{
+			size, err := m.TensorShape.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintTensor(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0x12
 	}
-	if len(m.VariantVal) > 0 {
-		for _, msg := range m.VariantVal {
-			dAtA[i] = 0x7a
-			i++
-			i = encodeVarintTensor(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
+	if m.Dtype != 0 {
+		i = encodeVarintTensor(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x8
 	}
-	if len(m.Uint32Val) > 0 {
-		dAtA13 := make([]byte, len(m.Uint32Val)*10)
-		var j12 int
-		for _, num := range m.Uint32Val {
-			for num >= 1<<7 {
-				dAtA13[j12] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j12++
-			}
-			dAtA13[j12] = uint8(num)
-			j12++
-		}
-		dAtA[i] = 0x82
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(j12))
-		i += copy(dAtA[i:], dAtA13[:j12])
-	}
-	if len(m.Uint64Val) > 0 {
-		dAtA15 := make([]byte, len(m.Uint64Val)*10)
-		var j14 int
-		for _, num := range m.Uint64Val {
-			for num >= 1<<7 {
-				dAtA15[j14] = uint8(uint64(num)&0x7f | 0x80)
-				num >>= 7
-				j14++
-			}
-			dAtA15[j14] = uint8(num)
-			j14++
-		}
-		dAtA[i] = 0x8a
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(j14))
-		i += copy(dAtA[i:], dAtA15[:j14])
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *VariantTensorDataProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -569,45 +588,56 @@ func (m *VariantTensorDataProto) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *VariantTensorDataProto) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VariantTensorDataProto) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.TypeName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(len(m.TypeName)))
-		i += copy(dAtA[i:], m.TypeName)
-	}
-	if len(m.Metadata) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintTensor(dAtA, i, uint64(len(m.Metadata)))
-		i += copy(dAtA[i:], m.Metadata)
-	}
 	if len(m.Tensors) > 0 {
-		for _, msg := range m.Tensors {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintTensor(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Tensors) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Tensors[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTensor(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x1a
 		}
 	}
-	return i, nil
+	if len(m.Metadata) > 0 {
+		i -= len(m.Metadata)
+		copy(dAtA[i:], m.Metadata)
+		i = encodeVarintTensor(dAtA, i, uint64(len(m.Metadata)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.TypeName) > 0 {
+		i -= len(m.TypeName)
+		copy(dAtA[i:], m.TypeName)
+		i = encodeVarintTensor(dAtA, i, uint64(len(m.TypeName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintTensor(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTensor(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *TensorProto) Size() (n int) {
 	if m == nil {
@@ -724,14 +754,7 @@ func (m *VariantTensorDataProto) Size() (n int) {
 }
 
 func sovTensor(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozTensor(x uint64) (n int) {
 	return sovTensor(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -751,7 +774,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -779,7 +802,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (DataType(b) & 0x7F) << shift
+				m.Dtype |= DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -798,7 +821,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -807,6 +830,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensor
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -831,7 +857,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.VersionNumber |= (int32(b) & 0x7F) << shift
+				m.VersionNumber |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -850,7 +876,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -859,6 +885,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensor
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -888,7 +917,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -897,6 +926,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -939,7 +971,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -948,6 +980,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -981,7 +1016,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= int32(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -998,7 +1033,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1007,12 +1042,15 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1032,7 +1070,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= int32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1056,7 +1094,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1065,6 +1103,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensor
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1092,7 +1133,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1101,6 +1142,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -1134,7 +1178,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1151,7 +1195,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1160,12 +1204,15 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1185,7 +1232,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1207,7 +1254,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int(b) & 0x7F) << shift
+					v |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1224,7 +1271,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1233,6 +1280,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -1252,7 +1302,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int(b) & 0x7F) << shift
+						v |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1283,7 +1333,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1292,6 +1342,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -1325,7 +1378,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= int32(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1342,7 +1395,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1351,12 +1404,15 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1376,7 +1432,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= int32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1400,7 +1456,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1409,6 +1465,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensor
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1431,7 +1490,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1440,6 +1499,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensor
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1460,7 +1522,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (uint32(b) & 0x7F) << shift
+					v |= uint32(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1477,7 +1539,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1486,12 +1548,15 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1511,7 +1576,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (uint32(b) & 0x7F) << shift
+						v |= uint32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1533,7 +1598,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (uint64(b) & 0x7F) << shift
+					v |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1550,7 +1615,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1559,12 +1624,15 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthTensor
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthTensor
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1584,7 +1652,7 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (uint64(b) & 0x7F) << shift
+						v |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1601,6 +1669,9 @@ func (m *TensorProto) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTensor
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTensor
 			}
 			if (iNdEx + skippy) > l {
@@ -1630,7 +1701,7 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1658,7 +1729,7 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1668,6 +1739,9 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensor
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1687,7 +1761,7 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1696,6 +1770,9 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensor
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1718,7 +1795,7 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1727,6 +1804,9 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensor
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1744,6 +1824,9 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthTensor
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTensor
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1759,6 +1842,7 @@ func (m *VariantTensorDataProto) Unmarshal(dAtA []byte) error {
 func skipTensor(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1790,10 +1874,8 @@ func skipTensor(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1810,53 +1892,34 @@ func skipTensor(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthTensor
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowTensor
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipTensor(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTensor
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTensor
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthTensor = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowTensor   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthTensor        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTensor          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTensor = fmt.Errorf("proto: unexpected end of group")
 )

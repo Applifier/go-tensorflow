@@ -16,11 +16,12 @@ limitations under the License.
 syntax = "proto3";
 
 package tensorflow;
+
 option cc_enable_arenas = true;
 option java_outer_classname = "ClusterProtos";
 option java_multiple_files = true;
 option java_package = "org.tensorflow.distruntime";
-option go_package = "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf";
+option go_package = "github.com/Applifier/go-tensorflow/types/tensorflow/core";
 
 // This file contains protos to be used when defining a TensorFlow
 // cluster.

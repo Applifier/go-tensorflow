@@ -5,7 +5,7 @@ package error_codes
 
 import (
 	fmt "fmt"
-	protobuf "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
+	core "github.com/Applifier/go-tensorflow/types/tensorflow/core"
 	proto "github.com/gogo/protobuf/proto"
 	math "math"
 )
@@ -19,32 +19,32 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Code from public import tensorflow/core/protobuf/error_codes.proto
-type Code = protobuf.Code
+type Code = core.Code
 
-var Code_name = protobuf.Code_name
-var Code_value = protobuf.Code_value
+var Code_name = core.Code_name
+var Code_value = core.Code_value
 
-const Code_OK = Code(protobuf.Code_OK)
-const Code_CANCELLED = Code(protobuf.Code_CANCELLED)
-const Code_UNKNOWN = Code(protobuf.Code_UNKNOWN)
-const Code_INVALID_ARGUMENT = Code(protobuf.Code_INVALID_ARGUMENT)
-const Code_DEADLINE_EXCEEDED = Code(protobuf.Code_DEADLINE_EXCEEDED)
-const Code_NOT_FOUND = Code(protobuf.Code_NOT_FOUND)
-const Code_ALREADY_EXISTS = Code(protobuf.Code_ALREADY_EXISTS)
-const Code_PERMISSION_DENIED = Code(protobuf.Code_PERMISSION_DENIED)
-const Code_UNAUTHENTICATED = Code(protobuf.Code_UNAUTHENTICATED)
-const Code_RESOURCE_EXHAUSTED = Code(protobuf.Code_RESOURCE_EXHAUSTED)
-const Code_FAILED_PRECONDITION = Code(protobuf.Code_FAILED_PRECONDITION)
-const Code_ABORTED = Code(protobuf.Code_ABORTED)
-const Code_OUT_OF_RANGE = Code(protobuf.Code_OUT_OF_RANGE)
-const Code_UNIMPLEMENTED = Code(protobuf.Code_UNIMPLEMENTED)
-const Code_INTERNAL = Code(protobuf.Code_INTERNAL)
-const Code_UNAVAILABLE = Code(protobuf.Code_UNAVAILABLE)
-const Code_DATA_LOSS = Code(protobuf.Code_DATA_LOSS)
-const Code_DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_ = Code(protobuf.Code_DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_)
+const Code_OK = Code(core.Code_OK)
+const Code_CANCELLED = Code(core.Code_CANCELLED)
+const Code_UNKNOWN = Code(core.Code_UNKNOWN)
+const Code_INVALID_ARGUMENT = Code(core.Code_INVALID_ARGUMENT)
+const Code_DEADLINE_EXCEEDED = Code(core.Code_DEADLINE_EXCEEDED)
+const Code_NOT_FOUND = Code(core.Code_NOT_FOUND)
+const Code_ALREADY_EXISTS = Code(core.Code_ALREADY_EXISTS)
+const Code_PERMISSION_DENIED = Code(core.Code_PERMISSION_DENIED)
+const Code_UNAUTHENTICATED = Code(core.Code_UNAUTHENTICATED)
+const Code_RESOURCE_EXHAUSTED = Code(core.Code_RESOURCE_EXHAUSTED)
+const Code_FAILED_PRECONDITION = Code(core.Code_FAILED_PRECONDITION)
+const Code_ABORTED = Code(core.Code_ABORTED)
+const Code_OUT_OF_RANGE = Code(core.Code_OUT_OF_RANGE)
+const Code_UNIMPLEMENTED = Code(core.Code_UNIMPLEMENTED)
+const Code_INTERNAL = Code(core.Code_INTERNAL)
+const Code_UNAVAILABLE = Code(core.Code_UNAVAILABLE)
+const Code_DATA_LOSS = Code(core.Code_DATA_LOSS)
+const Code_DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_ = Code(core.Code_DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_)
 
 func init() {
 	proto.RegisterFile("tensorflow/core/lib/core/error_codes.proto", fileDescriptor_212fd07356b95fd6)

@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package tensorflow;
+
 option cc_enable_arenas = true;
 option java_outer_classname = "DeviceAttributesProtos";
 option java_multiple_files = true;
@@ -11,11 +12,11 @@ message InterconnectLink {
   int32 device_id = 1;
   string type = 2;
   int32 strength = 3;
-};
+}
 
 message LocalLinks {
   repeated InterconnectLink link = 1;
-};
+}
 
 message DeviceLocality {
   // Optional bus locality of device.  Default value of 0 means
@@ -27,7 +28,7 @@ message DeviceLocality {
 
   // Optional local interconnect links to other devices.
   LocalLinks links = 3;
-};
+}
 
 message DeviceAttributes {
   // Fully specified name of the device within a cluster.

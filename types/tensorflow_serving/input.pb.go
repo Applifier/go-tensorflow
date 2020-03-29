@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Specifies one or more fully independent input Examples.
 // See examples at:
@@ -43,7 +44,7 @@ func (m *ExampleList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_ExampleList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -141,7 +142,7 @@ func (m *ExampleListWithContext) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_ExampleListWithContext.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -195,7 +196,7 @@ func (m *Input) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Input.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -221,10 +222,10 @@ type isInput_Kind interface {
 }
 
 type Input_ExampleList struct {
-	ExampleList *ExampleList `protobuf:"bytes,1,opt,name=example_list,json=exampleList,proto3,oneof"`
+	ExampleList *ExampleList `protobuf:"bytes,1,opt,name=example_list,json=exampleList,proto3,oneof" json:"example_list,omitempty"`
 }
 type Input_ExampleListWithContext struct {
-	ExampleListWithContext *ExampleListWithContext `protobuf:"bytes,2,opt,name=example_list_with_context,json=exampleListWithContext,proto3,oneof"`
+	ExampleListWithContext *ExampleListWithContext `protobuf:"bytes,2,opt,name=example_list_with_context,json=exampleListWithContext,proto3,oneof" json:"example_list_with_context,omitempty"`
 }
 
 func (*Input_ExampleList) isInput_Kind()            {}
@@ -251,78 +252,12 @@ func (m *Input) GetExampleListWithContext() *ExampleListWithContext {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*Input) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _Input_OneofMarshaler, _Input_OneofUnmarshaler, _Input_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*Input) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*Input_ExampleList)(nil),
 		(*Input_ExampleListWithContext)(nil),
 	}
-}
-
-func _Input_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*Input)
-	// kind
-	switch x := m.Kind.(type) {
-	case *Input_ExampleList:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ExampleList); err != nil {
-			return err
-		}
-	case *Input_ExampleListWithContext:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ExampleListWithContext); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("Input.Kind has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _Input_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*Input)
-	switch tag {
-	case 1: // kind.example_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ExampleList)
-		err := b.DecodeMessage(msg)
-		m.Kind = &Input_ExampleList{msg}
-		return true, err
-	case 2: // kind.example_list_with_context
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ExampleListWithContext)
-		err := b.DecodeMessage(msg)
-		m.Kind = &Input_ExampleListWithContext{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _Input_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*Input)
-	// kind
-	switch x := m.Kind.(type) {
-	case *Input_ExampleList:
-		s := proto.Size(x.ExampleList)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Input_ExampleListWithContext:
-		s := proto.Size(x.ExampleListWithContext)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 func init() {
@@ -357,7 +292,7 @@ var fileDescriptor_4595aa0586506d9d = []byte{
 func (m *ExampleList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -365,29 +300,36 @@ func (m *ExampleList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ExampleList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ExampleList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Examples) > 0 {
-		for _, msg := range m.Examples {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintInput(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Examples) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Examples[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintInput(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ExampleListWithContext) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -395,39 +337,48 @@ func (m *ExampleListWithContext) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ExampleListWithContext) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ExampleListWithContext) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Examples) > 0 {
-		for _, msg := range m.Examples {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintInput(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+	if m.Context != nil {
+		{
+			size, err := m.Context.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintInput(dAtA, i, uint64(size))
 		}
-	}
-	if m.Context != nil {
+		i--
 		dAtA[i] = 0x12
-		i++
-		i = encodeVarintInput(dAtA, i, uint64(m.Context.Size()))
-		n1, err := m.Context.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
 	}
-	return i, nil
+	if len(m.Examples) > 0 {
+		for iNdEx := len(m.Examples) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Examples[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintInput(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *Input) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -435,56 +386,79 @@ func (m *Input) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Input) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Input) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Kind != nil {
-		nn2, err := m.Kind.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Kind.Size()
+			i -= size
+			if _, err := m.Kind.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn2
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *Input_ExampleList) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Input_ExampleList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ExampleList != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintInput(dAtA, i, uint64(m.ExampleList.Size()))
-		n3, err := m.ExampleList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ExampleList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintInput(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *Input_ExampleListWithContext) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Input_ExampleListWithContext) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ExampleListWithContext != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintInput(dAtA, i, uint64(m.ExampleListWithContext.Size()))
-		n4, err := m.ExampleListWithContext.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ExampleListWithContext.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintInput(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func encodeVarintInput(dAtA []byte, offset int, v uint64) int {
+	offset -= sovInput(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *ExampleList) Size() (n int) {
 	if m == nil {
@@ -558,14 +532,7 @@ func (m *Input_ExampleListWithContext) Size() (n int) {
 }
 
 func sovInput(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozInput(x uint64) (n int) {
 	return sovInput(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -585,7 +552,7 @@ func (m *ExampleList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -613,7 +580,7 @@ func (m *ExampleList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -622,6 +589,9 @@ func (m *ExampleList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInput
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInput
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -637,6 +607,9 @@ func (m *ExampleList) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthInput
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthInput
 			}
 			if (iNdEx + skippy) > l {
@@ -666,7 +639,7 @@ func (m *ExampleListWithContext) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -694,7 +667,7 @@ func (m *ExampleListWithContext) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -703,6 +676,9 @@ func (m *ExampleListWithContext) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInput
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInput
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -725,7 +701,7 @@ func (m *ExampleListWithContext) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -734,6 +710,9 @@ func (m *ExampleListWithContext) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInput
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInput
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -751,6 +730,9 @@ func (m *ExampleListWithContext) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthInput
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthInput
 			}
 			if (iNdEx + skippy) > l {
@@ -780,7 +762,7 @@ func (m *Input) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -808,7 +790,7 @@ func (m *Input) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -817,6 +799,9 @@ func (m *Input) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInput
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInput
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -840,7 +825,7 @@ func (m *Input) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -849,6 +834,9 @@ func (m *Input) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInput
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInput
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -867,6 +855,9 @@ func (m *Input) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthInput
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthInput
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -882,6 +873,7 @@ func (m *Input) Unmarshal(dAtA []byte) error {
 func skipInput(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -913,10 +905,8 @@ func skipInput(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -933,53 +923,34 @@ func skipInput(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthInput
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowInput
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipInput(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupInput
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthInput
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthInput = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowInput   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthInput        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowInput          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupInput = fmt.Errorf("proto: unexpected end of group")
 )

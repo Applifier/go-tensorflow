@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Containers to hold repeated fundamental values.
 type BytesList struct {
@@ -41,7 +42,7 @@ func (m *BytesList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_BytesList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -85,7 +86,7 @@ func (m *FloatList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_FloatList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -129,7 +130,7 @@ func (m *Int64List) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Int64List.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -180,7 +181,7 @@ func (m *Feature) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Feature.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -206,13 +207,13 @@ type isFeature_Kind interface {
 }
 
 type Feature_BytesList struct {
-	BytesList *BytesList `protobuf:"bytes,1,opt,name=bytes_list,json=bytesList,proto3,oneof"`
+	BytesList *BytesList `protobuf:"bytes,1,opt,name=bytes_list,json=bytesList,proto3,oneof" json:"bytes_list,omitempty"`
 }
 type Feature_FloatList struct {
-	FloatList *FloatList `protobuf:"bytes,2,opt,name=float_list,json=floatList,proto3,oneof"`
+	FloatList *FloatList `protobuf:"bytes,2,opt,name=float_list,json=floatList,proto3,oneof" json:"float_list,omitempty"`
 }
 type Feature_Int64List struct {
-	Int64List *Int64List `protobuf:"bytes,3,opt,name=int64_list,json=int64List,proto3,oneof"`
+	Int64List *Int64List `protobuf:"bytes,3,opt,name=int64_list,json=int64List,proto3,oneof" json:"int64_list,omitempty"`
 }
 
 func (*Feature_BytesList) isFeature_Kind() {}
@@ -247,97 +248,13 @@ func (m *Feature) GetInt64List() *Int64List {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*Feature) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _Feature_OneofMarshaler, _Feature_OneofUnmarshaler, _Feature_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*Feature) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*Feature_BytesList)(nil),
 		(*Feature_FloatList)(nil),
 		(*Feature_Int64List)(nil),
 	}
-}
-
-func _Feature_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*Feature)
-	// kind
-	switch x := m.Kind.(type) {
-	case *Feature_BytesList:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.BytesList); err != nil {
-			return err
-		}
-	case *Feature_FloatList:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.FloatList); err != nil {
-			return err
-		}
-	case *Feature_Int64List:
-		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Int64List); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("Feature.Kind has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _Feature_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*Feature)
-	switch tag {
-	case 1: // kind.bytes_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(BytesList)
-		err := b.DecodeMessage(msg)
-		m.Kind = &Feature_BytesList{msg}
-		return true, err
-	case 2: // kind.float_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(FloatList)
-		err := b.DecodeMessage(msg)
-		m.Kind = &Feature_FloatList{msg}
-		return true, err
-	case 3: // kind.int64_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Int64List)
-		err := b.DecodeMessage(msg)
-		m.Kind = &Feature_Int64List{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _Feature_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*Feature)
-	// kind
-	switch x := m.Kind.(type) {
-	case *Feature_BytesList:
-		s := proto.Size(x.BytesList)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Feature_FloatList:
-		s := proto.Size(x.FloatList)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Feature_Int64List:
-		s := proto.Size(x.Int64List)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type Features struct {
@@ -359,7 +276,7 @@ func (m *Features) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Features.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -411,7 +328,7 @@ func (m *FeatureList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_FeatureList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -456,7 +373,7 @@ func (m *FeatureLists) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_FeatureLists.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -533,7 +450,7 @@ var fileDescriptor_0a52991187ca0172 = []byte{
 func (m *BytesList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -541,25 +458,31 @@ func (m *BytesList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *BytesList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *BytesList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
-		for _, b := range m.Value {
+		for iNdEx := len(m.Value) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Value[iNdEx])
+			copy(dAtA[i:], m.Value[iNdEx])
+			i = encodeVarintFeature(dAtA, i, uint64(len(m.Value[iNdEx])))
+			i--
 			dAtA[i] = 0xa
-			i++
-			i = encodeVarintFeature(dAtA, i, uint64(len(b)))
-			i += copy(dAtA[i:], b)
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FloatList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -567,27 +490,32 @@ func (m *FloatList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *FloatList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FloatList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintFeature(dAtA, i, uint64(len(m.Value)*4))
-		for _, num := range m.Value {
-			f1 := math.Float32bits(float32(num))
+		for iNdEx := len(m.Value) - 1; iNdEx >= 0; iNdEx-- {
+			f1 := math.Float32bits(float32(m.Value[iNdEx]))
+			i -= 4
 			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f1))
-			i += 4
 		}
+		i = encodeVarintFeature(dAtA, i, uint64(len(m.Value)*4))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *Int64List) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -595,7 +523,12 @@ func (m *Int64List) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Int64List) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Int64List) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
@@ -612,18 +545,19 @@ func (m *Int64List) MarshalTo(dAtA []byte) (int, error) {
 			dAtA3[j2] = uint8(num)
 			j2++
 		}
-		dAtA[i] = 0xa
-		i++
+		i -= j2
+		copy(dAtA[i:], dAtA3[:j2])
 		i = encodeVarintFeature(dAtA, i, uint64(j2))
-		i += copy(dAtA[i:], dAtA3[:j2])
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *Feature) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -631,66 +565,94 @@ func (m *Feature) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Feature) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Feature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Kind != nil {
-		nn4, err := m.Kind.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Kind.Size()
+			i -= size
+			if _, err := m.Kind.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn4
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *Feature_BytesList) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Feature_BytesList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.BytesList != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintFeature(dAtA, i, uint64(m.BytesList.Size()))
-		n5, err := m.BytesList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.BytesList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintFeature(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *Feature_FloatList) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Feature_FloatList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.FloatList != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintFeature(dAtA, i, uint64(m.FloatList.Size()))
-		n6, err := m.FloatList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.FloatList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintFeature(dAtA, i, uint64(size))
 		}
-		i += n6
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *Feature_Int64List) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Feature_Int64List) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Int64List != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintFeature(dAtA, i, uint64(m.Int64List.Size()))
-		n7, err := m.Int64List.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Int64List.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintFeature(dAtA, i, uint64(size))
 		}
-		i += n7
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *Features) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -698,45 +660,48 @@ func (m *Features) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Features) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Features) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Feature) > 0 {
-		for k, _ := range m.Feature {
-			dAtA[i] = 0xa
-			i++
+		for k := range m.Feature {
 			v := m.Feature[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovFeature(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovFeature(uint64(len(k))) + msgSize
-			i = encodeVarintFeature(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintFeature(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintFeature(dAtA, i, uint64(v.Size()))
-				n8, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintFeature(dAtA, i, uint64(size))
 				}
-				i += n8
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintFeature(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintFeature(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FeatureList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -744,29 +709,36 @@ func (m *FeatureList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *FeatureList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FeatureList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Feature) > 0 {
-		for _, msg := range m.Feature {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintFeature(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Feature) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Feature[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintFeature(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FeatureLists) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -774,49 +746,54 @@ func (m *FeatureLists) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *FeatureLists) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FeatureLists) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.FeatureList) > 0 {
-		for k, _ := range m.FeatureList {
-			dAtA[i] = 0xa
-			i++
+		for k := range m.FeatureList {
 			v := m.FeatureList[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovFeature(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovFeature(uint64(len(k))) + msgSize
-			i = encodeVarintFeature(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintFeature(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintFeature(dAtA, i, uint64(v.Size()))
-				n9, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintFeature(dAtA, i, uint64(size))
 				}
-				i += n9
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintFeature(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintFeature(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintFeature(dAtA []byte, offset int, v uint64) int {
+	offset -= sovFeature(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *BytesList) Size() (n int) {
 	if m == nil {
@@ -969,14 +946,7 @@ func (m *FeatureLists) Size() (n int) {
 }
 
 func sovFeature(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozFeature(x uint64) (n int) {
 	return sovFeature(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -996,7 +966,7 @@ func (m *BytesList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1024,7 +994,7 @@ func (m *BytesList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1033,6 +1003,9 @@ func (m *BytesList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFeature
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1046,6 +1019,9 @@ func (m *BytesList) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFeature
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFeature
 			}
 			if (iNdEx + skippy) > l {
@@ -1075,7 +1051,7 @@ func (m *FloatList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1110,7 +1086,7 @@ func (m *FloatList) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1119,6 +1095,9 @@ func (m *FloatList) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthFeature
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthFeature
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -1149,6 +1128,9 @@ func (m *FloatList) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthFeature
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1176,7 +1158,7 @@ func (m *Int64List) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1202,7 +1184,7 @@ func (m *Int64List) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1219,7 +1201,7 @@ func (m *Int64List) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1228,12 +1210,15 @@ func (m *Int64List) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthFeature
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthFeature
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1253,7 +1238,7 @@ func (m *Int64List) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1270,6 +1255,9 @@ func (m *Int64List) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFeature
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFeature
 			}
 			if (iNdEx + skippy) > l {
@@ -1299,7 +1287,7 @@ func (m *Feature) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1327,7 +1315,7 @@ func (m *Feature) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1336,6 +1324,9 @@ func (m *Feature) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFeature
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1359,7 +1350,7 @@ func (m *Feature) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1368,6 +1359,9 @@ func (m *Feature) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFeature
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1391,7 +1385,7 @@ func (m *Feature) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1400,6 +1394,9 @@ func (m *Feature) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFeature
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1416,6 +1413,9 @@ func (m *Feature) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFeature
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFeature
 			}
 			if (iNdEx + skippy) > l {
@@ -1445,7 +1445,7 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1473,7 +1473,7 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1482,6 +1482,9 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFeature
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1502,7 +1505,7 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1519,7 +1522,7 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1529,6 +1532,9 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthFeature
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthFeature
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -1545,7 +1551,7 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1554,7 +1560,7 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthFeature
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthFeature
 					}
 					if postmsgIndex > l {
@@ -1591,6 +1597,9 @@ func (m *Features) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthFeature
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1618,7 +1627,7 @@ func (m *FeatureList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1646,7 +1655,7 @@ func (m *FeatureList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1655,6 +1664,9 @@ func (m *FeatureList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFeature
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1670,6 +1682,9 @@ func (m *FeatureList) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthFeature
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthFeature
 			}
 			if (iNdEx + skippy) > l {
@@ -1699,7 +1714,7 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1727,7 +1742,7 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1736,6 +1751,9 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthFeature
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1756,7 +1774,7 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1773,7 +1791,7 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1783,6 +1801,9 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthFeature
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthFeature
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -1799,7 +1820,7 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1808,7 +1829,7 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthFeature
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthFeature
 					}
 					if postmsgIndex > l {
@@ -1845,6 +1866,9 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthFeature
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthFeature
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1860,6 +1884,7 @@ func (m *FeatureLists) Unmarshal(dAtA []byte) error {
 func skipFeature(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1891,10 +1916,8 @@ func skipFeature(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1911,53 +1934,34 @@ func skipFeature(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthFeature
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowFeature
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipFeature(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupFeature
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthFeature
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthFeature = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowFeature   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthFeature        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowFeature          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupFeature = fmt.Errorf("proto: unexpected end of group")
 )

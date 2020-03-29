@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // An allocation/de-allocation operation performed by the allocator.
 type AllocationRecord struct {
@@ -43,7 +44,7 @@ func (m *AllocationRecord) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_AllocationRecord.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -104,7 +105,7 @@ func (m *AllocatorMemoryUsed) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return xxx_messageInfo_AllocatorMemoryUsed.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -185,7 +186,7 @@ func (m *NodeOutput) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_NodeOutput.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -242,7 +243,7 @@ func (m *MemoryStats) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_MemoryStats.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -345,7 +346,7 @@ func (m *NodeExecStats) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_NodeExecStats.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -504,7 +505,7 @@ func (m *DeviceStepStats) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_DeviceStepStats.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -562,7 +563,7 @@ func (m *StepStats) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_StepStats.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -673,7 +674,7 @@ var fileDescriptor_1e915309f7ed52e5 = []byte{
 func (m *AllocationRecord) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -681,27 +682,32 @@ func (m *AllocationRecord) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *AllocationRecord) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AllocationRecord) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.AllocMicros != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.AllocMicros))
-	}
 	if m.AllocBytes != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintStepStats(dAtA, i, uint64(m.AllocBytes))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.AllocMicros != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.AllocMicros))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *AllocatorMemoryUsed) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -709,55 +715,63 @@ func (m *AllocatorMemoryUsed) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *AllocatorMemoryUsed) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AllocatorMemoryUsed) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.AllocatorName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(len(m.AllocatorName)))
-		i += copy(dAtA[i:], m.AllocatorName)
-	}
-	if m.TotalBytes != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.TotalBytes))
-	}
-	if m.PeakBytes != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.PeakBytes))
-	}
-	if m.LiveBytes != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.LiveBytes))
-	}
-	if m.AllocatorBytesInUse != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.AllocatorBytesInUse))
-	}
 	if len(m.AllocationRecords) > 0 {
-		for _, msg := range m.AllocationRecords {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintStepStats(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.AllocationRecords) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.AllocationRecords[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStepStats(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x32
 		}
 	}
-	return i, nil
+	if m.AllocatorBytesInUse != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.AllocatorBytesInUse))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.LiveBytes != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.LiveBytes))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.PeakBytes != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.PeakBytes))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.TotalBytes != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.TotalBytes))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.AllocatorName) > 0 {
+		i -= len(m.AllocatorName)
+		copy(dAtA[i:], m.AllocatorName)
+		i = encodeVarintStepStats(dAtA, i, uint64(len(m.AllocatorName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *NodeOutput) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -765,32 +779,39 @@ func (m *NodeOutput) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *NodeOutput) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *NodeOutput) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Slot != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.Slot))
-	}
 	if m.TensorDescription != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.TensorDescription.Size()))
-		n1, err := m.TensorDescription.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TensorDescription.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStepStats(dAtA, i, uint64(size))
 		}
-		i += n1
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	if m.Slot != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.Slot))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MemoryStats) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -798,34 +819,19 @@ func (m *MemoryStats) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MemoryStats) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MemoryStats) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.TempMemorySize != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.TempMemorySize))
-	}
-	if m.DeviceTempMemorySize != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.DeviceTempMemorySize))
-	}
-	if m.PersistentMemorySize != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.PersistentMemorySize))
-	}
-	if m.DevicePersistentMemorySize != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.DevicePersistentMemorySize))
-	}
-	if len(m.PersistentTensorAllocIds) > 0 {
-		dAtA3 := make([]byte, len(m.PersistentTensorAllocIds)*10)
+	if len(m.DevicePersistentTensorAllocIds) > 0 {
+		dAtA3 := make([]byte, len(m.DevicePersistentTensorAllocIds)*10)
 		var j2 int
-		for _, num1 := range m.PersistentTensorAllocIds {
+		for _, num1 := range m.DevicePersistentTensorAllocIds {
 			num := uint64(num1)
 			for num >= 1<<7 {
 				dAtA3[j2] = uint8(uint64(num)&0x7f | 0x80)
@@ -835,15 +841,16 @@ func (m *MemoryStats) MarshalTo(dAtA []byte) (int, error) {
 			dAtA3[j2] = uint8(num)
 			j2++
 		}
-		dAtA[i] = 0x2a
-		i++
+		i -= j2
+		copy(dAtA[i:], dAtA3[:j2])
 		i = encodeVarintStepStats(dAtA, i, uint64(j2))
-		i += copy(dAtA[i:], dAtA3[:j2])
+		i--
+		dAtA[i] = 0x32
 	}
-	if len(m.DevicePersistentTensorAllocIds) > 0 {
-		dAtA5 := make([]byte, len(m.DevicePersistentTensorAllocIds)*10)
+	if len(m.PersistentTensorAllocIds) > 0 {
+		dAtA5 := make([]byte, len(m.PersistentTensorAllocIds)*10)
 		var j4 int
-		for _, num1 := range m.DevicePersistentTensorAllocIds {
+		for _, num1 := range m.PersistentTensorAllocIds {
 			num := uint64(num1)
 			for num >= 1<<7 {
 				dAtA5[j4] = uint8(uint64(num)&0x7f | 0x80)
@@ -853,18 +860,39 @@ func (m *MemoryStats) MarshalTo(dAtA []byte) (int, error) {
 			dAtA5[j4] = uint8(num)
 			j4++
 		}
-		dAtA[i] = 0x32
-		i++
+		i -= j4
+		copy(dAtA[i:], dAtA5[:j4])
 		i = encodeVarintStepStats(dAtA, i, uint64(j4))
-		i += copy(dAtA[i:], dAtA5[:j4])
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	if m.DevicePersistentMemorySize != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.DevicePersistentMemorySize))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.PersistentMemorySize != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.PersistentMemorySize))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.DeviceTempMemorySize != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.DeviceTempMemorySize))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.TempMemorySize != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.TempMemorySize))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *NodeExecStats) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -872,134 +900,149 @@ func (m *NodeExecStats) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *NodeExecStats) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *NodeExecStats) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.NodeName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(len(m.NodeName)))
-		i += copy(dAtA[i:], m.NodeName)
-	}
-	if m.AllStartMicros != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.AllStartMicros))
-	}
-	if m.OpStartRelMicros != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.OpStartRelMicros))
-	}
-	if m.OpEndRelMicros != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.OpEndRelMicros))
-	}
-	if m.AllEndRelMicros != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.AllEndRelMicros))
-	}
-	if len(m.Memory) > 0 {
-		for _, msg := range m.Memory {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintStepStats(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.Output) > 0 {
-		for _, msg := range m.Output {
-			dAtA[i] = 0x3a
-			i++
-			i = encodeVarintStepStats(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.TimelineLabel) > 0 {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(len(m.TimelineLabel)))
-		i += copy(dAtA[i:], m.TimelineLabel)
-	}
-	if m.ScheduledMicros != 0 {
-		dAtA[i] = 0x48
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.ScheduledMicros))
-	}
-	if m.ThreadId != 0 {
-		dAtA[i] = 0x50
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.ThreadId))
-	}
-	if len(m.ReferencedTensor) > 0 {
-		for _, msg := range m.ReferencedTensor {
-			dAtA[i] = 0x5a
-			i++
-			i = encodeVarintStepStats(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.MemoryStats != nil {
-		dAtA[i] = 0x62
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.MemoryStats.Size()))
-		n6, err := m.MemoryStats.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n6
-	}
-	if m.AllStartNanos != 0 {
-		dAtA[i] = 0x68
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.AllStartNanos))
-	}
-	if m.OpStartRelNanos != 0 {
-		dAtA[i] = 0x70
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.OpStartRelNanos))
-	}
-	if m.OpEndRelNanos != 0 {
-		dAtA[i] = 0x78
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.OpEndRelNanos))
+	if m.ScheduledNanos != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.ScheduledNanos))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x88
 	}
 	if m.AllEndRelNanos != 0 {
-		dAtA[i] = 0x80
-		i++
-		dAtA[i] = 0x1
-		i++
 		i = encodeVarintStepStats(dAtA, i, uint64(m.AllEndRelNanos))
-	}
-	if m.ScheduledNanos != 0 {
-		dAtA[i] = 0x88
-		i++
+		i--
 		dAtA[i] = 0x1
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(m.ScheduledNanos))
+		i--
+		dAtA[i] = 0x80
 	}
-	return i, nil
+	if m.OpEndRelNanos != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.OpEndRelNanos))
+		i--
+		dAtA[i] = 0x78
+	}
+	if m.OpStartRelNanos != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.OpStartRelNanos))
+		i--
+		dAtA[i] = 0x70
+	}
+	if m.AllStartNanos != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.AllStartNanos))
+		i--
+		dAtA[i] = 0x68
+	}
+	if m.MemoryStats != nil {
+		{
+			size, err := m.MemoryStats.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStepStats(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x62
+	}
+	if len(m.ReferencedTensor) > 0 {
+		for iNdEx := len(m.ReferencedTensor) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ReferencedTensor[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStepStats(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x5a
+		}
+	}
+	if m.ThreadId != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.ThreadId))
+		i--
+		dAtA[i] = 0x50
+	}
+	if m.ScheduledMicros != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.ScheduledMicros))
+		i--
+		dAtA[i] = 0x48
+	}
+	if len(m.TimelineLabel) > 0 {
+		i -= len(m.TimelineLabel)
+		copy(dAtA[i:], m.TimelineLabel)
+		i = encodeVarintStepStats(dAtA, i, uint64(len(m.TimelineLabel)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.Output) > 0 {
+		for iNdEx := len(m.Output) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Output[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStepStats(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x3a
+		}
+	}
+	if len(m.Memory) > 0 {
+		for iNdEx := len(m.Memory) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Memory[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStepStats(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x32
+		}
+	}
+	if m.AllEndRelMicros != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.AllEndRelMicros))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.OpEndRelMicros != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.OpEndRelMicros))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.OpStartRelMicros != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.OpStartRelMicros))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.AllStartMicros != 0 {
+		i = encodeVarintStepStats(dAtA, i, uint64(m.AllStartMicros))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.NodeName) > 0 {
+		i -= len(m.NodeName)
+		copy(dAtA[i:], m.NodeName)
+		i = encodeVarintStepStats(dAtA, i, uint64(len(m.NodeName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DeviceStepStats) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1007,51 +1050,60 @@ func (m *DeviceStepStats) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DeviceStepStats) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DeviceStepStats) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Device) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintStepStats(dAtA, i, uint64(len(m.Device)))
-		i += copy(dAtA[i:], m.Device)
+	if len(m.ThreadNames) > 0 {
+		for k := range m.ThreadNames {
+			v := m.ThreadNames[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintStepStats(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i = encodeVarintStepStats(dAtA, i, uint64(k))
+			i--
+			dAtA[i] = 0x8
+			i = encodeVarintStepStats(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x1a
+		}
 	}
 	if len(m.NodeStats) > 0 {
-		for _, msg := range m.NodeStats {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintStepStats(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.NodeStats) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.NodeStats[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStepStats(dAtA, i, uint64(size))
 			}
-			i += n
-		}
-	}
-	if len(m.ThreadNames) > 0 {
-		for k, _ := range m.ThreadNames {
-			dAtA[i] = 0x1a
-			i++
-			v := m.ThreadNames[k]
-			mapSize := 1 + sovStepStats(uint64(k)) + 1 + len(v) + sovStepStats(uint64(len(v)))
-			i = encodeVarintStepStats(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0x8
-			i++
-			i = encodeVarintStepStats(dAtA, i, uint64(k))
+			i--
 			dAtA[i] = 0x12
-			i++
-			i = encodeVarintStepStats(dAtA, i, uint64(len(v)))
-			i += copy(dAtA[i:], v)
 		}
 	}
-	return i, nil
+	if len(m.Device) > 0 {
+		i -= len(m.Device)
+		copy(dAtA[i:], m.Device)
+		i = encodeVarintStepStats(dAtA, i, uint64(len(m.Device)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *StepStats) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1059,33 +1111,42 @@ func (m *StepStats) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *StepStats) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StepStats) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.DevStats) > 0 {
-		for _, msg := range m.DevStats {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintStepStats(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.DevStats) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.DevStats[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStepStats(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintStepStats(dAtA []byte, offset int, v uint64) int {
+	offset -= sovStepStats(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *AllocationRecord) Size() (n int) {
 	if m == nil {
@@ -1299,14 +1360,7 @@ func (m *StepStats) Size() (n int) {
 }
 
 func sovStepStats(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozStepStats(x uint64) (n int) {
 	return sovStepStats(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1326,7 +1380,7 @@ func (m *AllocationRecord) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1354,7 +1408,7 @@ func (m *AllocationRecord) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllocMicros |= (int64(b) & 0x7F) << shift
+				m.AllocMicros |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1373,7 +1427,7 @@ func (m *AllocationRecord) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllocBytes |= (int64(b) & 0x7F) << shift
+				m.AllocBytes |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1385,6 +1439,9 @@ func (m *AllocationRecord) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStepStats
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStepStats
 			}
 			if (iNdEx + skippy) > l {
@@ -1414,7 +1471,7 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1442,7 +1499,7 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1452,6 +1509,9 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1471,7 +1531,7 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TotalBytes |= (int64(b) & 0x7F) << shift
+				m.TotalBytes |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1490,7 +1550,7 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PeakBytes |= (int64(b) & 0x7F) << shift
+				m.PeakBytes |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1509,7 +1569,7 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.LiveBytes |= (int64(b) & 0x7F) << shift
+				m.LiveBytes |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1528,7 +1588,7 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllocatorBytesInUse |= (int64(b) & 0x7F) << shift
+				m.AllocatorBytesInUse |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1547,7 +1607,7 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1556,6 +1616,9 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1571,6 +1634,9 @@ func (m *AllocatorMemoryUsed) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStepStats
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStepStats
 			}
 			if (iNdEx + skippy) > l {
@@ -1600,7 +1666,7 @@ func (m *NodeOutput) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1628,7 +1694,7 @@ func (m *NodeOutput) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Slot |= (int32(b) & 0x7F) << shift
+				m.Slot |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1647,7 +1713,7 @@ func (m *NodeOutput) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1656,6 +1722,9 @@ func (m *NodeOutput) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1673,6 +1742,9 @@ func (m *NodeOutput) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStepStats
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStepStats
 			}
 			if (iNdEx + skippy) > l {
@@ -1702,7 +1774,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1730,7 +1802,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TempMemorySize |= (int64(b) & 0x7F) << shift
+				m.TempMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1749,7 +1821,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DeviceTempMemorySize |= (int64(b) & 0x7F) << shift
+				m.DeviceTempMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1768,7 +1840,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PersistentMemorySize |= (int64(b) & 0x7F) << shift
+				m.PersistentMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1787,7 +1859,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DevicePersistentMemorySize |= (int64(b) & 0x7F) << shift
+				m.DevicePersistentMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1804,7 +1876,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1821,7 +1893,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1830,12 +1902,15 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthStepStats
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthStepStats
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1855,7 +1930,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1877,7 +1952,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1894,7 +1969,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1903,12 +1978,15 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthStepStats
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthStepStats
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1928,7 +2006,7 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1945,6 +2023,9 @@ func (m *MemoryStats) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStepStats
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStepStats
 			}
 			if (iNdEx + skippy) > l {
@@ -1974,7 +2055,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2002,7 +2083,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2012,6 +2093,9 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2031,7 +2115,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllStartMicros |= (int64(b) & 0x7F) << shift
+				m.AllStartMicros |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2050,7 +2134,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OpStartRelMicros |= (int64(b) & 0x7F) << shift
+				m.OpStartRelMicros |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2069,7 +2153,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OpEndRelMicros |= (int64(b) & 0x7F) << shift
+				m.OpEndRelMicros |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2088,7 +2172,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllEndRelMicros |= (int64(b) & 0x7F) << shift
+				m.AllEndRelMicros |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2107,7 +2191,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2116,6 +2200,9 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2138,7 +2225,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2147,6 +2234,9 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2169,7 +2259,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2179,6 +2269,9 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2198,7 +2291,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ScheduledMicros |= (int64(b) & 0x7F) << shift
+				m.ScheduledMicros |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2217,7 +2310,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ThreadId |= (uint32(b) & 0x7F) << shift
+				m.ThreadId |= uint32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2236,7 +2329,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2245,6 +2338,9 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2267,7 +2363,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2276,6 +2372,9 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2300,7 +2399,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllStartNanos |= (int64(b) & 0x7F) << shift
+				m.AllStartNanos |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2319,7 +2418,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OpStartRelNanos |= (int64(b) & 0x7F) << shift
+				m.OpStartRelNanos |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2338,7 +2437,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OpEndRelNanos |= (int64(b) & 0x7F) << shift
+				m.OpEndRelNanos |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2357,7 +2456,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllEndRelNanos |= (int64(b) & 0x7F) << shift
+				m.AllEndRelNanos |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2376,7 +2475,7 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ScheduledNanos |= (int64(b) & 0x7F) << shift
+				m.ScheduledNanos |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2388,6 +2487,9 @@ func (m *NodeExecStats) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStepStats
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStepStats
 			}
 			if (iNdEx + skippy) > l {
@@ -2417,7 +2519,7 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2445,7 +2547,7 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2455,6 +2557,9 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2474,7 +2579,7 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2483,6 +2588,9 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2505,7 +2613,7 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2514,6 +2622,9 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2534,7 +2645,7 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2550,7 +2661,7 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapkey |= (uint32(b) & 0x7F) << shift
+						mapkey |= uint32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2566,7 +2677,7 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapvalue |= (uint64(b) & 0x7F) << shift
+						stringLenmapvalue |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2576,6 +2687,9 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthStepStats
 					}
 					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthStepStats
+					}
 					if postStringIndexmapvalue > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -2607,6 +2721,9 @@ func (m *DeviceStepStats) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthStepStats
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2634,7 +2751,7 @@ func (m *StepStats) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2662,7 +2779,7 @@ func (m *StepStats) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2671,6 +2788,9 @@ func (m *StepStats) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStepStats
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2688,6 +2808,9 @@ func (m *StepStats) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthStepStats
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthStepStats
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2703,6 +2826,7 @@ func (m *StepStats) Unmarshal(dAtA []byte) error {
 func skipStepStats(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -2734,10 +2858,8 @@ func skipStepStats(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -2754,53 +2876,34 @@ func skipStepStats(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthStepStats
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowStepStats
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipStepStats(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupStepStats
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthStepStats
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthStepStats = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowStepStats   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthStepStats        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowStepStats          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupStepStats = fmt.Errorf("proto: unexpected end of group")
 )

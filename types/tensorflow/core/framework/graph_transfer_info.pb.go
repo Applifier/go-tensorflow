@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type GraphTransferInfo_Destination int32
 
@@ -65,7 +66,7 @@ func (m *GraphTransferNodeInput) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_GraphTransferNodeInput.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -122,7 +123,7 @@ func (m *GraphTransferNodeInfo) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return xxx_messageInfo_GraphTransferNodeInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -212,7 +213,7 @@ func (m *GraphTransferConstNodeInfo) XXX_Marshal(b []byte, deterministic bool) (
 		return xxx_messageInfo_GraphTransferConstNodeInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -285,7 +286,7 @@ func (m *GraphTransferNodeInputInfo) XXX_Marshal(b []byte, deterministic bool) (
 		return xxx_messageInfo_GraphTransferNodeInputInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -337,7 +338,7 @@ func (m *GraphTransferNodeOutputInfo) XXX_Marshal(b []byte, deterministic bool) 
 		return xxx_messageInfo_GraphTransferNodeOutputInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -390,7 +391,7 @@ func (m *GraphTransferGraphInputNodeInfo) XXX_Marshal(b []byte, deterministic bo
 		return xxx_messageInfo_GraphTransferGraphInputNodeInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -450,7 +451,7 @@ func (m *GraphTransferGraphOutputNodeInfo) XXX_Marshal(b []byte, deterministic b
 		return xxx_messageInfo_GraphTransferGraphOutputNodeInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -519,7 +520,7 @@ func (m *GraphTransferInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_GraphTransferInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -655,7 +656,7 @@ var fileDescriptor_c3a1e773f26c9475 = []byte{
 func (m *GraphTransferNodeInput) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -663,27 +664,32 @@ func (m *GraphTransferNodeInput) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GraphTransferNodeInput) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GraphTransferNodeInput) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.NodeId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
-	}
 	if m.OutputPort != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.OutputPort))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.NodeId != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *GraphTransferNodeInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -691,54 +697,61 @@ func (m *GraphTransferNodeInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GraphTransferNodeInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GraphTransferNodeInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if m.NodeId != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
-	}
-	if len(m.TypeName) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.TypeName)))
-		i += copy(dAtA[i:], m.TypeName)
-	}
-	if m.SocOpId != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.SocOpId))
-	}
-	if m.PaddingId != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.PaddingId))
+	if m.OutputCount != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.OutputCount))
+		i--
+		dAtA[i] = 0x38
 	}
 	if m.InputCount != 0 {
-		dAtA[i] = 0x30
-		i++
 		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.InputCount))
+		i--
+		dAtA[i] = 0x30
 	}
-	if m.OutputCount != 0 {
-		dAtA[i] = 0x38
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.OutputCount))
+	if m.PaddingId != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.PaddingId))
+		i--
+		dAtA[i] = 0x28
 	}
-	return i, nil
+	if m.SocOpId != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.SocOpId))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.TypeName) > 0 {
+		i -= len(m.TypeName)
+		copy(dAtA[i:], m.TypeName)
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.TypeName)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.NodeId != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *GraphTransferConstNodeInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -746,20 +759,26 @@ func (m *GraphTransferConstNodeInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GraphTransferConstNodeInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GraphTransferConstNodeInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
+	if m.Dtype != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x28
 	}
-	if m.NodeId != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
+	if len(m.Data) > 0 {
+		i -= len(m.Data)
+		copy(dAtA[i:], m.Data)
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Data)))
+		i--
+		dAtA[i] = 0x22
 	}
 	if len(m.Shape) > 0 {
 		dAtA2 := make([]byte, len(m.Shape)*10)
@@ -774,29 +793,31 @@ func (m *GraphTransferConstNodeInfo) MarshalTo(dAtA []byte) (int, error) {
 			dAtA2[j1] = uint8(num)
 			j1++
 		}
-		dAtA[i] = 0x1a
-		i++
+		i -= j1
+		copy(dAtA[i:], dAtA2[:j1])
 		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(j1))
-		i += copy(dAtA[i:], dAtA2[:j1])
+		i--
+		dAtA[i] = 0x1a
 	}
-	if len(m.Data) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Data)))
-		i += copy(dAtA[i:], m.Data)
+	if m.NodeId != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
+		i--
+		dAtA[i] = 0x10
 	}
-	if m.Dtype != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.Dtype))
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *GraphTransferNodeInputInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -804,34 +825,41 @@ func (m *GraphTransferNodeInputInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GraphTransferNodeInputInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GraphTransferNodeInputInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.NodeId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
-	}
 	if len(m.NodeInput) > 0 {
-		for _, msg := range m.NodeInput {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintGraphTransferInfo(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.NodeInput) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.NodeInput[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGraphTransferInfo(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	return i, nil
+	if m.NodeId != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *GraphTransferNodeOutputInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -839,15 +867,15 @@ func (m *GraphTransferNodeOutputInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GraphTransferNodeOutputInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GraphTransferNodeOutputInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.NodeId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
-	}
 	if len(m.MaxByteSize) > 0 {
 		dAtA4 := make([]byte, len(m.MaxByteSize)*10)
 		var j3 int
@@ -861,18 +889,24 @@ func (m *GraphTransferNodeOutputInfo) MarshalTo(dAtA []byte) (int, error) {
 			dAtA4[j3] = uint8(num)
 			j3++
 		}
-		dAtA[i] = 0x12
-		i++
+		i -= j3
+		copy(dAtA[i:], dAtA4[:j3])
 		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(j3))
-		i += copy(dAtA[i:], dAtA4[:j3])
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.NodeId != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.NodeId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *GraphTransferGraphInputNodeInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -880,15 +914,19 @@ func (m *GraphTransferGraphInputNodeInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GraphTransferGraphInputNodeInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GraphTransferGraphInputNodeInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
+	if m.Dtype != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.Shape) > 0 {
 		dAtA6 := make([]byte, len(m.Shape)*10)
@@ -903,23 +941,26 @@ func (m *GraphTransferGraphInputNodeInfo) MarshalTo(dAtA []byte) (int, error) {
 			dAtA6[j5] = uint8(num)
 			j5++
 		}
-		dAtA[i] = 0x12
-		i++
+		i -= j5
+		copy(dAtA[i:], dAtA6[:j5])
 		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(j5))
-		i += copy(dAtA[i:], dAtA6[:j5])
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.Dtype != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.Dtype))
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *GraphTransferGraphOutputNodeInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -927,15 +968,19 @@ func (m *GraphTransferGraphOutputNodeInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GraphTransferGraphOutputNodeInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GraphTransferGraphOutputNodeInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
+	if m.Dtype != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.Shape) > 0 {
 		dAtA8 := make([]byte, len(m.Shape)*10)
@@ -950,23 +995,26 @@ func (m *GraphTransferGraphOutputNodeInfo) MarshalTo(dAtA []byte) (int, error) {
 			dAtA8[j7] = uint8(num)
 			j7++
 		}
-		dAtA[i] = 0x12
-		i++
+		i -= j7
+		copy(dAtA[i:], dAtA8[:j7])
 		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(j7))
-		i += copy(dAtA[i:], dAtA8[:j7])
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.Dtype != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.Dtype))
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *GraphTransferInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -974,98 +1022,117 @@ func (m *GraphTransferInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GraphTransferInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GraphTransferInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.NodeInfo) > 0 {
-		for _, msg := range m.NodeInfo {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintGraphTransferInfo(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
+	if m.Destination != 0 {
+		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.Destination))
+		i--
+		dAtA[i] = 0x38
 	}
-	if len(m.ConstNodeInfo) > 0 {
-		for _, msg := range m.ConstNodeInfo {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintGraphTransferInfo(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.GraphOutputNodeInfo) > 0 {
+		for iNdEx := len(m.GraphOutputNodeInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.GraphOutputNodeInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGraphTransferInfo(dAtA, i, uint64(size))
 			}
-			i += n
-		}
-	}
-	if len(m.NodeInputInfo) > 0 {
-		for _, msg := range m.NodeInputInfo {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintGraphTransferInfo(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.NodeOutputInfo) > 0 {
-		for _, msg := range m.NodeOutputInfo {
-			dAtA[i] = 0x22
-			i++
-			i = encodeVarintGraphTransferInfo(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
+			i--
+			dAtA[i] = 0x32
 		}
 	}
 	if len(m.GraphInputNodeInfo) > 0 {
-		for _, msg := range m.GraphInputNodeInfo {
+		for iNdEx := len(m.GraphInputNodeInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.GraphInputNodeInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGraphTransferInfo(dAtA, i, uint64(size))
+			}
+			i--
 			dAtA[i] = 0x2a
-			i++
-			i = encodeVarintGraphTransferInfo(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
 		}
 	}
-	if len(m.GraphOutputNodeInfo) > 0 {
-		for _, msg := range m.GraphOutputNodeInfo {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintGraphTransferInfo(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.NodeOutputInfo) > 0 {
+		for iNdEx := len(m.NodeOutputInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.NodeOutputInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGraphTransferInfo(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x22
 		}
 	}
-	if m.Destination != 0 {
-		dAtA[i] = 0x38
-		i++
-		i = encodeVarintGraphTransferInfo(dAtA, i, uint64(m.Destination))
+	if len(m.NodeInputInfo) > 0 {
+		for iNdEx := len(m.NodeInputInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.NodeInputInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGraphTransferInfo(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x1a
+		}
 	}
-	return i, nil
+	if len(m.ConstNodeInfo) > 0 {
+		for iNdEx := len(m.ConstNodeInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.ConstNodeInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGraphTransferInfo(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.NodeInfo) > 0 {
+		for iNdEx := len(m.NodeInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.NodeInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintGraphTransferInfo(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintGraphTransferInfo(dAtA []byte, offset int, v uint64) int {
+	offset -= sovGraphTransferInfo(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *GraphTransferNodeInput) Size() (n int) {
 	if m == nil {
@@ -1276,14 +1343,7 @@ func (m *GraphTransferInfo) Size() (n int) {
 }
 
 func sovGraphTransferInfo(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozGraphTransferInfo(x uint64) (n int) {
 	return sovGraphTransferInfo(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1303,7 +1363,7 @@ func (m *GraphTransferNodeInput) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1331,7 +1391,7 @@ func (m *GraphTransferNodeInput) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NodeId |= (int32(b) & 0x7F) << shift
+				m.NodeId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1350,7 +1410,7 @@ func (m *GraphTransferNodeInput) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OutputPort |= (int32(b) & 0x7F) << shift
+				m.OutputPort |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1362,6 +1422,9 @@ func (m *GraphTransferNodeInput) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			if (iNdEx + skippy) > l {
@@ -1391,7 +1454,7 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1419,7 +1482,7 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1429,6 +1492,9 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1448,7 +1514,7 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NodeId |= (int32(b) & 0x7F) << shift
+				m.NodeId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1467,7 +1533,7 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1477,6 +1543,9 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1496,7 +1565,7 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.SocOpId |= (int32(b) & 0x7F) << shift
+				m.SocOpId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1515,7 +1584,7 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PaddingId |= (int32(b) & 0x7F) << shift
+				m.PaddingId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1534,7 +1603,7 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.InputCount |= (int32(b) & 0x7F) << shift
+				m.InputCount |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1553,7 +1622,7 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OutputCount |= (int32(b) & 0x7F) << shift
+				m.OutputCount |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1565,6 +1634,9 @@ func (m *GraphTransferNodeInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			if (iNdEx + skippy) > l {
@@ -1594,7 +1666,7 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1622,7 +1694,7 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1632,6 +1704,9 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1651,7 +1726,7 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NodeId |= (int32(b) & 0x7F) << shift
+				m.NodeId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1668,7 +1743,7 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1685,7 +1760,7 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1694,12 +1769,15 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthGraphTransferInfo
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthGraphTransferInfo
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1719,7 +1797,7 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1743,7 +1821,7 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1752,6 +1830,9 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1774,7 +1855,7 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (DataType(b) & 0x7F) << shift
+				m.Dtype |= DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1786,6 +1867,9 @@ func (m *GraphTransferConstNodeInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			if (iNdEx + skippy) > l {
@@ -1815,7 +1899,7 @@ func (m *GraphTransferNodeInputInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1843,7 +1927,7 @@ func (m *GraphTransferNodeInputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NodeId |= (int32(b) & 0x7F) << shift
+				m.NodeId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1862,7 +1946,7 @@ func (m *GraphTransferNodeInputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1871,6 +1955,9 @@ func (m *GraphTransferNodeInputInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1886,6 +1973,9 @@ func (m *GraphTransferNodeInputInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			if (iNdEx + skippy) > l {
@@ -1915,7 +2005,7 @@ func (m *GraphTransferNodeOutputInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1943,7 +2033,7 @@ func (m *GraphTransferNodeOutputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NodeId |= (int32(b) & 0x7F) << shift
+				m.NodeId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1960,7 +2050,7 @@ func (m *GraphTransferNodeOutputInfo) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= int32(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1977,7 +2067,7 @@ func (m *GraphTransferNodeOutputInfo) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1986,12 +2076,15 @@ func (m *GraphTransferNodeOutputInfo) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthGraphTransferInfo
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthGraphTransferInfo
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -2011,7 +2104,7 @@ func (m *GraphTransferNodeOutputInfo) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= int32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2028,6 +2121,9 @@ func (m *GraphTransferNodeOutputInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			if (iNdEx + skippy) > l {
@@ -2057,7 +2153,7 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2085,7 +2181,7 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2095,6 +2191,9 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2112,7 +2211,7 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2129,7 +2228,7 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2138,12 +2237,15 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthGraphTransferInfo
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthGraphTransferInfo
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -2163,7 +2265,7 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2187,7 +2289,7 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (DataType(b) & 0x7F) << shift
+				m.Dtype |= DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2199,6 +2301,9 @@ func (m *GraphTransferGraphInputNodeInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			if (iNdEx + skippy) > l {
@@ -2228,7 +2333,7 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2256,7 +2361,7 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2266,6 +2371,9 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2283,7 +2391,7 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2300,7 +2408,7 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2309,12 +2417,15 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthGraphTransferInfo
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthGraphTransferInfo
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -2334,7 +2445,7 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2358,7 +2469,7 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (DataType(b) & 0x7F) << shift
+				m.Dtype |= DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2370,6 +2481,9 @@ func (m *GraphTransferGraphOutputNodeInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			if (iNdEx + skippy) > l {
@@ -2399,7 +2513,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2427,7 +2541,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2436,6 +2550,9 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2458,7 +2575,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2467,6 +2584,9 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2489,7 +2609,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2498,6 +2618,9 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2520,7 +2643,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2529,6 +2652,9 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2551,7 +2677,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2560,6 +2686,9 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2582,7 +2711,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2591,6 +2720,9 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2613,7 +2745,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Destination |= (GraphTransferInfo_Destination(b) & 0x7F) << shift
+				m.Destination |= GraphTransferInfo_Destination(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2625,6 +2757,9 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGraphTransferInfo
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGraphTransferInfo
 			}
 			if (iNdEx + skippy) > l {
@@ -2642,6 +2777,7 @@ func (m *GraphTransferInfo) Unmarshal(dAtA []byte) error {
 func skipGraphTransferInfo(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -2673,10 +2809,8 @@ func skipGraphTransferInfo(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -2693,53 +2827,34 @@ func skipGraphTransferInfo(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthGraphTransferInfo
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowGraphTransferInfo
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipGraphTransferInfo(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupGraphTransferInfo
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthGraphTransferInfo
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthGraphTransferInfo = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowGraphTransferInfo   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthGraphTransferInfo        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowGraphTransferInfo          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupGraphTransferInfo = fmt.Errorf("proto: unexpected end of group")
 )

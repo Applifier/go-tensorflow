@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type NodeDef struct {
 	// The name given to this operator. Used for naming inputs,
@@ -87,7 +88,7 @@ func (m *NodeDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_NodeDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -181,7 +182,7 @@ func (m *NodeDef_ExperimentalDebugInfo) XXX_Marshal(b []byte, deterministic bool
 		return xxx_messageInfo_NodeDef_ExperimentalDebugInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -258,7 +259,7 @@ var fileDescriptor_b34b3b836a96140b = []byte{
 func (m *NodeDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -266,88 +267,90 @@ func (m *NodeDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *NodeDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *NodeDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintNodeDef(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if len(m.Op) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintNodeDef(dAtA, i, uint64(len(m.Op)))
-		i += copy(dAtA[i:], m.Op)
-	}
-	if len(m.Input) > 0 {
-		for _, s := range m.Input {
-			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
+	if m.ExperimentalDebugInfo != nil {
+		{
+			size, err := m.ExperimentalDebugInfo.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
 			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
+			i -= size
+			i = encodeVarintNodeDef(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.Attr) > 0 {
+		for k := range m.Attr {
+			v := m.Attr[k]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintNodeDef(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintNodeDef(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintNodeDef(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x2a
 		}
 	}
 	if len(m.Device) > 0 {
-		dAtA[i] = 0x22
-		i++
+		i -= len(m.Device)
+		copy(dAtA[i:], m.Device)
 		i = encodeVarintNodeDef(dAtA, i, uint64(len(m.Device)))
-		i += copy(dAtA[i:], m.Device)
+		i--
+		dAtA[i] = 0x22
 	}
-	if len(m.Attr) > 0 {
-		for k, _ := range m.Attr {
-			dAtA[i] = 0x2a
-			i++
-			v := m.Attr[k]
-			msgSize := 0
-			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovNodeDef(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovNodeDef(uint64(len(k))) + msgSize
-			i = encodeVarintNodeDef(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintNodeDef(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintNodeDef(dAtA, i, uint64(v.Size()))
-				n1, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
-				}
-				i += n1
-			}
+	if len(m.Input) > 0 {
+		for iNdEx := len(m.Input) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Input[iNdEx])
+			copy(dAtA[i:], m.Input[iNdEx])
+			i = encodeVarintNodeDef(dAtA, i, uint64(len(m.Input[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
 		}
 	}
-	if m.ExperimentalDebugInfo != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintNodeDef(dAtA, i, uint64(m.ExperimentalDebugInfo.Size()))
-		n2, err := m.ExperimentalDebugInfo.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
+	if len(m.Op) > 0 {
+		i -= len(m.Op)
+		copy(dAtA[i:], m.Op)
+		i = encodeVarintNodeDef(dAtA, i, uint64(len(m.Op)))
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintNodeDef(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *NodeDef_ExperimentalDebugInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -355,51 +358,46 @@ func (m *NodeDef_ExperimentalDebugInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *NodeDef_ExperimentalDebugInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *NodeDef_ExperimentalDebugInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.OriginalNodeNames) > 0 {
-		for _, s := range m.OriginalNodeNames {
-			dAtA[i] = 0xa
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
 	if len(m.OriginalFuncNames) > 0 {
-		for _, s := range m.OriginalFuncNames {
+		for iNdEx := len(m.OriginalFuncNames) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.OriginalFuncNames[iNdEx])
+			copy(dAtA[i:], m.OriginalFuncNames[iNdEx])
+			i = encodeVarintNodeDef(dAtA, i, uint64(len(m.OriginalFuncNames[iNdEx])))
+			i--
 			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
 		}
 	}
-	return i, nil
+	if len(m.OriginalNodeNames) > 0 {
+		for iNdEx := len(m.OriginalNodeNames) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.OriginalNodeNames[iNdEx])
+			copy(dAtA[i:], m.OriginalNodeNames[iNdEx])
+			i = encodeVarintNodeDef(dAtA, i, uint64(len(m.OriginalNodeNames[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintNodeDef(dAtA []byte, offset int, v uint64) int {
+	offset -= sovNodeDef(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *NodeDef) Size() (n int) {
 	if m == nil {
@@ -467,14 +465,7 @@ func (m *NodeDef_ExperimentalDebugInfo) Size() (n int) {
 }
 
 func sovNodeDef(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozNodeDef(x uint64) (n int) {
 	return sovNodeDef(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -494,7 +485,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -522,7 +513,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -532,6 +523,9 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNodeDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNodeDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -551,7 +545,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -561,6 +555,9 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNodeDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNodeDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -580,7 +577,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -590,6 +587,9 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNodeDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNodeDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -609,7 +609,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -619,6 +619,9 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNodeDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNodeDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -638,7 +641,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -647,6 +650,9 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNodeDef
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthNodeDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -667,7 +673,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -684,7 +690,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -694,6 +700,9 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthNodeDef
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthNodeDef
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -710,7 +719,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -719,7 +728,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthNodeDef
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthNodeDef
 					}
 					if postmsgIndex > l {
@@ -761,7 +770,7 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -770,6 +779,9 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNodeDef
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthNodeDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -787,6 +799,9 @@ func (m *NodeDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNodeDef
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNodeDef
 			}
 			if (iNdEx + skippy) > l {
@@ -816,7 +831,7 @@ func (m *NodeDef_ExperimentalDebugInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -844,7 +859,7 @@ func (m *NodeDef_ExperimentalDebugInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -854,6 +869,9 @@ func (m *NodeDef_ExperimentalDebugInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNodeDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNodeDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -873,7 +891,7 @@ func (m *NodeDef_ExperimentalDebugInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -883,6 +901,9 @@ func (m *NodeDef_ExperimentalDebugInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthNodeDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthNodeDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -895,6 +916,9 @@ func (m *NodeDef_ExperimentalDebugInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthNodeDef
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthNodeDef
 			}
 			if (iNdEx + skippy) > l {
@@ -912,6 +936,7 @@ func (m *NodeDef_ExperimentalDebugInfo) Unmarshal(dAtA []byte) error {
 func skipNodeDef(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -943,10 +968,8 @@ func skipNodeDef(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -963,53 +986,34 @@ func skipNodeDef(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthNodeDef
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowNodeDef
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipNodeDef(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupNodeDef
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthNodeDef
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthNodeDef = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowNodeDef   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthNodeDef        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowNodeDef          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupNodeDef = fmt.Errorf("proto: unexpected end of group")
 )
