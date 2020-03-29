@@ -5,10 +5,10 @@ package framework
 
 import (
 	fmt "fmt"
+	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
-
-	proto "github.com/gogo/protobuf/proto"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type ApiDef_Visibility int32
 
@@ -120,7 +120,7 @@ func (m *ApiDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_ApiDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -263,7 +263,7 @@ func (m *ApiDef_Endpoint) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_ApiDef_Endpoint.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -329,7 +329,7 @@ func (m *ApiDef_Arg) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_ApiDef_Arg.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -402,7 +402,7 @@ func (m *ApiDef_Attr) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_ApiDef_Attr.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -467,7 +467,7 @@ func (m *ApiDefs) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_ApiDefs.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -554,7 +554,7 @@ var fileDescriptor_00a850add58b816a = []byte{
 func (m *ApiDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -562,126 +562,139 @@ func (m *ApiDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ApiDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ApiDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.GraphOpName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.GraphOpName)))
-		i += copy(dAtA[i:], m.GraphOpName)
+	if m.DeprecationVersion != 0 {
+		i = encodeVarintApiDef(dAtA, i, uint64(m.DeprecationVersion))
+		i--
+		dAtA[i] = 0x68
 	}
-	if m.Visibility != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(m.Visibility))
+	if len(m.DeprecationMessage) > 0 {
+		i -= len(m.DeprecationMessage)
+		copy(dAtA[i:], m.DeprecationMessage)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.DeprecationMessage)))
+		i--
+		dAtA[i] = 0x62
 	}
-	if len(m.Endpoint) > 0 {
-		for _, msg := range m.Endpoint {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintApiDef(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
+	if len(m.ArgOrder) > 0 {
+		for iNdEx := len(m.ArgOrder) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.ArgOrder[iNdEx])
+			copy(dAtA[i:], m.ArgOrder[iNdEx])
+			i = encodeVarintApiDef(dAtA, i, uint64(len(m.ArgOrder[iNdEx])))
+			i--
+			dAtA[i] = 0x5a
 		}
 	}
-	if len(m.InArg) > 0 {
-		for _, msg := range m.InArg {
-			dAtA[i] = 0x22
-			i++
-			i = encodeVarintApiDef(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.DescriptionSuffix) > 0 {
+		i -= len(m.DescriptionSuffix)
+		copy(dAtA[i:], m.DescriptionSuffix)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.DescriptionSuffix)))
+		i--
+		dAtA[i] = 0x52
+	}
+	if len(m.DescriptionPrefix) > 0 {
+		i -= len(m.DescriptionPrefix)
+		copy(dAtA[i:], m.DescriptionPrefix)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.DescriptionPrefix)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x42
+	}
+	if len(m.Summary) > 0 {
+		i -= len(m.Summary)
+		copy(dAtA[i:], m.Summary)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Summary)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.Attr) > 0 {
+		for iNdEx := len(m.Attr) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Attr[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintApiDef(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x32
 		}
 	}
 	if len(m.OutArg) > 0 {
-		for _, msg := range m.OutArg {
+		for iNdEx := len(m.OutArg) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.OutArg[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintApiDef(dAtA, i, uint64(size))
+			}
+			i--
 			dAtA[i] = 0x2a
-			i++
-			i = encodeVarintApiDef(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
 		}
 	}
-	if len(m.Attr) > 0 {
-		for _, msg := range m.Attr {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintApiDef(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.InArg) > 0 {
+		for iNdEx := len(m.InArg) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.InArg[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintApiDef(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x22
 		}
 	}
-	if len(m.Summary) > 0 {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Summary)))
-		i += copy(dAtA[i:], m.Summary)
-	}
-	if len(m.Description) > 0 {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Description)))
-		i += copy(dAtA[i:], m.Description)
-	}
-	if len(m.DescriptionPrefix) > 0 {
-		dAtA[i] = 0x4a
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.DescriptionPrefix)))
-		i += copy(dAtA[i:], m.DescriptionPrefix)
-	}
-	if len(m.DescriptionSuffix) > 0 {
-		dAtA[i] = 0x52
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.DescriptionSuffix)))
-		i += copy(dAtA[i:], m.DescriptionSuffix)
-	}
-	if len(m.ArgOrder) > 0 {
-		for _, s := range m.ArgOrder {
-			dAtA[i] = 0x5a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
+	if len(m.Endpoint) > 0 {
+		for iNdEx := len(m.Endpoint) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Endpoint[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintApiDef(dAtA, i, uint64(size))
 			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
+			i--
+			dAtA[i] = 0x1a
 		}
 	}
-	if len(m.DeprecationMessage) > 0 {
-		dAtA[i] = 0x62
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.DeprecationMessage)))
-		i += copy(dAtA[i:], m.DeprecationMessage)
+	if m.Visibility != 0 {
+		i = encodeVarintApiDef(dAtA, i, uint64(m.Visibility))
+		i--
+		dAtA[i] = 0x10
 	}
-	if m.DeprecationVersion != 0 {
-		dAtA[i] = 0x68
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(m.DeprecationVersion))
+	if len(m.GraphOpName) > 0 {
+		i -= len(m.GraphOpName)
+		copy(dAtA[i:], m.GraphOpName)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.GraphOpName)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ApiDef_Endpoint) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -689,38 +702,44 @@ func (m *ApiDef_Endpoint) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ApiDef_Endpoint) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ApiDef_Endpoint) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
+	if m.DeprecationVersion != 0 {
+		i = encodeVarintApiDef(dAtA, i, uint64(m.DeprecationVersion))
+		i--
+		dAtA[i] = 0x20
 	}
 	if m.Deprecated {
-		dAtA[i] = 0x18
-		i++
+		i--
 		if m.Deprecated {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x18
 	}
-	if m.DeprecationVersion != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(m.DeprecationVersion))
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ApiDef_Arg) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -728,35 +747,43 @@ func (m *ApiDef_Arg) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ApiDef_Arg) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ApiDef_Arg) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.RenameTo) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.RenameTo)
+		copy(dAtA[i:], m.RenameTo)
 		i = encodeVarintApiDef(dAtA, i, uint64(len(m.RenameTo)))
-		i += copy(dAtA[i:], m.RenameTo)
+		i--
+		dAtA[i] = 0x12
 	}
-	if len(m.Description) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Description)))
-		i += copy(dAtA[i:], m.Description)
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ApiDef_Attr) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -764,45 +791,55 @@ func (m *ApiDef_Attr) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ApiDef_Attr) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ApiDef_Attr) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if len(m.RenameTo) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.RenameTo)))
-		i += copy(dAtA[i:], m.RenameTo)
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x22
 	}
 	if m.DefaultValue != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(m.DefaultValue.Size()))
-		n1, err := m.DefaultValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.DefaultValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintApiDef(dAtA, i, uint64(size))
 		}
-		i += n1
+		i--
+		dAtA[i] = 0x1a
 	}
-	if len(m.Description) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Description)))
-		i += copy(dAtA[i:], m.Description)
+	if len(m.RenameTo) > 0 {
+		i -= len(m.RenameTo)
+		copy(dAtA[i:], m.RenameTo)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.RenameTo)))
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintApiDef(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *ApiDefs) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -810,33 +847,42 @@ func (m *ApiDefs) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ApiDefs) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ApiDefs) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Op) > 0 {
-		for _, msg := range m.Op {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintApiDef(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Op) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Op[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintApiDef(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintApiDef(dAtA []byte, offset int, v uint64) int {
+	offset -= sovApiDef(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *ApiDef) Size() (n int) {
 	if m == nil {
@@ -988,14 +1034,7 @@ func (m *ApiDefs) Size() (n int) {
 }
 
 func sovApiDef(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozApiDef(x uint64) (n int) {
 	return sovApiDef(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1015,7 +1054,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1043,7 +1082,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1053,6 +1092,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1072,7 +1114,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Visibility |= (ApiDef_Visibility(b) & 0x7F) << shift
+				m.Visibility |= ApiDef_Visibility(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1091,7 +1133,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1100,6 +1142,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1122,7 +1167,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1131,6 +1176,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1153,7 +1201,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1162,6 +1210,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1184,7 +1235,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1193,6 +1244,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1215,7 +1269,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1225,6 +1279,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1244,7 +1301,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1254,6 +1311,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1273,7 +1333,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1283,6 +1343,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1302,7 +1365,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1312,6 +1375,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1331,7 +1397,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1341,6 +1407,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1360,7 +1429,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1370,6 +1439,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1389,7 +1461,7 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DeprecationVersion |= (int32(b) & 0x7F) << shift
+				m.DeprecationVersion |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1401,6 +1473,9 @@ func (m *ApiDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthApiDef
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthApiDef
 			}
 			if (iNdEx + skippy) > l {
@@ -1430,7 +1505,7 @@ func (m *ApiDef_Endpoint) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1458,7 +1533,7 @@ func (m *ApiDef_Endpoint) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1468,6 +1543,9 @@ func (m *ApiDef_Endpoint) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1487,7 +1565,7 @@ func (m *ApiDef_Endpoint) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1507,7 +1585,7 @@ func (m *ApiDef_Endpoint) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DeprecationVersion |= (int32(b) & 0x7F) << shift
+				m.DeprecationVersion |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1519,6 +1597,9 @@ func (m *ApiDef_Endpoint) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthApiDef
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthApiDef
 			}
 			if (iNdEx + skippy) > l {
@@ -1548,7 +1629,7 @@ func (m *ApiDef_Arg) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1576,7 +1657,7 @@ func (m *ApiDef_Arg) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1586,6 +1667,9 @@ func (m *ApiDef_Arg) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1605,7 +1689,7 @@ func (m *ApiDef_Arg) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1615,6 +1699,9 @@ func (m *ApiDef_Arg) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1634,7 +1721,7 @@ func (m *ApiDef_Arg) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1644,6 +1731,9 @@ func (m *ApiDef_Arg) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1656,6 +1746,9 @@ func (m *ApiDef_Arg) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthApiDef
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthApiDef
 			}
 			if (iNdEx + skippy) > l {
@@ -1685,7 +1778,7 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1713,7 +1806,7 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1723,6 +1816,9 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1742,7 +1838,7 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1752,6 +1848,9 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1771,7 +1870,7 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1780,6 +1879,9 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1804,7 +1906,7 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1814,6 +1916,9 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1826,6 +1931,9 @@ func (m *ApiDef_Attr) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthApiDef
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthApiDef
 			}
 			if (iNdEx + skippy) > l {
@@ -1855,7 +1963,7 @@ func (m *ApiDefs) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1883,7 +1991,7 @@ func (m *ApiDefs) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1892,6 +2000,9 @@ func (m *ApiDefs) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthApiDef
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1909,6 +2020,9 @@ func (m *ApiDefs) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthApiDef
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthApiDef
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1924,6 +2038,7 @@ func (m *ApiDefs) Unmarshal(dAtA []byte) error {
 func skipApiDef(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1955,10 +2070,8 @@ func skipApiDef(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1975,53 +2088,34 @@ func skipApiDef(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthApiDef
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowApiDef
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipApiDef(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupApiDef
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthApiDef
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthApiDef = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowApiDef   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthApiDef        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowApiDef          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupApiDef = fmt.Errorf("proto: unexpected end of group")
 )

@@ -4,10 +4,12 @@
 package framework
 
 import (
+	encoding_binary "encoding/binary"
 	fmt "fmt"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,10 +21,11 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type CostGraphDef struct {
-	Node []*CostGraphDef_Node `protobuf:"bytes,1,rep,name=node,proto3" json:"node,omitempty"`
+	Node []*CostGraphDef_Node           `protobuf:"bytes,1,rep,name=node,proto3" json:"node,omitempty"`
+	Cost []*CostGraphDef_AggregatedCost `protobuf:"bytes,2,rep,name=cost,proto3" json:"cost,omitempty"`
 }
 
 func (m *CostGraphDef) Reset()         { *m = CostGraphDef{} }
@@ -39,7 +42,7 @@ func (m *CostGraphDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_CostGraphDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -61,6 +64,13 @@ var xxx_messageInfo_CostGraphDef proto.InternalMessageInfo
 func (m *CostGraphDef) GetNode() []*CostGraphDef_Node {
 	if m != nil {
 		return m.Node
+	}
+	return nil
+}
+
+func (m *CostGraphDef) GetCost() []*CostGraphDef_AggregatedCost {
+	if m != nil {
+		return m.Cost
 	}
 	return nil
 }
@@ -113,7 +123,7 @@ func (m *CostGraphDef_Node) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_CostGraphDef_Node.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -269,7 +279,7 @@ func (m *CostGraphDef_Node_InputInfo) XXX_Marshal(b []byte, deterministic bool) 
 		return xxx_messageInfo_CostGraphDef_Node_InputInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -327,7 +337,7 @@ func (m *CostGraphDef_Node_OutputInfo) XXX_Marshal(b []byte, deterministic bool)
 		return xxx_messageInfo_CostGraphDef_Node_OutputInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -374,11 +384,67 @@ func (m *CostGraphDef_Node_OutputInfo) GetDtype() DataType {
 	return DataType_DT_INVALID
 }
 
+// Total cost of this graph, typically used for balancing decisions.
+type CostGraphDef_AggregatedCost struct {
+	// Aggregated cost value.
+	Cost float32 `protobuf:"fixed32,1,opt,name=cost,proto3" json:"cost,omitempty"`
+	// Aggregated cost dimension (e.g. 'memory', 'compute', 'network').
+	Dimension string `protobuf:"bytes,2,opt,name=dimension,proto3" json:"dimension,omitempty"`
+}
+
+func (m *CostGraphDef_AggregatedCost) Reset()         { *m = CostGraphDef_AggregatedCost{} }
+func (m *CostGraphDef_AggregatedCost) String() string { return proto.CompactTextString(m) }
+func (*CostGraphDef_AggregatedCost) ProtoMessage()    {}
+func (*CostGraphDef_AggregatedCost) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5f8948141565ace8, []int{0, 1}
+}
+func (m *CostGraphDef_AggregatedCost) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CostGraphDef_AggregatedCost) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CostGraphDef_AggregatedCost.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CostGraphDef_AggregatedCost) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CostGraphDef_AggregatedCost.Merge(m, src)
+}
+func (m *CostGraphDef_AggregatedCost) XXX_Size() int {
+	return m.Size()
+}
+func (m *CostGraphDef_AggregatedCost) XXX_DiscardUnknown() {
+	xxx_messageInfo_CostGraphDef_AggregatedCost.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CostGraphDef_AggregatedCost proto.InternalMessageInfo
+
+func (m *CostGraphDef_AggregatedCost) GetCost() float32 {
+	if m != nil {
+		return m.Cost
+	}
+	return 0
+}
+
+func (m *CostGraphDef_AggregatedCost) GetDimension() string {
+	if m != nil {
+		return m.Dimension
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*CostGraphDef)(nil), "tensorflow.CostGraphDef")
 	proto.RegisterType((*CostGraphDef_Node)(nil), "tensorflow.CostGraphDef.Node")
 	proto.RegisterType((*CostGraphDef_Node_InputInfo)(nil), "tensorflow.CostGraphDef.Node.InputInfo")
 	proto.RegisterType((*CostGraphDef_Node_OutputInfo)(nil), "tensorflow.CostGraphDef.Node.OutputInfo")
+	proto.RegisterType((*CostGraphDef_AggregatedCost)(nil), "tensorflow.CostGraphDef.AggregatedCost")
 }
 
 func init() {
@@ -386,55 +452,59 @@ func init() {
 }
 
 var fileDescriptor_5f8948141565ace8 = []byte{
-	// 670 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x54, 0x4d, 0x6f, 0xd3, 0x4c,
-	0x10, 0xee, 0xe6, 0xa3, 0x4d, 0x26, 0x69, 0xda, 0x77, 0xdf, 0xb6, 0xaf, 0xdf, 0x88, 0x86, 0x00,
-	0xaa, 0xb0, 0x2a, 0x48, 0x44, 0x80, 0x03, 0x47, 0x42, 0x29, 0xea, 0x01, 0x88, 0xdc, 0x5c, 0xe0,
-	0x62, 0xb9, 0xf6, 0x3a, 0x59, 0x11, 0x7b, 0x57, 0xeb, 0x0d, 0x55, 0xfa, 0x17, 0xe0, 0xc0, 0xef,
-	0xe0, 0x8f, 0xc0, 0xb1, 0x47, 0x8e, 0xa8, 0xfd, 0x13, 0x1c, 0xd1, 0x8e, 0x83, 0xe3, 0x00, 0xed,
-	0x6d, 0x3c, 0xf3, 0x3c, 0xcf, 0xec, 0xae, 0x9f, 0x19, 0xd8, 0xd7, 0x2c, 0x4e, 0x84, 0x0a, 0x27,
-	0xe2, 0xb4, 0xeb, 0x0b, 0xc5, 0xba, 0xa1, 0xf2, 0x22, 0x76, 0x2a, 0xd4, 0xbb, 0xae, 0x2f, 0x12,
-	0xed, 0x8e, 0x94, 0x27, 0xc7, 0x1d, 0xa9, 0x84, 0x16, 0x14, 0x16, 0xd8, 0xe6, 0xbd, 0xab, 0x79,
-	0x69, 0xc5, 0x4d, 0xc6, 0x9e, 0x64, 0x29, 0xb3, 0xb9, 0x77, 0x0d, 0x7a, 0x26, 0x59, 0x92, 0xc2,
-	0x6e, 0x7f, 0xa8, 0x40, 0xfd, 0x99, 0x48, 0xf4, 0x0b, 0xd3, 0xf4, 0x80, 0x85, 0xf4, 0x01, 0x94,
-	0x62, 0x11, 0x30, 0x8b, 0xb4, 0x8b, 0x76, 0xad, 0xb7, 0xdb, 0x59, 0xc8, 0x74, 0xf2, 0xb8, 0xce,
-	0x2b, 0x11, 0x30, 0x07, 0xa1, 0xcd, 0x2f, 0x6b, 0x50, 0x32, 0x9f, 0x94, 0x42, 0x29, 0xf6, 0x22,
-	0xc3, 0x25, 0x76, 0xd5, 0xc1, 0x98, 0xee, 0xc0, 0x6a, 0xc0, 0xde, 0x73, 0x9f, 0x59, 0x05, 0xcc,
-	0xce, 0xbf, 0x68, 0x03, 0x0a, 0x3c, 0xb0, 0x8a, 0x6d, 0x62, 0x97, 0x9d, 0x02, 0x0f, 0xe8, 0x21,
-	0x00, 0x8f, 0xe5, 0x54, 0xbb, 0x3c, 0x0e, 0x85, 0x55, 0xc2, 0xee, 0x77, 0xaf, 0xed, 0xde, 0x39,
-	0x32, 0xf8, 0xa3, 0x38, 0x14, 0x4e, 0x95, 0xff, 0x0a, 0xe9, 0x11, 0xd4, 0xc4, 0x54, 0x67, 0x42,
-	0x65, 0x14, 0xb2, 0xaf, 0x17, 0x7a, 0x8d, 0x04, 0x54, 0x02, 0x91, 0xc5, 0xb4, 0x07, 0xdb, 0x9a,
-	0x45, 0x52, 0x28, 0x4f, 0xcd, 0xdc, 0x88, 0x45, 0x42, 0xcd, 0xdc, 0x84, 0x9f, 0x31, 0x6b, 0xb5,
-	0x4d, 0xec, 0xa2, 0xf3, 0x6f, 0x56, 0x7c, 0x89, 0xb5, 0x63, 0x7e, 0xc6, 0xe8, 0x23, 0xd8, 0x91,
-	0x4c, 0x25, 0x3c, 0xd1, 0x2c, 0xd6, 0x4b, 0xa4, 0x3a, 0x92, 0xb6, 0x16, 0xd5, 0x1c, 0xeb, 0x31,
-	0x6c, 0x8f, 0xcd, 0xaf, 0x37, 0x8a, 0x4b, 0x24, 0x30, 0xa4, 0x7e, 0xc1, 0x22, 0x0e, 0x35, 0x80,
-	0x21, 0x8b, 0x64, 0x8e, 0xf6, 0x04, 0xfe, 0x4b, 0x5f, 0xf3, 0x4f, 0x62, 0x2d, 0x23, 0x6e, 0xa5,
-	0x90, 0xdf, 0xa8, 0xcf, 0x61, 0x77, 0x4e, 0xbd, 0xe2, 0xb8, 0x9b, 0x99, 0x40, 0x33, 0x05, 0x0e,
-	0xfe, 0x76, 0xf0, 0x5b, 0x50, 0xf7, 0x45, 0x24, 0xa7, 0x9a, 0xb9, 0xc6, 0xbb, 0x56, 0x15, 0x2f,
-	0x59, 0x9b, 0xe7, 0xcc, 0x4b, 0xe7, 0x21, 0x9a, 0x47, 0xcc, 0x6a, 0x2c, 0x41, 0x86, 0x3c, 0x62,
-	0xf4, 0x26, 0xd4, 0xe6, 0xad, 0x11, 0xb1, 0x81, 0x08, 0x48, 0x53, 0x08, 0xf8, 0x1f, 0x2a, 0x3c,
-	0x71, 0x43, 0x1e, 0x7b, 0x13, 0x6b, 0xad, 0x4d, 0xec, 0x8a, 0xb3, 0xc6, 0x93, 0x43, 0xf3, 0x49,
-	0xef, 0xc0, 0xba, 0x2f, 0x62, 0xad, 0xc4, 0xc4, 0x45, 0x13, 0x58, 0x95, 0x76, 0xd1, 0x2e, 0x3b,
-	0xf5, 0x79, 0x12, 0x3d, 0x42, 0x5b, 0xc6, 0x5c, 0x9e, 0xef, 0x4f, 0x95, 0xa7, 0x99, 0xf5, 0x0f,
-	0x2a, 0xe4, 0x32, 0xcd, 0x37, 0x50, 0xcd, 0xcc, 0x44, 0xf7, 0xa0, 0x21, 0x15, 0xf3, 0x59, 0xc0,
-	0xe3, 0x91, 0x3b, 0x9f, 0x05, 0xe3, 0xd2, 0xf5, 0x2c, 0x8b, 0x66, 0x5f, 0x82, 0x49, 0xa1, 0x34,
-	0x1a, 0x3c, 0x0f, 0x1b, 0x08, 0xa5, 0x9b, 0x9f, 0x09, 0xc0, 0xc2, 0x5f, 0x66, 0x44, 0xf0, 0x79,
-	0x09, 0xde, 0x11, 0x63, 0x6a, 0xc3, 0xa6, 0x37, 0xe1, 0x5e, 0x92, 0x5e, 0x60, 0xa1, 0x55, 0x74,
-	0x1a, 0x98, 0xc7, 0xa3, 0x19, 0x31, 0xda, 0x83, 0x32, 0xce, 0x38, 0xce, 0x4d, 0xad, 0x77, 0x23,
-	0x6f, 0xeb, 0x21, 0x86, 0xc7, 0xa6, 0x3c, 0x30, 0xa3, 0xed, 0xa4, 0x50, 0xba, 0x0f, 0xe5, 0xc0,
-	0x4c, 0xbc, 0x55, 0x6a, 0x13, 0xbb, 0xd1, 0xdb, 0xca, 0x73, 0x0e, 0x3c, 0xed, 0x0d, 0x67, 0x92,
-	0x39, 0x29, 0xa4, 0xff, 0x91, 0x7c, 0xbd, 0x68, 0x91, 0xf3, 0x8b, 0x16, 0xf9, 0x7e, 0xd1, 0x22,
-	0x9f, 0x2e, 0x5b, 0x2b, 0xe7, 0x97, 0xad, 0x95, 0x6f, 0x97, 0xad, 0x15, 0xb0, 0x84, 0x1a, 0xe5,
-	0xa9, 0xd9, 0x3a, 0xe9, 0x6f, 0x64, 0x03, 0x85, 0x7d, 0x93, 0x01, 0x79, 0xdb, 0x1f, 0x71, 0x3d,
-	0x9e, 0x9e, 0x74, 0x7c, 0x11, 0x75, 0x9f, 0x4a, 0x39, 0xe1, 0x21, 0x67, 0xaa, 0x3b, 0x12, 0xf7,
-	0x73, 0x4b, 0x09, 0xb7, 0x50, 0xf7, 0xca, 0x2d, 0xf5, 0x83, 0x90, 0x93, 0x55, 0xdc, 0x51, 0x0f,
-	0x7f, 0x06, 0x00, 0x00, 0xff, 0xff, 0x6f, 0x77, 0x39, 0x28, 0x32, 0x05, 0x00, 0x00,
+	// 721 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x54, 0x4d, 0x6f, 0xd3, 0x4c,
+	0x10, 0xee, 0xe6, 0xa3, 0x6d, 0x26, 0x69, 0xda, 0x77, 0xdf, 0xb6, 0xaf, 0xdf, 0xa8, 0x0d, 0x01,
+	0x54, 0x61, 0x55, 0x90, 0x88, 0x00, 0x07, 0xc4, 0xa9, 0xa1, 0x14, 0xf5, 0x00, 0x44, 0x6e, 0x2e,
+	0x70, 0xb1, 0x5c, 0x7b, 0xe3, 0xac, 0x88, 0xbd, 0xd6, 0x7a, 0x43, 0x95, 0xfe, 0x86, 0x1e, 0xf8,
+	0x1d, 0xfc, 0x11, 0x38, 0xf6, 0xc8, 0x11, 0xb5, 0x7f, 0x82, 0x23, 0xda, 0xb1, 0x71, 0x1c, 0x20,
+	0xe5, 0xb6, 0x9e, 0x79, 0x9e, 0x67, 0x66, 0xd7, 0xcf, 0x0c, 0xec, 0x2b, 0x16, 0xc6, 0x42, 0x0e,
+	0xc7, 0xe2, 0xac, 0xe3, 0x0a, 0xc9, 0x3a, 0x43, 0xe9, 0x04, 0xec, 0x4c, 0xc8, 0xf7, 0x1d, 0x57,
+	0xc4, 0xca, 0xf6, 0xa5, 0x13, 0x8d, 0xda, 0x91, 0x14, 0x4a, 0x50, 0x98, 0x61, 0x1b, 0xf7, 0x17,
+	0xf3, 0x92, 0x8c, 0x1d, 0x8f, 0x9c, 0x88, 0x25, 0xcc, 0xc6, 0xde, 0x0d, 0xe8, 0x69, 0xc4, 0xe2,
+	0x04, 0x76, 0xe7, 0xa2, 0x02, 0xb5, 0xe7, 0x22, 0x56, 0x2f, 0x75, 0xd1, 0x43, 0x36, 0xa4, 0x0f,
+	0xa1, 0x14, 0x0a, 0x8f, 0x19, 0xa4, 0x55, 0x34, 0xab, 0xdd, 0xdd, 0xf6, 0x4c, 0xa6, 0x9d, 0xc7,
+	0xb5, 0x5f, 0x0b, 0x8f, 0x59, 0x08, 0xa5, 0xcf, 0xa0, 0xa4, 0x1b, 0x37, 0x0a, 0x48, 0xb9, 0xb7,
+	0x90, 0x72, 0xe0, 0xfb, 0x92, 0xf9, 0x8e, 0x62, 0x9e, 0x0e, 0x5b, 0x48, 0x6a, 0x7c, 0x5e, 0x81,
+	0x92, 0xd6, 0xa2, 0x14, 0x4a, 0xa1, 0x13, 0xe8, 0xc2, 0xc4, 0xac, 0x58, 0x78, 0xa6, 0xdb, 0xb0,
+	0xec, 0xb1, 0x0f, 0xdc, 0x65, 0x46, 0x01, 0xa3, 0xe9, 0x17, 0xad, 0x43, 0x81, 0x7b, 0x46, 0xb1,
+	0x45, 0xcc, 0xb2, 0x55, 0xe0, 0x1e, 0x3d, 0x02, 0xe0, 0x61, 0x34, 0x51, 0x36, 0x0f, 0x87, 0xc2,
+	0x28, 0xfd, 0xa5, 0x0f, 0x5d, 0xae, 0x7d, 0xac, 0xf1, 0xc7, 0xe1, 0x50, 0x58, 0x15, 0xfe, 0xf3,
+	0x48, 0x8f, 0xa1, 0x2a, 0x26, 0x2a, 0x13, 0x2a, 0xa3, 0x90, 0x79, 0xb3, 0xd0, 0x1b, 0x24, 0xa0,
+	0x12, 0x88, 0xec, 0x4c, 0xbb, 0xb0, 0xa5, 0x58, 0x10, 0x09, 0xe9, 0xc8, 0xa9, 0x1d, 0xb0, 0x40,
+	0xc8, 0xa9, 0x1d, 0xf3, 0x73, 0x66, 0x2c, 0xb7, 0x88, 0x59, 0xb4, 0xfe, 0xcd, 0x92, 0xaf, 0x30,
+	0x77, 0xc2, 0xcf, 0x19, 0x7d, 0x0c, 0xdb, 0x11, 0x93, 0x31, 0x8f, 0x15, 0x0b, 0xd5, 0x1c, 0xa9,
+	0x86, 0xa4, 0xcd, 0x59, 0x36, 0xc7, 0x7a, 0x02, 0x5b, 0x23, 0xed, 0x1b, 0xad, 0x38, 0x47, 0x02,
+	0x4d, 0xea, 0x15, 0x0c, 0x62, 0x51, 0x0d, 0x18, 0xb0, 0x20, 0xca, 0xd1, 0x9e, 0xc2, 0x7f, 0xc9,
+	0x6b, 0xfe, 0x4e, 0xac, 0x66, 0xc4, 0xcd, 0x04, 0xf2, 0x0b, 0xf5, 0x05, 0xec, 0xa6, 0xd4, 0x05,
+	0xed, 0x6e, 0x64, 0x02, 0x8d, 0x04, 0xd8, 0xff, 0x53, 0xe3, 0xb7, 0xa1, 0xe6, 0x8a, 0x20, 0x9a,
+	0x28, 0x66, 0xa3, 0x7f, 0x2a, 0x78, 0xc9, 0x6a, 0x1a, 0xd3, 0x2f, 0x9d, 0x87, 0x28, 0x1e, 0x30,
+	0xa3, 0x3e, 0x07, 0x19, 0xf0, 0x80, 0xd1, 0x5b, 0x50, 0x4d, 0x4b, 0x23, 0x62, 0x1d, 0x11, 0x90,
+	0x84, 0x10, 0xf0, 0x3f, 0xac, 0xf2, 0xd8, 0x1e, 0xf2, 0xd0, 0x19, 0x1b, 0x2b, 0x2d, 0x62, 0xae,
+	0x5a, 0x2b, 0x3c, 0x3e, 0xd2, 0x9f, 0xf4, 0x2e, 0xac, 0xb9, 0x22, 0x54, 0x52, 0x8c, 0x6d, 0x34,
+	0x81, 0xb1, 0xda, 0x2a, 0x9a, 0x65, 0xab, 0x96, 0x06, 0xd1, 0x23, 0xb4, 0xa9, 0xcd, 0xe5, 0xb8,
+	0xee, 0x44, 0x3a, 0x8a, 0x19, 0xff, 0xa0, 0x42, 0x2e, 0xd2, 0x78, 0x0b, 0x95, 0xcc, 0x4c, 0x74,
+	0x0f, 0xea, 0x91, 0x64, 0x2e, 0xf3, 0x78, 0xe8, 0xdb, 0xe9, 0x20, 0x69, 0x97, 0xae, 0x65, 0x51,
+	0x34, 0xfb, 0x1c, 0x2c, 0x12, 0x52, 0xa1, 0xc1, 0xf3, 0xb0, 0xbe, 0x90, 0xaa, 0xf1, 0x89, 0x00,
+	0xcc, 0xfc, 0xa5, 0x47, 0x04, 0x9f, 0x97, 0xe0, 0x1d, 0xf1, 0x4c, 0x4d, 0xd8, 0x70, 0xc6, 0xdc,
+	0x89, 0x93, 0x0b, 0xcc, 0xb4, 0x8a, 0x56, 0x1d, 0xe3, 0xd8, 0x9a, 0x16, 0xa3, 0x5d, 0x28, 0xe3,
+	0x82, 0xc0, 0xb9, 0xa9, 0x76, 0x77, 0xf2, 0xb6, 0x1e, 0xe0, 0xf1, 0x44, 0xa7, 0xfb, 0x7a, 0x2f,
+	0x58, 0x09, 0x94, 0xee, 0x43, 0xd9, 0xd3, 0xeb, 0xc2, 0x28, 0xb5, 0x88, 0x59, 0xef, 0x6e, 0xe6,
+	0x39, 0x87, 0x8e, 0x72, 0x06, 0xd3, 0x88, 0x59, 0x09, 0xa4, 0xd1, 0x83, 0xfa, 0xfc, 0x84, 0xeb,
+	0x7e, 0xf1, 0xc7, 0xea, 0x7e, 0x0b, 0xc9, 0xbc, 0xd3, 0x1d, 0xa8, 0x78, 0x3c, 0x60, 0x61, 0xcc,
+	0x45, 0x98, 0x4e, 0xf5, 0x2c, 0xd0, 0xbb, 0x20, 0x5f, 0xae, 0x9a, 0xe4, 0xf2, 0xaa, 0x49, 0xbe,
+	0x5d, 0x35, 0xc9, 0xc7, 0xeb, 0xe6, 0xd2, 0xe5, 0x75, 0x73, 0xe9, 0xeb, 0x75, 0x73, 0x09, 0x0c,
+	0x21, 0xfd, 0x7c, 0xf9, 0x6c, 0x9f, 0xf5, 0xd6, 0xb3, 0xa1, 0xc4, 0xde, 0xe3, 0x3e, 0x79, 0xd7,
+	0xf3, 0xb9, 0x1a, 0x4d, 0x4e, 0xdb, 0xae, 0x08, 0x3a, 0x07, 0x51, 0x34, 0xe6, 0x43, 0xce, 0x64,
+	0xc7, 0x17, 0x0f, 0x72, 0x5b, 0x11, 0xd7, 0x60, 0x67, 0xe1, 0x9a, 0xfc, 0x4e, 0xc8, 0xe9, 0x32,
+	0x2e, 0xc9, 0x47, 0x3f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x98, 0xf6, 0x9e, 0x5c, 0xb3, 0x05, 0x00,
+	0x00,
 }
 
 func (m *CostGraphDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -442,29 +512,50 @@ func (m *CostGraphDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CostGraphDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CostGraphDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Node) > 0 {
-		for _, msg := range m.Node {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintCostGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.Cost) > 0 {
+		for iNdEx := len(m.Cost) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Cost[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintCostGraph(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	return i, nil
+	if len(m.Node) > 0 {
+		for iNdEx := len(m.Node) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Node[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintCostGraph(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *CostGraphDef_Node) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -472,65 +563,63 @@ func (m *CostGraphDef_Node) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CostGraphDef_Node) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CostGraphDef_Node) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if len(m.Device) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(len(m.Device)))
-		i += copy(dAtA[i:], m.Device)
-	}
-	if m.Id != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.Id))
-	}
-	if len(m.InputInfo) > 0 {
-		for _, msg := range m.InputInfo {
-			dAtA[i] = 0x22
-			i++
-			i = encodeVarintCostGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if len(m.OutputInfo) > 0 {
-		for _, msg := range m.OutputInfo {
-			dAtA[i] = 0x2a
-			i++
-			i = encodeVarintCostGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.TemporaryMemorySize != 0 {
-		dAtA[i] = 0x30
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.TemporaryMemorySize))
-	}
-	if m.IsFinal {
-		dAtA[i] = 0x38
-		i++
-		if m.IsFinal {
+	if m.Inaccurate {
+		i--
+		if m.Inaccurate {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x88
+	}
+	if m.DevicePersistentMemorySize != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.DevicePersistentMemorySize))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x80
+	}
+	if m.MemoryTime != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.MemoryTime))
+		i--
+		dAtA[i] = 0x78
+	}
+	if m.ComputeTime != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.ComputeTime))
+		i--
+		dAtA[i] = 0x70
+	}
+	if m.PersistentMemorySize != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.PersistentMemorySize))
+		i--
+		dAtA[i] = 0x60
+	}
+	if m.DeviceTempMemorySize != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.DeviceTempMemorySize))
+		i--
+		dAtA[i] = 0x58
+	}
+	if m.HostTempMemorySize != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.HostTempMemorySize))
+		i--
+		dAtA[i] = 0x50
+	}
+	if m.ComputeCost != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.ComputeCost))
+		i--
+		dAtA[i] = 0x48
 	}
 	if len(m.ControlInput) > 0 {
 		dAtA2 := make([]byte, len(m.ControlInput)*10)
@@ -545,67 +634,81 @@ func (m *CostGraphDef_Node) MarshalTo(dAtA []byte) (int, error) {
 			dAtA2[j1] = uint8(num)
 			j1++
 		}
-		dAtA[i] = 0x42
-		i++
+		i -= j1
+		copy(dAtA[i:], dAtA2[:j1])
 		i = encodeVarintCostGraph(dAtA, i, uint64(j1))
-		i += copy(dAtA[i:], dAtA2[:j1])
+		i--
+		dAtA[i] = 0x42
 	}
-	if m.ComputeCost != 0 {
-		dAtA[i] = 0x48
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.ComputeCost))
-	}
-	if m.HostTempMemorySize != 0 {
-		dAtA[i] = 0x50
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.HostTempMemorySize))
-	}
-	if m.DeviceTempMemorySize != 0 {
-		dAtA[i] = 0x58
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.DeviceTempMemorySize))
-	}
-	if m.PersistentMemorySize != 0 {
-		dAtA[i] = 0x60
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.PersistentMemorySize))
-	}
-	if m.ComputeTime != 0 {
-		dAtA[i] = 0x70
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.ComputeTime))
-	}
-	if m.MemoryTime != 0 {
-		dAtA[i] = 0x78
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.MemoryTime))
-	}
-	if m.DevicePersistentMemorySize != 0 {
-		dAtA[i] = 0x80
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.DevicePersistentMemorySize))
-	}
-	if m.Inaccurate {
-		dAtA[i] = 0x88
-		i++
-		dAtA[i] = 0x1
-		i++
-		if m.Inaccurate {
+	if m.IsFinal {
+		i--
+		if m.IsFinal {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x38
 	}
-	return i, nil
+	if m.TemporaryMemorySize != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.TemporaryMemorySize))
+		i--
+		dAtA[i] = 0x30
+	}
+	if len(m.OutputInfo) > 0 {
+		for iNdEx := len(m.OutputInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.OutputInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintCostGraph(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.InputInfo) > 0 {
+		for iNdEx := len(m.InputInfo) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.InputInfo[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintCostGraph(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if m.Id != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Device) > 0 {
+		i -= len(m.Device)
+		copy(dAtA[i:], m.Device)
+		i = encodeVarintCostGraph(dAtA, i, uint64(len(m.Device)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintCostGraph(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *CostGraphDef_Node_InputInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -613,27 +716,32 @@ func (m *CostGraphDef_Node_InputInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CostGraphDef_Node_InputInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CostGraphDef_Node_InputInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.PrecedingNode != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.PrecedingNode))
-	}
 	if m.PrecedingPort != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintCostGraph(dAtA, i, uint64(m.PrecedingPort))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.PrecedingNode != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.PrecedingNode))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *CostGraphDef_Node_OutputInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -641,46 +749,91 @@ func (m *CostGraphDef_Node_OutputInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CostGraphDef_Node_OutputInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CostGraphDef_Node_OutputInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Size_ != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.Size_))
-	}
-	if m.AliasInputPort != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.AliasInputPort))
+	if m.Dtype != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x20
 	}
 	if m.Shape != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.Shape.Size()))
-		n3, err := m.Shape.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Shape.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintCostGraph(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0x1a
 	}
-	if m.Dtype != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintCostGraph(dAtA, i, uint64(m.Dtype))
+	if m.AliasInputPort != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.AliasInputPort))
+		i--
+		dAtA[i] = 0x10
 	}
-	return i, nil
+	if m.Size_ != 0 {
+		i = encodeVarintCostGraph(dAtA, i, uint64(m.Size_))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *CostGraphDef_AggregatedCost) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CostGraphDef_AggregatedCost) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CostGraphDef_AggregatedCost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Dimension) > 0 {
+		i -= len(m.Dimension)
+		copy(dAtA[i:], m.Dimension)
+		i = encodeVarintCostGraph(dAtA, i, uint64(len(m.Dimension)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Cost != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.Cost))))
+		i--
+		dAtA[i] = 0xd
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintCostGraph(dAtA []byte, offset int, v uint64) int {
+	offset -= sovCostGraph(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *CostGraphDef) Size() (n int) {
 	if m == nil {
@@ -690,6 +843,12 @@ func (m *CostGraphDef) Size() (n int) {
 	_ = l
 	if len(m.Node) > 0 {
 		for _, e := range m.Node {
+			l = e.Size()
+			n += 1 + l + sovCostGraph(uint64(l))
+		}
+	}
+	if len(m.Cost) > 0 {
+		for _, e := range m.Cost {
 			l = e.Size()
 			n += 1 + l + sovCostGraph(uint64(l))
 		}
@@ -803,15 +962,24 @@ func (m *CostGraphDef_Node_OutputInfo) Size() (n int) {
 	return n
 }
 
-func sovCostGraph(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
+func (m *CostGraphDef_AggregatedCost) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Cost != 0 {
+		n += 5
+	}
+	l = len(m.Dimension)
+	if l > 0 {
+		n += 1 + l + sovCostGraph(uint64(l))
 	}
 	return n
+}
+
+func sovCostGraph(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozCostGraph(x uint64) (n int) {
 	return sovCostGraph(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -831,7 +999,7 @@ func (m *CostGraphDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -859,7 +1027,7 @@ func (m *CostGraphDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -868,11 +1036,48 @@ func (m *CostGraphDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCostGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCostGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
 			m.Node = append(m.Node, &CostGraphDef_Node{})
 			if err := m.Node[len(m.Node)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cost", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCostGraph
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cost = append(m.Cost, &CostGraphDef_AggregatedCost{})
+			if err := m.Cost[len(m.Cost)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -883,6 +1088,9 @@ func (m *CostGraphDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCostGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -912,7 +1120,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -940,7 +1148,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -950,6 +1158,9 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCostGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCostGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -969,7 +1180,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -979,6 +1190,9 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCostGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCostGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -998,7 +1212,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Id |= (int32(b) & 0x7F) << shift
+				m.Id |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1017,7 +1231,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1026,6 +1240,9 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCostGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCostGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1048,7 +1265,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1057,6 +1274,9 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCostGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCostGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1079,7 +1299,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TemporaryMemorySize |= (int64(b) & 0x7F) << shift
+				m.TemporaryMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1098,7 +1318,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1116,7 +1336,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= int32(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1133,7 +1353,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1142,12 +1362,15 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthCostGraph
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthCostGraph
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1167,7 +1390,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= int32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1191,7 +1414,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ComputeCost |= (int64(b) & 0x7F) << shift
+				m.ComputeCost |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1210,7 +1433,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.HostTempMemorySize |= (int64(b) & 0x7F) << shift
+				m.HostTempMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1229,7 +1452,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DeviceTempMemorySize |= (int64(b) & 0x7F) << shift
+				m.DeviceTempMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1248,7 +1471,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PersistentMemorySize |= (int64(b) & 0x7F) << shift
+				m.PersistentMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1267,7 +1490,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ComputeTime |= (int64(b) & 0x7F) << shift
+				m.ComputeTime |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1286,7 +1509,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MemoryTime |= (int64(b) & 0x7F) << shift
+				m.MemoryTime |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1305,7 +1528,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DevicePersistentMemorySize |= (int64(b) & 0x7F) << shift
+				m.DevicePersistentMemorySize |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1324,7 +1547,7 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1337,6 +1560,9 @@ func (m *CostGraphDef_Node) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCostGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -1366,7 +1592,7 @@ func (m *CostGraphDef_Node_InputInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1394,7 +1620,7 @@ func (m *CostGraphDef_Node_InputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PrecedingNode |= (int32(b) & 0x7F) << shift
+				m.PrecedingNode |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1413,7 +1639,7 @@ func (m *CostGraphDef_Node_InputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PrecedingPort |= (int32(b) & 0x7F) << shift
+				m.PrecedingPort |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1425,6 +1651,9 @@ func (m *CostGraphDef_Node_InputInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCostGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -1454,7 +1683,7 @@ func (m *CostGraphDef_Node_OutputInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1482,7 +1711,7 @@ func (m *CostGraphDef_Node_OutputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Size_ |= (int64(b) & 0x7F) << shift
+				m.Size_ |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1501,7 +1730,7 @@ func (m *CostGraphDef_Node_OutputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AliasInputPort |= (int64(b) & 0x7F) << shift
+				m.AliasInputPort |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1520,7 +1749,7 @@ func (m *CostGraphDef_Node_OutputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1529,6 +1758,9 @@ func (m *CostGraphDef_Node_OutputInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthCostGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthCostGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1553,7 +1785,7 @@ func (m *CostGraphDef_Node_OutputInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (DataType(b) & 0x7F) << shift
+				m.Dtype |= DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1565,6 +1797,105 @@ func (m *CostGraphDef_Node_OutputInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CostGraphDef_AggregatedCost) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowCostGraph
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AggregatedCost: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AggregatedCost: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 5 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cost", wireType)
+			}
+			var v uint32
+			if (iNdEx + 4) > l {
+				return io.ErrUnexpectedEOF
+			}
+			v = uint32(encoding_binary.LittleEndian.Uint32(dAtA[iNdEx:]))
+			iNdEx += 4
+			m.Cost = float32(math.Float32frombits(v))
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dimension", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowCostGraph
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Dimension = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipCostGraph(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthCostGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthCostGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -1582,6 +1913,7 @@ func (m *CostGraphDef_Node_OutputInfo) Unmarshal(dAtA []byte) error {
 func skipCostGraph(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1613,10 +1945,8 @@ func skipCostGraph(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1633,53 +1963,34 @@ func skipCostGraph(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthCostGraph
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowCostGraph
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipCostGraph(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupCostGraph
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthCostGraph
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthCostGraph = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowCostGraph   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthCostGraph        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowCostGraph          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupCostGraph = fmt.Errorf("proto: unexpected end of group")
 )

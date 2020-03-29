@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Metadata logged along with the request logs.
 type LogMetadata struct {
@@ -43,7 +44,7 @@ func (m *LogMetadata) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_LogMetadata.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -111,7 +112,7 @@ var fileDescriptor_e2383633b45aa1b8 = []byte{
 func (m *LogMetadata) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -119,56 +120,61 @@ func (m *LogMetadata) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *LogMetadata) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LogMetadata) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ModelSpec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintLogging(dAtA, i, uint64(m.ModelSpec.Size()))
-		n1, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.SavedModelTags) > 0 {
+		for iNdEx := len(m.SavedModelTags) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.SavedModelTags[iNdEx])
+			copy(dAtA[i:], m.SavedModelTags[iNdEx])
+			i = encodeVarintLogging(dAtA, i, uint64(len(m.SavedModelTags[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
 		}
-		i += n1
 	}
 	if m.SamplingConfig != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintLogging(dAtA, i, uint64(m.SamplingConfig.Size()))
-		n2, err := m.SamplingConfig.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
-	if len(m.SavedModelTags) > 0 {
-		for _, s := range m.SavedModelTags {
-			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
+		{
+			size, err := m.SamplingConfig.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
 			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
+			i -= size
+			i = encodeVarintLogging(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.ModelSpec != nil {
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintLogging(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintLogging(dAtA []byte, offset int, v uint64) int {
+	offset -= sovLogging(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *LogMetadata) Size() (n int) {
 	if m == nil {
@@ -194,14 +200,7 @@ func (m *LogMetadata) Size() (n int) {
 }
 
 func sovLogging(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozLogging(x uint64) (n int) {
 	return sovLogging(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -221,7 +220,7 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -249,7 +248,7 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -258,6 +257,9 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogging
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogging
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -282,7 +284,7 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -291,6 +293,9 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogging
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogging
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -315,7 +320,7 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -325,6 +330,9 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthLogging
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthLogging
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -337,6 +345,9 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthLogging
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthLogging
 			}
 			if (iNdEx + skippy) > l {
@@ -354,6 +365,7 @@ func (m *LogMetadata) Unmarshal(dAtA []byte) error {
 func skipLogging(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -385,10 +397,8 @@ func skipLogging(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -405,53 +415,34 @@ func skipLogging(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthLogging
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowLogging
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipLogging(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupLogging
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthLogging
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthLogging = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowLogging   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthLogging        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowLogging          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupLogging = fmt.Errorf("proto: unexpected end of group")
 )

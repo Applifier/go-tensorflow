@@ -10,6 +10,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -21,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type TypeSpecProto_TypeSpecClass int32
 
@@ -36,19 +37,21 @@ const (
 	TypeSpecProto_OPTIONAL_SPEC       TypeSpecProto_TypeSpecClass = 7
 	TypeSpecProto_PER_REPLICA_SPEC    TypeSpecProto_TypeSpecClass = 8
 	TypeSpecProto_VARIABLE_SPEC       TypeSpecProto_TypeSpecClass = 9
+	TypeSpecProto_ROW_PARTITION_SPEC  TypeSpecProto_TypeSpecClass = 10
 )
 
 var TypeSpecProto_TypeSpecClass_name = map[int32]string{
-	0: "UNKNOWN",
-	1: "SPARSE_TENSOR_SPEC",
-	2: "INDEXED_SLICES_SPEC",
-	3: "RAGGED_TENSOR_SPEC",
-	4: "TENSOR_ARRAY_SPEC",
-	5: "DATA_DATASET_SPEC",
-	6: "DATA_ITERATOR_SPEC",
-	7: "OPTIONAL_SPEC",
-	8: "PER_REPLICA_SPEC",
-	9: "VARIABLE_SPEC",
+	0:  "UNKNOWN",
+	1:  "SPARSE_TENSOR_SPEC",
+	2:  "INDEXED_SLICES_SPEC",
+	3:  "RAGGED_TENSOR_SPEC",
+	4:  "TENSOR_ARRAY_SPEC",
+	5:  "DATA_DATASET_SPEC",
+	6:  "DATA_ITERATOR_SPEC",
+	7:  "OPTIONAL_SPEC",
+	8:  "PER_REPLICA_SPEC",
+	9:  "VARIABLE_SPEC",
+	10: "ROW_PARTITION_SPEC",
 }
 
 var TypeSpecProto_TypeSpecClass_value = map[string]int32{
@@ -62,6 +65,7 @@ var TypeSpecProto_TypeSpecClass_value = map[string]int32{
 	"OPTIONAL_SPEC":       7,
 	"PER_REPLICA_SPEC":    8,
 	"VARIABLE_SPEC":       9,
+	"ROW_PARTITION_SPEC":  10,
 }
 
 func (x TypeSpecProto_TypeSpecClass) String() string {
@@ -69,7 +73,7 @@ func (x TypeSpecProto_TypeSpecClass) String() string {
 }
 
 func (TypeSpecProto_TypeSpecClass) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_8f6f8fd91d5fa722, []int{8, 0}
+	return fileDescriptor_8f6f8fd91d5fa722, []int{9, 0}
 }
 
 // `StructuredValue` represents a dynamically typed value representing various
@@ -109,6 +113,7 @@ type StructuredValue struct {
 	//	*StructuredValue_TensorDtypeValue
 	//	*StructuredValue_TensorSpecValue
 	//	*StructuredValue_TypeSpecValue
+	//	*StructuredValue_BoundedTensorSpecValue
 	//	*StructuredValue_ListValue
 	//	*StructuredValue_TupleValue
 	//	*StructuredValue_DictValue
@@ -130,7 +135,7 @@ func (m *StructuredValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_StructuredValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -156,58 +161,62 @@ type isStructuredValue_Kind interface {
 }
 
 type StructuredValue_NoneValue struct {
-	NoneValue *NoneValue `protobuf:"bytes,1,opt,name=none_value,json=noneValue,proto3,oneof"`
+	NoneValue *NoneValue `protobuf:"bytes,1,opt,name=none_value,json=noneValue,proto3,oneof" json:"none_value,omitempty"`
 }
 type StructuredValue_Float64Value struct {
-	Float64Value float64 `protobuf:"fixed64,11,opt,name=float64_value,json=float64Value,proto3,oneof"`
+	Float64Value float64 `protobuf:"fixed64,11,opt,name=float64_value,json=float64Value,proto3,oneof" json:"float64_value,omitempty"`
 }
 type StructuredValue_Int64Value struct {
-	Int64Value int64 `protobuf:"zigzag64,12,opt,name=int64_value,json=int64Value,proto3,oneof"`
+	Int64Value int64 `protobuf:"zigzag64,12,opt,name=int64_value,json=int64Value,proto3,oneof" json:"int64_value,omitempty"`
 }
 type StructuredValue_StringValue struct {
-	StringValue string `protobuf:"bytes,13,opt,name=string_value,json=stringValue,proto3,oneof"`
+	StringValue string `protobuf:"bytes,13,opt,name=string_value,json=stringValue,proto3,oneof" json:"string_value,omitempty"`
 }
 type StructuredValue_BoolValue struct {
-	BoolValue bool `protobuf:"varint,14,opt,name=bool_value,json=boolValue,proto3,oneof"`
+	BoolValue bool `protobuf:"varint,14,opt,name=bool_value,json=boolValue,proto3,oneof" json:"bool_value,omitempty"`
 }
 type StructuredValue_TensorShapeValue struct {
-	TensorShapeValue *framework.TensorShapeProto `protobuf:"bytes,31,opt,name=tensor_shape_value,json=tensorShapeValue,proto3,oneof"`
+	TensorShapeValue *framework.TensorShapeProto `protobuf:"bytes,31,opt,name=tensor_shape_value,json=tensorShapeValue,proto3,oneof" json:"tensor_shape_value,omitempty"`
 }
 type StructuredValue_TensorDtypeValue struct {
-	TensorDtypeValue framework.DataType `protobuf:"varint,32,opt,name=tensor_dtype_value,json=tensorDtypeValue,proto3,enum=tensorflow.DataType,oneof"`
+	TensorDtypeValue framework.DataType `protobuf:"varint,32,opt,name=tensor_dtype_value,json=tensorDtypeValue,proto3,enum=tensorflow.DataType,oneof" json:"tensor_dtype_value,omitempty"`
 }
 type StructuredValue_TensorSpecValue struct {
-	TensorSpecValue *TensorSpecProto `protobuf:"bytes,33,opt,name=tensor_spec_value,json=tensorSpecValue,proto3,oneof"`
+	TensorSpecValue *TensorSpecProto `protobuf:"bytes,33,opt,name=tensor_spec_value,json=tensorSpecValue,proto3,oneof" json:"tensor_spec_value,omitempty"`
 }
 type StructuredValue_TypeSpecValue struct {
-	TypeSpecValue *TypeSpecProto `protobuf:"bytes,34,opt,name=type_spec_value,json=typeSpecValue,proto3,oneof"`
+	TypeSpecValue *TypeSpecProto `protobuf:"bytes,34,opt,name=type_spec_value,json=typeSpecValue,proto3,oneof" json:"type_spec_value,omitempty"`
+}
+type StructuredValue_BoundedTensorSpecValue struct {
+	BoundedTensorSpecValue *BoundedTensorSpecProto `protobuf:"bytes,35,opt,name=bounded_tensor_spec_value,json=boundedTensorSpecValue,proto3,oneof" json:"bounded_tensor_spec_value,omitempty"`
 }
 type StructuredValue_ListValue struct {
-	ListValue *ListValue `protobuf:"bytes,51,opt,name=list_value,json=listValue,proto3,oneof"`
+	ListValue *ListValue `protobuf:"bytes,51,opt,name=list_value,json=listValue,proto3,oneof" json:"list_value,omitempty"`
 }
 type StructuredValue_TupleValue struct {
-	TupleValue *TupleValue `protobuf:"bytes,52,opt,name=tuple_value,json=tupleValue,proto3,oneof"`
+	TupleValue *TupleValue `protobuf:"bytes,52,opt,name=tuple_value,json=tupleValue,proto3,oneof" json:"tuple_value,omitempty"`
 }
 type StructuredValue_DictValue struct {
-	DictValue *DictValue `protobuf:"bytes,53,opt,name=dict_value,json=dictValue,proto3,oneof"`
+	DictValue *DictValue `protobuf:"bytes,53,opt,name=dict_value,json=dictValue,proto3,oneof" json:"dict_value,omitempty"`
 }
 type StructuredValue_NamedTupleValue struct {
-	NamedTupleValue *NamedTupleValue `protobuf:"bytes,54,opt,name=named_tuple_value,json=namedTupleValue,proto3,oneof"`
+	NamedTupleValue *NamedTupleValue `protobuf:"bytes,54,opt,name=named_tuple_value,json=namedTupleValue,proto3,oneof" json:"named_tuple_value,omitempty"`
 }
 
-func (*StructuredValue_NoneValue) isStructuredValue_Kind()        {}
-func (*StructuredValue_Float64Value) isStructuredValue_Kind()     {}
-func (*StructuredValue_Int64Value) isStructuredValue_Kind()       {}
-func (*StructuredValue_StringValue) isStructuredValue_Kind()      {}
-func (*StructuredValue_BoolValue) isStructuredValue_Kind()        {}
-func (*StructuredValue_TensorShapeValue) isStructuredValue_Kind() {}
-func (*StructuredValue_TensorDtypeValue) isStructuredValue_Kind() {}
-func (*StructuredValue_TensorSpecValue) isStructuredValue_Kind()  {}
-func (*StructuredValue_TypeSpecValue) isStructuredValue_Kind()    {}
-func (*StructuredValue_ListValue) isStructuredValue_Kind()        {}
-func (*StructuredValue_TupleValue) isStructuredValue_Kind()       {}
-func (*StructuredValue_DictValue) isStructuredValue_Kind()        {}
-func (*StructuredValue_NamedTupleValue) isStructuredValue_Kind()  {}
+func (*StructuredValue_NoneValue) isStructuredValue_Kind()              {}
+func (*StructuredValue_Float64Value) isStructuredValue_Kind()           {}
+func (*StructuredValue_Int64Value) isStructuredValue_Kind()             {}
+func (*StructuredValue_StringValue) isStructuredValue_Kind()            {}
+func (*StructuredValue_BoolValue) isStructuredValue_Kind()              {}
+func (*StructuredValue_TensorShapeValue) isStructuredValue_Kind()       {}
+func (*StructuredValue_TensorDtypeValue) isStructuredValue_Kind()       {}
+func (*StructuredValue_TensorSpecValue) isStructuredValue_Kind()        {}
+func (*StructuredValue_TypeSpecValue) isStructuredValue_Kind()          {}
+func (*StructuredValue_BoundedTensorSpecValue) isStructuredValue_Kind() {}
+func (*StructuredValue_ListValue) isStructuredValue_Kind()              {}
+func (*StructuredValue_TupleValue) isStructuredValue_Kind()             {}
+func (*StructuredValue_DictValue) isStructuredValue_Kind()              {}
+func (*StructuredValue_NamedTupleValue) isStructuredValue_Kind()        {}
 
 func (m *StructuredValue) GetKind() isStructuredValue_Kind {
 	if m != nil {
@@ -279,6 +288,13 @@ func (m *StructuredValue) GetTypeSpecValue() *TypeSpecProto {
 	return nil
 }
 
+func (m *StructuredValue) GetBoundedTensorSpecValue() *BoundedTensorSpecProto {
+	if x, ok := m.GetKind().(*StructuredValue_BoundedTensorSpecValue); ok {
+		return x.BoundedTensorSpecValue
+	}
+	return nil
+}
+
 func (m *StructuredValue) GetListValue() *ListValue {
 	if x, ok := m.GetKind().(*StructuredValue_ListValue); ok {
 		return x.ListValue
@@ -307,9 +323,9 @@ func (m *StructuredValue) GetNamedTupleValue() *NamedTupleValue {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*StructuredValue) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _StructuredValue_OneofMarshaler, _StructuredValue_OneofUnmarshaler, _StructuredValue_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*StructuredValue) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*StructuredValue_NoneValue)(nil),
 		(*StructuredValue_Float64Value)(nil),
 		(*StructuredValue_Int64Value)(nil),
@@ -319,255 +335,12 @@ func (*StructuredValue) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffe
 		(*StructuredValue_TensorDtypeValue)(nil),
 		(*StructuredValue_TensorSpecValue)(nil),
 		(*StructuredValue_TypeSpecValue)(nil),
+		(*StructuredValue_BoundedTensorSpecValue)(nil),
 		(*StructuredValue_ListValue)(nil),
 		(*StructuredValue_TupleValue)(nil),
 		(*StructuredValue_DictValue)(nil),
 		(*StructuredValue_NamedTupleValue)(nil),
 	}
-}
-
-func _StructuredValue_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*StructuredValue)
-	// kind
-	switch x := m.Kind.(type) {
-	case *StructuredValue_NoneValue:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.NoneValue); err != nil {
-			return err
-		}
-	case *StructuredValue_Float64Value:
-		_ = b.EncodeVarint(11<<3 | proto.WireFixed64)
-		_ = b.EncodeFixed64(math.Float64bits(x.Float64Value))
-	case *StructuredValue_Int64Value:
-		_ = b.EncodeVarint(12<<3 | proto.WireVarint)
-		_ = b.EncodeZigzag64(uint64(x.Int64Value))
-	case *StructuredValue_StringValue:
-		_ = b.EncodeVarint(13<<3 | proto.WireBytes)
-		_ = b.EncodeStringBytes(x.StringValue)
-	case *StructuredValue_BoolValue:
-		t := uint64(0)
-		if x.BoolValue {
-			t = 1
-		}
-		_ = b.EncodeVarint(14<<3 | proto.WireVarint)
-		_ = b.EncodeVarint(t)
-	case *StructuredValue_TensorShapeValue:
-		_ = b.EncodeVarint(31<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.TensorShapeValue); err != nil {
-			return err
-		}
-	case *StructuredValue_TensorDtypeValue:
-		_ = b.EncodeVarint(32<<3 | proto.WireVarint)
-		_ = b.EncodeVarint(uint64(x.TensorDtypeValue))
-	case *StructuredValue_TensorSpecValue:
-		_ = b.EncodeVarint(33<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.TensorSpecValue); err != nil {
-			return err
-		}
-	case *StructuredValue_TypeSpecValue:
-		_ = b.EncodeVarint(34<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.TypeSpecValue); err != nil {
-			return err
-		}
-	case *StructuredValue_ListValue:
-		_ = b.EncodeVarint(51<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ListValue); err != nil {
-			return err
-		}
-	case *StructuredValue_TupleValue:
-		_ = b.EncodeVarint(52<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.TupleValue); err != nil {
-			return err
-		}
-	case *StructuredValue_DictValue:
-		_ = b.EncodeVarint(53<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.DictValue); err != nil {
-			return err
-		}
-	case *StructuredValue_NamedTupleValue:
-		_ = b.EncodeVarint(54<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.NamedTupleValue); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("StructuredValue.Kind has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _StructuredValue_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*StructuredValue)
-	switch tag {
-	case 1: // kind.none_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(NoneValue)
-		err := b.DecodeMessage(msg)
-		m.Kind = &StructuredValue_NoneValue{msg}
-		return true, err
-	case 11: // kind.float64_value
-		if wire != proto.WireFixed64 {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeFixed64()
-		m.Kind = &StructuredValue_Float64Value{math.Float64frombits(x)}
-		return true, err
-	case 12: // kind.int64_value
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeZigzag64()
-		m.Kind = &StructuredValue_Int64Value{int64(x)}
-		return true, err
-	case 13: // kind.string_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeStringBytes()
-		m.Kind = &StructuredValue_StringValue{x}
-		return true, err
-	case 14: // kind.bool_value
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Kind = &StructuredValue_BoolValue{x != 0}
-		return true, err
-	case 31: // kind.tensor_shape_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(framework.TensorShapeProto)
-		err := b.DecodeMessage(msg)
-		m.Kind = &StructuredValue_TensorShapeValue{msg}
-		return true, err
-	case 32: // kind.tensor_dtype_value
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Kind = &StructuredValue_TensorDtypeValue{framework.DataType(x)}
-		return true, err
-	case 33: // kind.tensor_spec_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(TensorSpecProto)
-		err := b.DecodeMessage(msg)
-		m.Kind = &StructuredValue_TensorSpecValue{msg}
-		return true, err
-	case 34: // kind.type_spec_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(TypeSpecProto)
-		err := b.DecodeMessage(msg)
-		m.Kind = &StructuredValue_TypeSpecValue{msg}
-		return true, err
-	case 51: // kind.list_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ListValue)
-		err := b.DecodeMessage(msg)
-		m.Kind = &StructuredValue_ListValue{msg}
-		return true, err
-	case 52: // kind.tuple_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(TupleValue)
-		err := b.DecodeMessage(msg)
-		m.Kind = &StructuredValue_TupleValue{msg}
-		return true, err
-	case 53: // kind.dict_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(DictValue)
-		err := b.DecodeMessage(msg)
-		m.Kind = &StructuredValue_DictValue{msg}
-		return true, err
-	case 54: // kind.named_tuple_value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(NamedTupleValue)
-		err := b.DecodeMessage(msg)
-		m.Kind = &StructuredValue_NamedTupleValue{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _StructuredValue_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*StructuredValue)
-	// kind
-	switch x := m.Kind.(type) {
-	case *StructuredValue_NoneValue:
-		s := proto.Size(x.NoneValue)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StructuredValue_Float64Value:
-		n += 1 // tag and wire
-		n += 8
-	case *StructuredValue_Int64Value:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(uint64(x.Int64Value<<1) ^ uint64((int64(x.Int64Value) >> 63))))
-	case *StructuredValue_StringValue:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.StringValue)))
-		n += len(x.StringValue)
-	case *StructuredValue_BoolValue:
-		n += 1 // tag and wire
-		n += 1
-	case *StructuredValue_TensorShapeValue:
-		s := proto.Size(x.TensorShapeValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StructuredValue_TensorDtypeValue:
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(x.TensorDtypeValue))
-	case *StructuredValue_TensorSpecValue:
-		s := proto.Size(x.TensorSpecValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StructuredValue_TypeSpecValue:
-		s := proto.Size(x.TypeSpecValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StructuredValue_ListValue:
-		s := proto.Size(x.ListValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StructuredValue_TupleValue:
-		s := proto.Size(x.TupleValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StructuredValue_DictValue:
-		s := proto.Size(x.DictValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StructuredValue_NamedTupleValue:
-		s := proto.Size(x.NamedTupleValue)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 // Represents None.
@@ -588,7 +361,7 @@ func (m *NoneValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_NoneValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -626,7 +399,7 @@ func (m *ListValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_ListValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -671,7 +444,7 @@ func (m *TupleValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_TupleValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -717,7 +490,7 @@ func (m *DictValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_DictValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -763,7 +536,7 @@ func (m *PairValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PairValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -816,7 +589,7 @@ func (m *NamedTupleValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_NamedTupleValue.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -849,7 +622,7 @@ func (m *NamedTupleValue) GetValues() []*PairValue {
 	return nil
 }
 
-// A protobuf to tf.TensorSpec.
+// A protobuf to represent tf.TensorSpec.
 type TensorSpecProto struct {
 	Name  string                      `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Shape *framework.TensorShapeProto `protobuf:"bytes,2,opt,name=shape,proto3" json:"shape,omitempty"`
@@ -870,7 +643,7 @@ func (m *TensorSpecProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_TensorSpecProto.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -910,6 +683,83 @@ func (m *TensorSpecProto) GetDtype() framework.DataType {
 	return framework.DataType_DT_INVALID
 }
 
+// A protobuf to represent tf.BoundedTensorSpec.
+type BoundedTensorSpecProto struct {
+	Name    string                      `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Shape   *framework.TensorShapeProto `protobuf:"bytes,2,opt,name=shape,proto3" json:"shape,omitempty"`
+	Dtype   framework.DataType          `protobuf:"varint,3,opt,name=dtype,proto3,enum=tensorflow.DataType" json:"dtype,omitempty"`
+	Minimum *framework.TensorProto      `protobuf:"bytes,4,opt,name=minimum,proto3" json:"minimum,omitempty"`
+	Maximum *framework.TensorProto      `protobuf:"bytes,5,opt,name=maximum,proto3" json:"maximum,omitempty"`
+}
+
+func (m *BoundedTensorSpecProto) Reset()         { *m = BoundedTensorSpecProto{} }
+func (m *BoundedTensorSpecProto) String() string { return proto.CompactTextString(m) }
+func (*BoundedTensorSpecProto) ProtoMessage()    {}
+func (*BoundedTensorSpecProto) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8f6f8fd91d5fa722, []int{8}
+}
+func (m *BoundedTensorSpecProto) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *BoundedTensorSpecProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_BoundedTensorSpecProto.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *BoundedTensorSpecProto) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BoundedTensorSpecProto.Merge(m, src)
+}
+func (m *BoundedTensorSpecProto) XXX_Size() int {
+	return m.Size()
+}
+func (m *BoundedTensorSpecProto) XXX_DiscardUnknown() {
+	xxx_messageInfo_BoundedTensorSpecProto.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_BoundedTensorSpecProto proto.InternalMessageInfo
+
+func (m *BoundedTensorSpecProto) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *BoundedTensorSpecProto) GetShape() *framework.TensorShapeProto {
+	if m != nil {
+		return m.Shape
+	}
+	return nil
+}
+
+func (m *BoundedTensorSpecProto) GetDtype() framework.DataType {
+	if m != nil {
+		return m.Dtype
+	}
+	return framework.DataType_DT_INVALID
+}
+
+func (m *BoundedTensorSpecProto) GetMinimum() *framework.TensorProto {
+	if m != nil {
+		return m.Minimum
+	}
+	return nil
+}
+
+func (m *BoundedTensorSpecProto) GetMaximum() *framework.TensorProto {
+	if m != nil {
+		return m.Maximum
+	}
+	return nil
+}
+
 // Represents a tf.TypeSpec
 type TypeSpecProto struct {
 	TypeSpecClass TypeSpecProto_TypeSpecClass `protobuf:"varint,1,opt,name=type_spec_class,json=typeSpecClass,proto3,enum=tensorflow.TypeSpecProto_TypeSpecClass" json:"type_spec_class,omitempty"`
@@ -926,7 +776,7 @@ func (m *TypeSpecProto) Reset()         { *m = TypeSpecProto{} }
 func (m *TypeSpecProto) String() string { return proto.CompactTextString(m) }
 func (*TypeSpecProto) ProtoMessage()    {}
 func (*TypeSpecProto) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8f6f8fd91d5fa722, []int{8}
+	return fileDescriptor_8f6f8fd91d5fa722, []int{9}
 }
 func (m *TypeSpecProto) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -936,7 +786,7 @@ func (m *TypeSpecProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_TypeSpecProto.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -987,6 +837,7 @@ func init() {
 	proto.RegisterType((*PairValue)(nil), "tensorflow.PairValue")
 	proto.RegisterType((*NamedTupleValue)(nil), "tensorflow.NamedTupleValue")
 	proto.RegisterType((*TensorSpecProto)(nil), "tensorflow.TensorSpecProto")
+	proto.RegisterType((*BoundedTensorSpecProto)(nil), "tensorflow.BoundedTensorSpecProto")
 	proto.RegisterType((*TypeSpecProto)(nil), "tensorflow.TypeSpecProto")
 }
 
@@ -995,68 +846,74 @@ func init() {
 }
 
 var fileDescriptor_8f6f8fd91d5fa722 = []byte{
-	// 880 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0xcd, 0x6e, 0xdb, 0x46,
-	0x10, 0xd6, 0x5a, 0x96, 0x12, 0x8e, 0x2c, 0x4b, 0xde, 0x3a, 0xa9, 0xeb, 0x16, 0x8a, 0xcc, 0xc2,
-	0xa8, 0x50, 0x34, 0x12, 0x6a, 0xa7, 0x46, 0x93, 0x53, 0x69, 0x89, 0x8d, 0x84, 0x0a, 0x92, 0xb0,
-	0x64, 0xdd, 0xbf, 0x03, 0x41, 0x4b, 0x2b, 0x87, 0x30, 0x4d, 0x12, 0xe4, 0xaa, 0x81, 0x1e, 0xa0,
-	0xf7, 0x3e, 0x41, 0x5f, 0xa3, 0xaf, 0xd0, 0x63, 0x8e, 0x3d, 0x16, 0xf6, 0xa1, 0x0f, 0xd1, 0x4b,
-	0xb1, 0xbb, 0xfc, 0x93, 0x6c, 0x07, 0x45, 0x91, 0x8b, 0xb0, 0xf3, 0xf1, 0x9b, 0x6f, 0x66, 0xbf,
-	0xd1, 0x90, 0x70, 0xc8, 0xa8, 0x17, 0xf9, 0xe1, 0xdc, 0xf5, 0x5f, 0x77, 0xa6, 0x7e, 0x48, 0x3b,
-	0x41, 0xe8, 0x33, 0xff, 0x7c, 0x31, 0xef, 0x44, 0x2c, 0x5c, 0x4c, 0x59, 0x5b, 0xc4, 0x18, 0x32,
-	0xda, 0xfe, 0x67, 0xeb, 0x29, 0xf3, 0xd0, 0xbe, 0xa2, 0xaf, 0xfd, 0xf0, 0xb2, 0x23, 0x9f, 0x58,
-	0xd1, 0x2b, 0x3b, 0xa0, 0x32, 0x73, 0xff, 0xf0, 0x2d, 0xec, 0x65, 0x40, 0x23, 0x49, 0x53, 0xff,
-	0x29, 0x41, 0xcd, 0x10, 0x15, 0x17, 0x21, 0x9d, 0x9d, 0xd9, 0xee, 0x82, 0xe2, 0x13, 0x00, 0xcf,
-	0xf7, 0xa8, 0xf5, 0x33, 0x8f, 0xf6, 0x50, 0x13, 0xb5, 0x2a, 0x47, 0x8f, 0xda, 0x99, 0x5e, 0x7b,
-	0xe4, 0x7b, 0x54, 0x50, 0xfb, 0x05, 0xa2, 0x78, 0x49, 0x80, 0x0f, 0xa1, 0x3a, 0x77, 0x7d, 0x9b,
-	0x9d, 0x3c, 0x8b, 0x53, 0x2b, 0x4d, 0xd4, 0x42, 0xfd, 0x02, 0xd9, 0x8a, 0x61, 0x49, 0x3b, 0x80,
-	0x8a, 0xe3, 0x65, 0xa4, 0xad, 0x26, 0x6a, 0xe1, 0x7e, 0x81, 0x80, 0x00, 0x25, 0xe5, 0x63, 0xd8,
-	0x8a, 0x58, 0xe8, 0x78, 0x17, 0x31, 0xa7, 0xda, 0x44, 0x2d, 0xa5, 0x5f, 0x20, 0x15, 0x89, 0x4a,
-	0xd2, 0x13, 0x80, 0x73, 0xdf, 0x77, 0x63, 0xca, 0x76, 0x13, 0xb5, 0x1e, 0xf2, 0x7e, 0x38, 0x26,
-	0x09, 0x43, 0xc0, 0x79, 0x63, 0x62, 0xe2, 0x13, 0x71, 0x9f, 0x8f, 0xf2, 0xf7, 0x31, 0xc5, 0xd1,
-	0xe0, 0xa4, 0x09, 0x77, 0xa5, 0x5f, 0x20, 0x75, 0x96, 0x61, 0x52, 0xad, 0x97, 0xaa, 0xcd, 0xb8,
-	0x81, 0xb1, 0x5a, 0xb3, 0x89, 0x5a, 0xdb, 0x47, 0xbb, 0x79, 0xb5, 0x9e, 0xcd, 0x6c, 0x73, 0x19,
-	0xd0, 0x4c, 0xa5, 0xc7, 0x13, 0xa4, 0xca, 0x00, 0x76, 0x92, 0x9e, 0x02, 0x3a, 0x8d, 0x45, 0x0e,
-	0x44, 0x4b, 0x1f, 0xde, 0xd1, 0x52, 0x40, 0xa7, 0x49, 0x47, 0x35, 0x96, 0x42, 0x52, 0xaa, 0x0b,
-	0x35, 0xd1, 0x48, 0x4e, 0x48, 0x15, 0x42, 0x1f, 0xac, 0x08, 0x2d, 0x03, 0x9a, 0x97, 0xa9, 0xb2,
-	0x18, 0x48, 0x67, 0xed, 0x3a, 0x11, 0x8b, 0xf3, 0x8f, 0x6f, 0xcf, 0x7a, 0xe8, 0x44, 0x2c, 0x9d,
-	0xb5, 0x9b, 0x04, 0xf8, 0x39, 0x54, 0xd8, 0x22, 0x70, 0x13, 0x1b, 0x9e, 0x89, 0xc4, 0xc7, 0x2b,
-	0x85, 0xf9, 0xe3, 0x24, 0x13, 0x58, 0x1a, 0xf1, 0x92, 0x33, 0x67, 0x9a, 0x94, 0xfc, 0xe2, 0x76,
-	0xc9, 0x9e, 0x33, 0xcd, 0x4a, 0xce, 0x92, 0x80, 0x5b, 0xe7, 0xd9, 0x57, 0x74, 0x66, 0xe5, 0x0b,
-	0x9f, 0xdc, 0xb6, 0x6e, 0xc4, 0x49, 0x2b, 0xd5, 0x6b, 0xde, 0x2a, 0x74, 0x5a, 0x86, 0xcd, 0x4b,
-	0xc7, 0x9b, 0xa9, 0x15, 0x50, 0xd2, 0xff, 0xb2, 0xfa, 0x15, 0x28, 0xe9, 0x65, 0xf1, 0x31, 0x94,
-	0x45, 0x81, 0x68, 0x0f, 0x35, 0x8b, 0xeb, 0x15, 0xd6, 0x16, 0x86, 0xc4, 0x54, 0x55, 0x03, 0xc8,
-	0x8a, 0xfc, 0x3f, 0x89, 0xdf, 0x10, 0x28, 0xe9, 0xfd, 0xf1, 0x73, 0x28, 0xcf, 0x1d, 0xea, 0xce,
-	0x12, 0x89, 0x83, 0x3b, 0x6d, 0x6a, 0x7f, 0x2d, 0x38, 0xba, 0xc7, 0xc2, 0x25, 0x89, 0x13, 0xf6,
-	0xcf, 0xa0, 0x92, 0x83, 0x71, 0x1d, 0x8a, 0x97, 0x74, 0x29, 0x96, 0x59, 0x21, 0xfc, 0x88, 0x3f,
-	0x87, 0x92, 0xb4, 0x70, 0xe3, 0xb6, 0x85, 0xeb, 0xdd, 0x49, 0xe6, 0x8b, 0x8d, 0x2f, 0x91, 0x3a,
-	0x01, 0x65, 0x62, 0x3b, 0xa1, 0xec, 0xef, 0x5d, 0xa8, 0xaa, 0x26, 0xd4, 0xd6, 0x46, 0x86, 0x31,
-	0x6c, 0xf2, 0x91, 0xc5, 0xc2, 0xe2, 0x8c, 0x9f, 0xa6, 0x76, 0x6e, 0x08, 0x2f, 0x56, 0xfe, 0x32,
-	0x69, 0x4b, 0xa9, 0x91, 0xbf, 0x20, 0xa8, 0xad, 0x2d, 0xd1, 0x9d, 0xb2, 0x47, 0x50, 0x12, 0x6f,
-	0x87, 0xb8, 0xe1, 0xb7, 0xbe, 0x17, 0x88, 0xa4, 0xe2, 0x4f, 0xa1, 0x24, 0xde, 0x01, 0x7b, 0xc5,
-	0xfb, 0xb7, 0x9f, 0x48, 0x8a, 0xfa, 0x7b, 0x11, 0xaa, 0x2b, 0x3b, 0x88, 0xc7, 0xf9, 0xbd, 0x9d,
-	0xba, 0x76, 0x14, 0x89, 0x86, 0xb6, 0x8f, 0x3e, 0xb9, 0x77, 0x6f, 0xd3, 0xa8, 0xcb, 0xe9, 0xd9,
-	0x0e, 0x8b, 0x10, 0xbf, 0x00, 0x90, 0x82, 0xcc, 0x66, 0xff, 0xc9, 0x78, 0x45, 0xe4, 0x73, 0x36,
-	0xee, 0xc0, 0xee, 0x5a, 0x33, 0x96, 0xb0, 0xa8, 0x28, 0x2c, 0xda, 0x59, 0x29, 0xc4, 0xa7, 0xa4,
-	0xfe, 0x8d, 0xb2, 0xfb, 0xc8, 0xf2, 0x15, 0x78, 0xf0, 0xed, 0xe8, 0x9b, 0xd1, 0xf8, 0xbb, 0x51,
-	0xbd, 0x80, 0x1f, 0x03, 0x36, 0x26, 0x1a, 0x31, 0x74, 0xcb, 0xd4, 0x47, 0xc6, 0x98, 0x58, 0xc6,
-	0x44, 0xef, 0xd6, 0x11, 0x7e, 0x1f, 0xde, 0x1b, 0x8c, 0x7a, 0xfa, 0xf7, 0x7a, 0xcf, 0x32, 0x86,
-	0x83, 0xae, 0x6e, 0xc8, 0x07, 0x1b, 0x3c, 0x81, 0x68, 0x2f, 0x5f, 0xea, 0xbd, 0x95, 0x84, 0x22,
-	0x7e, 0x04, 0x3b, 0x31, 0xa0, 0x11, 0xa2, 0xfd, 0x20, 0xe1, 0x4d, 0x0e, 0xf7, 0x34, 0x53, 0xb3,
-	0xf8, 0x8f, 0xa1, 0x9b, 0x12, 0x2e, 0x71, 0x15, 0x01, 0x0f, 0x4c, 0x9d, 0x68, 0x66, 0xa2, 0x52,
-	0xc6, 0x3b, 0x50, 0x1d, 0x4f, 0xcc, 0xc1, 0x78, 0xa4, 0x0d, 0x25, 0xf4, 0x00, 0xef, 0x42, 0x7d,
-	0xa2, 0x13, 0x8b, 0xe8, 0x93, 0xe1, 0xa0, 0xab, 0x49, 0xf4, 0x21, 0x27, 0x9e, 0x69, 0x64, 0xa0,
-	0x9d, 0x0e, 0x75, 0x09, 0x29, 0xa7, 0x3f, 0xfd, 0x71, 0xdd, 0x40, 0x6f, 0xae, 0x1b, 0xe8, 0xaf,
-	0xeb, 0x06, 0xfa, 0xf5, 0xa6, 0x51, 0x78, 0x73, 0xd3, 0x28, 0xfc, 0x79, 0xd3, 0x28, 0xfc, 0xa8,
-	0x5d, 0x38, 0xec, 0xd5, 0xe2, 0xbc, 0x3d, 0xf5, 0xaf, 0x3a, 0x5a, 0x10, 0xb8, 0xce, 0xdc, 0xa1,
-	0x61, 0xe7, 0xc2, 0x7f, 0x9a, 0xfb, 0xe6, 0x8a, 0x8f, 0x6c, 0xe7, 0xbe, 0xaf, 0xfc, 0x79, 0x59,
-	0x9c, 0x8e, 0xff, 0x0d, 0x00, 0x00, 0xff, 0xff, 0xf3, 0x5b, 0x84, 0x23, 0x08, 0x08, 0x00, 0x00,
+	// 968 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x56, 0xdd, 0x6e, 0x1a, 0x47,
+	0x14, 0x66, 0x8c, 0x21, 0xe1, 0x60, 0x0c, 0x9e, 0x3a, 0x8e, 0xe3, 0x56, 0x04, 0x6f, 0xe4, 0x16,
+	0x55, 0x0d, 0x28, 0x76, 0x6a, 0x35, 0xb9, 0xea, 0x1a, 0xb6, 0x01, 0x15, 0x01, 0x9a, 0xdd, 0x3a,
+	0xfd, 0xb9, 0x58, 0x2d, 0xb0, 0x38, 0x2b, 0x2f, 0xbb, 0xab, 0xdd, 0xa1, 0x29, 0x0f, 0xd0, 0xfb,
+	0x3e, 0x41, 0x9f, 0xa7, 0x77, 0xcd, 0x65, 0x2f, 0x7a, 0x51, 0xd9, 0x6f, 0xd0, 0x17, 0x68, 0x35,
+	0x33, 0xfb, 0x07, 0xd8, 0x49, 0x55, 0x55, 0xea, 0x0d, 0xda, 0xf3, 0xcd, 0x77, 0xbe, 0xf3, 0xcd,
+	0x99, 0x99, 0x23, 0xe0, 0x88, 0x9a, 0x4e, 0xe0, 0xfa, 0x53, 0xdb, 0x7d, 0xdd, 0x1c, 0xbb, 0xbe,
+	0xd9, 0xf4, 0x7c, 0x97, 0xba, 0xa3, 0xf9, 0xb4, 0x19, 0x50, 0x7f, 0x3e, 0xa6, 0x0d, 0x1e, 0x63,
+	0x48, 0x68, 0x07, 0x1f, 0xae, 0xa6, 0x4c, 0x7d, 0x63, 0x66, 0xbe, 0x76, 0xfd, 0xcb, 0xa6, 0x58,
+	0x11, 0x39, 0x07, 0x9f, 0xbc, 0x8b, 0xa7, 0x07, 0xaf, 0x0c, 0xcf, 0x0c, 0xd9, 0x47, 0x6f, 0x61,
+	0x2f, 0x3c, 0x33, 0x10, 0x34, 0xe9, 0xf7, 0x3c, 0x94, 0x55, 0xee, 0x6c, 0xee, 0x9b, 0x93, 0x73,
+	0xc3, 0x9e, 0x9b, 0xf8, 0x14, 0xc0, 0x71, 0x1d, 0x53, 0xff, 0x9e, 0x45, 0xfb, 0xa8, 0x86, 0xea,
+	0xc5, 0xe3, 0x7b, 0x8d, 0x44, 0xaf, 0xd1, 0x77, 0x1d, 0x93, 0x53, 0x3b, 0x19, 0x52, 0x70, 0xa2,
+	0x00, 0x1f, 0x41, 0x69, 0x6a, 0xbb, 0x06, 0x3d, 0x7d, 0x1a, 0xa6, 0x16, 0x6b, 0xa8, 0x8e, 0x3a,
+	0x19, 0xb2, 0x15, 0xc2, 0x82, 0x76, 0x08, 0x45, 0xcb, 0x49, 0x48, 0x5b, 0x35, 0x54, 0xc7, 0x9d,
+	0x0c, 0x01, 0x0e, 0x0a, 0xca, 0x23, 0xd8, 0x0a, 0xa8, 0x6f, 0x39, 0x17, 0x21, 0xa7, 0x54, 0x43,
+	0xf5, 0x42, 0x27, 0x43, 0x8a, 0x02, 0x15, 0xa4, 0x87, 0x00, 0x23, 0xd7, 0xb5, 0x43, 0xca, 0x76,
+	0x0d, 0xd5, 0xef, 0x32, 0x3f, 0x0c, 0x13, 0x84, 0x1e, 0xe0, 0x74, 0x63, 0x42, 0xe2, 0x43, 0xbe,
+	0x9f, 0x0f, 0xd2, 0xfb, 0xd1, 0xf8, 0xa7, 0xca, 0x48, 0x43, 0xd6, 0x95, 0x4e, 0x86, 0x54, 0x68,
+	0x82, 0x09, 0xb5, 0x76, 0xac, 0x36, 0x61, 0x0d, 0x0c, 0xd5, 0x6a, 0x35, 0x54, 0xdf, 0x3e, 0xde,
+	0x4d, 0xab, 0xb5, 0x0d, 0x6a, 0x68, 0x0b, 0xcf, 0x4c, 0x54, 0xda, 0x2c, 0x41, 0xa8, 0x74, 0x61,
+	0x27, 0xf2, 0xe4, 0x99, 0xe3, 0x50, 0xe4, 0x90, 0x5b, 0x7a, 0xff, 0x06, 0x4b, 0x9e, 0x39, 0x8e,
+	0x1c, 0x95, 0x69, 0x0c, 0x09, 0xa9, 0x16, 0x94, 0xb9, 0x91, 0x94, 0x90, 0xc4, 0x85, 0x1e, 0x2c,
+	0x09, 0x2d, 0x3c, 0x33, 0x2d, 0x53, 0xa2, 0x21, 0x20, 0x44, 0x74, 0x78, 0x30, 0x72, 0xe7, 0xce,
+	0xc4, 0x9c, 0xe8, 0xeb, 0xbe, 0x1e, 0x71, 0x39, 0x29, 0x2d, 0x77, 0x26, 0xc8, 0xeb, 0xf6, 0xf6,
+	0x46, 0xab, 0x2b, 0xf1, 0x65, 0xb2, 0xad, 0x80, 0x86, 0x8a, 0x27, 0xeb, 0x97, 0xa9, 0x67, 0x05,
+	0x34, 0xbe, 0x4c, 0x76, 0x14, 0xe0, 0x67, 0x50, 0xa4, 0x73, 0xcf, 0x8e, 0xfa, 0xfc, 0x94, 0x27,
+	0xee, 0x2d, 0xed, 0x8c, 0x2d, 0x47, 0x99, 0x40, 0xe3, 0x88, 0x95, 0x9c, 0x58, 0xe3, 0xa8, 0xe4,
+	0xa7, 0xeb, 0x25, 0xdb, 0xd6, 0x38, 0x29, 0x39, 0x89, 0x02, 0x76, 0x36, 0x8e, 0x31, 0x63, 0x9d,
+	0x48, 0x15, 0x3e, 0x5d, 0x3f, 0x9b, 0x3e, 0x23, 0x2d, 0x55, 0x2f, 0x3b, 0xcb, 0xd0, 0x59, 0x1e,
+	0x36, 0x2f, 0x2d, 0x67, 0x22, 0x15, 0xa1, 0x10, 0x3f, 0x16, 0xe9, 0x73, 0x28, 0xc4, 0x9b, 0xc5,
+	0x27, 0x90, 0xe7, 0x05, 0x82, 0x7d, 0x54, 0xcb, 0xae, 0x56, 0x58, 0x79, 0x91, 0x24, 0xa4, 0x4a,
+	0x32, 0x40, 0x52, 0xe4, 0xdf, 0x49, 0xfc, 0x8c, 0xa0, 0x10, 0xef, 0x1f, 0x3f, 0x83, 0xfc, 0xd4,
+	0x32, 0xed, 0x49, 0x24, 0x71, 0x78, 0x63, 0x9b, 0x1a, 0x5f, 0x70, 0x8e, 0xe2, 0x50, 0x7f, 0x41,
+	0xc2, 0x84, 0x83, 0x73, 0x28, 0xa6, 0x60, 0x5c, 0x81, 0xec, 0xa5, 0xb9, 0xe0, 0xd3, 0xa2, 0x40,
+	0xd8, 0x27, 0x7e, 0x02, 0x39, 0xd1, 0xc2, 0x8d, 0xf5, 0x16, 0xae, 0xba, 0x13, 0xcc, 0xe7, 0x1b,
+	0x9f, 0x21, 0x69, 0x08, 0x85, 0xa1, 0x61, 0xf9, 0xc2, 0xdf, 0x7f, 0xa1, 0x2a, 0x69, 0x50, 0x5e,
+	0x39, 0x32, 0x8c, 0x61, 0x93, 0x1d, 0x59, 0x28, 0xcc, 0xbf, 0xf1, 0xe3, 0xb8, 0x9d, 0x1b, 0xbc,
+	0x17, 0x4b, 0x57, 0x26, 0xb6, 0x14, 0x37, 0xf2, 0x47, 0x04, 0xe5, 0x95, 0x67, 0x70, 0xa3, 0xec,
+	0x31, 0xe4, 0xf8, 0xf8, 0x09, 0x0d, 0xbf, 0x75, 0xf0, 0x10, 0x41, 0xc5, 0x1f, 0x43, 0x8e, 0x0f,
+	0x99, 0xfd, 0xec, 0xed, 0xe3, 0x85, 0x08, 0x8a, 0xf4, 0x27, 0x82, 0xbd, 0x9b, 0x5f, 0xe5, 0xff,
+	0x61, 0x07, 0x3f, 0x81, 0x3b, 0x33, 0xcb, 0xb1, 0x66, 0xf3, 0xd9, 0xfe, 0x26, 0xaf, 0x70, 0x7f,
+	0xbd, 0x82, 0x10, 0x8f, 0x78, 0x3c, 0xc5, 0xf8, 0x81, 0xa7, 0xe4, 0xde, 0x95, 0x22, 0x78, 0xd2,
+	0xaf, 0x59, 0x28, 0x2d, 0x4d, 0x36, 0x3c, 0x48, 0x4f, 0xc3, 0xb1, 0x6d, 0x04, 0x01, 0xdf, 0xf6,
+	0xf6, 0xf1, 0x47, 0xb7, 0x4e, 0xc3, 0x38, 0x6a, 0x31, 0x7a, 0x32, 0x19, 0x79, 0x88, 0x9f, 0x03,
+	0x08, 0x41, 0x6a, 0xd0, 0x7f, 0x74, 0xdb, 0x0a, 0x3c, 0x9f, 0xb1, 0x71, 0x13, 0x76, 0x57, 0xcc,
+	0xe8, 0xfc, 0x20, 0xb2, 0xfc, 0x20, 0x76, 0x96, 0x0a, 0xb1, 0xab, 0x29, 0xfd, 0x85, 0x92, 0xfd,
+	0x88, 0xf2, 0x45, 0xb8, 0xf3, 0x55, 0xff, 0xcb, 0xfe, 0xe0, 0x65, 0xbf, 0x92, 0xc1, 0x7b, 0x80,
+	0xd5, 0xa1, 0x4c, 0x54, 0x45, 0xd7, 0x94, 0xbe, 0x3a, 0x20, 0xba, 0x3a, 0x54, 0x5a, 0x15, 0x84,
+	0xef, 0xc3, 0x7b, 0xdd, 0x7e, 0x5b, 0xf9, 0x5a, 0x69, 0xeb, 0x6a, 0xaf, 0xdb, 0x52, 0x54, 0xb1,
+	0xb0, 0xc1, 0x12, 0x88, 0xfc, 0xe2, 0x85, 0xd2, 0x5e, 0x4a, 0xc8, 0xe2, 0x7b, 0xb0, 0x13, 0x02,
+	0x32, 0x21, 0xf2, 0x37, 0x02, 0xde, 0x64, 0x70, 0x5b, 0xd6, 0x64, 0x9d, 0xfd, 0xa8, 0x8a, 0x26,
+	0xe0, 0x1c, 0x53, 0xe1, 0x70, 0x57, 0x53, 0x88, 0xac, 0x45, 0x2a, 0x79, 0xbc, 0x03, 0xa5, 0xc1,
+	0x50, 0xeb, 0x0e, 0xfa, 0x72, 0x4f, 0x40, 0x77, 0xf0, 0x2e, 0x54, 0x86, 0x0a, 0xd1, 0x89, 0x32,
+	0xec, 0x75, 0x5b, 0xb2, 0x40, 0xef, 0x32, 0xe2, 0xb9, 0x4c, 0xba, 0xf2, 0x59, 0x4f, 0x11, 0x50,
+	0x81, 0x3b, 0x1b, 0xbc, 0xd4, 0x87, 0x32, 0xd1, 0xba, 0x4c, 0x42, 0xe0, 0x70, 0xf6, 0xdd, 0x2f,
+	0x57, 0x55, 0xf4, 0xe6, 0xaa, 0x8a, 0xfe, 0xb8, 0xaa, 0xa2, 0x9f, 0xae, 0xab, 0x99, 0x37, 0xd7,
+	0xd5, 0xcc, 0x6f, 0xd7, 0xd5, 0xcc, 0xb7, 0xf2, 0x85, 0x45, 0x5f, 0xcd, 0x47, 0x8d, 0xb1, 0x3b,
+	0x6b, 0xca, 0x9e, 0x67, 0x5b, 0x53, 0xcb, 0xf4, 0x9b, 0x17, 0xee, 0xe3, 0xd4, 0x3f, 0x1c, 0xfe,
+	0x97, 0xa6, 0x79, 0xdb, 0x7f, 0xaf, 0x51, 0x9e, 0x7f, 0x9d, 0xfc, 0x1d, 0x00, 0x00, 0xff, 0xff,
+	0xa6, 0x1b, 0x43, 0x88, 0x9e, 0x09, 0x00, 0x00,
 }
 
 func (m *StructuredValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1064,194 +921,306 @@ func (m *StructuredValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *StructuredValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Kind != nil {
-		nn1, err := m.Kind.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Kind.Size()
+			i -= size
+			if _, err := m.Kind.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn1
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *StructuredValue_NoneValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_NoneValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.NoneValue != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.NoneValue.Size()))
-		n2, err := m.NoneValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.NoneValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n2
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_Float64Value) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x59
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_Float64Value) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= 8
 	encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Float64Value))))
-	i += 8
-	return i, nil
+	i--
+	dAtA[i] = 0x59
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_Int64Value) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x60
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_Int64Value) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	i = encodeVarintStruct(dAtA, i, uint64((uint64(m.Int64Value)<<1)^uint64((m.Int64Value>>63))))
-	return i, nil
+	i--
+	dAtA[i] = 0x60
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_StringValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x6a
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_StringValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.StringValue)
+	copy(dAtA[i:], m.StringValue)
 	i = encodeVarintStruct(dAtA, i, uint64(len(m.StringValue)))
-	i += copy(dAtA[i:], m.StringValue)
-	return i, nil
+	i--
+	dAtA[i] = 0x6a
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_BoolValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x70
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_BoolValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i--
 	if m.BoolValue {
 		dAtA[i] = 1
 	} else {
 		dAtA[i] = 0
 	}
-	i++
-	return i, nil
+	i--
+	dAtA[i] = 0x70
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_TensorShapeValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_TensorShapeValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.TensorShapeValue != nil {
-		dAtA[i] = 0xfa
-		i++
-		dAtA[i] = 0x1
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.TensorShapeValue.Size()))
-		n3, err := m.TensorShapeValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TensorShapeValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0xfa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_TensorDtypeValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x80
-	i++
-	dAtA[i] = 0x2
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_TensorDtypeValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	i = encodeVarintStruct(dAtA, i, uint64(m.TensorDtypeValue))
-	return i, nil
+	i--
+	dAtA[i] = 0x2
+	i--
+	dAtA[i] = 0x80
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_TensorSpecValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_TensorSpecValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.TensorSpecValue != nil {
-		dAtA[i] = 0x8a
-		i++
-		dAtA[i] = 0x2
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.TensorSpecValue.Size()))
-		n4, err := m.TensorSpecValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TensorSpecValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x2
+		i--
+		dAtA[i] = 0x8a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_TypeSpecValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_TypeSpecValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.TypeSpecValue != nil {
-		dAtA[i] = 0x92
-		i++
-		dAtA[i] = 0x2
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.TypeSpecValue.Size()))
-		n5, err := m.TypeSpecValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TypeSpecValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0x2
+		i--
+		dAtA[i] = 0x92
 	}
-	return i, nil
+	return len(dAtA) - i, nil
+}
+func (m *StructuredValue_BoundedTensorSpecValue) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_BoundedTensorSpecValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	if m.BoundedTensorSpecValue != nil {
+		{
+			size, err := m.BoundedTensorSpecValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2
+		i--
+		dAtA[i] = 0x9a
+	}
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_ListValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_ListValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ListValue != nil {
-		dAtA[i] = 0x9a
-		i++
-		dAtA[i] = 0x3
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.ListValue.Size()))
-		n6, err := m.ListValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ListValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n6
+		i--
+		dAtA[i] = 0x3
+		i--
+		dAtA[i] = 0x9a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_TupleValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_TupleValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.TupleValue != nil {
-		dAtA[i] = 0xa2
-		i++
-		dAtA[i] = 0x3
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.TupleValue.Size()))
-		n7, err := m.TupleValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TupleValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n7
+		i--
+		dAtA[i] = 0x3
+		i--
+		dAtA[i] = 0xa2
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_DictValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_DictValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.DictValue != nil {
-		dAtA[i] = 0xaa
-		i++
-		dAtA[i] = 0x3
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.DictValue.Size()))
-		n8, err := m.DictValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.DictValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n8
+		i--
+		dAtA[i] = 0x3
+		i--
+		dAtA[i] = 0xaa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *StructuredValue_NamedTupleValue) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StructuredValue_NamedTupleValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.NamedTupleValue != nil {
-		dAtA[i] = 0xb2
-		i++
-		dAtA[i] = 0x3
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.NamedTupleValue.Size()))
-		n9, err := m.NamedTupleValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.NamedTupleValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n9
+		i--
+		dAtA[i] = 0x3
+		i--
+		dAtA[i] = 0xb2
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *NoneValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1259,17 +1228,22 @@ func (m *NoneValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *NoneValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *NoneValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ListValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1277,29 +1251,36 @@ func (m *ListValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ListValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ListValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Values) > 0 {
-		for _, msg := range m.Values {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintStruct(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Values) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Values[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStruct(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *TupleValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1307,29 +1288,36 @@ func (m *TupleValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TupleValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TupleValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Values) > 0 {
-		for _, msg := range m.Values {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintStruct(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Values) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Values[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStruct(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DictValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1337,45 +1325,48 @@ func (m *DictValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DictValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DictValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Fields) > 0 {
-		for k, _ := range m.Fields {
-			dAtA[i] = 0xa
-			i++
+		for k := range m.Fields {
 			v := m.Fields[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovStruct(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovStruct(uint64(len(k))) + msgSize
-			i = encodeVarintStruct(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintStruct(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintStruct(dAtA, i, uint64(v.Size()))
-				n10, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintStruct(dAtA, i, uint64(size))
 				}
-				i += n10
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintStruct(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintStruct(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *PairValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1383,33 +1374,41 @@ func (m *PairValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PairValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PairValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Key) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(len(m.Key)))
-		i += copy(dAtA[i:], m.Key)
-	}
 	if m.Value != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.Value.Size()))
-		n11, err := m.Value.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Value.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n11
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if len(m.Key) > 0 {
+		i -= len(m.Key)
+		copy(dAtA[i:], m.Key)
+		i = encodeVarintStruct(dAtA, i, uint64(len(m.Key)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *NamedTupleValue) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1417,35 +1416,43 @@ func (m *NamedTupleValue) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *NamedTupleValue) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *NamedTupleValue) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
 	if len(m.Values) > 0 {
-		for _, msg := range m.Values {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintStruct(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Values) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Values[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintStruct(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	return i, nil
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintStruct(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *TensorSpecProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1453,38 +1460,117 @@ func (m *TensorSpecProto) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TensorSpecProto) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorSpecProto) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
+	if m.Dtype != 0 {
+		i = encodeVarintStruct(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x18
 	}
 	if m.Shape != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.Shape.Size()))
-		n12, err := m.Shape.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Shape.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n12
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintStruct(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *BoundedTensorSpecProto) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *BoundedTensorSpecProto) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *BoundedTensorSpecProto) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.Maximum != nil {
+		{
+			size, err := m.Maximum.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Minimum != nil {
+		{
+			size, err := m.Minimum.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
 	}
 	if m.Dtype != 0 {
-		dAtA[i] = 0x18
-		i++
 		i = encodeVarintStruct(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x18
 	}
-	return i, nil
+	if m.Shape != nil {
+		{
+			size, err := m.Shape.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintStruct(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *TypeSpecProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1492,42 +1578,52 @@ func (m *TypeSpecProto) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TypeSpecProto) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TypeSpecProto) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.TypeSpecClass != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.TypeSpecClass))
+	if len(m.TypeSpecClassName) > 0 {
+		i -= len(m.TypeSpecClassName)
+		copy(dAtA[i:], m.TypeSpecClassName)
+		i = encodeVarintStruct(dAtA, i, uint64(len(m.TypeSpecClassName)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.TypeState != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(m.TypeState.Size()))
-		n13, err := m.TypeState.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TypeState.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStruct(dAtA, i, uint64(size))
 		}
-		i += n13
+		i--
+		dAtA[i] = 0x12
 	}
-	if len(m.TypeSpecClassName) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintStruct(dAtA, i, uint64(len(m.TypeSpecClassName)))
-		i += copy(dAtA[i:], m.TypeSpecClassName)
+	if m.TypeSpecClass != 0 {
+		i = encodeVarintStruct(dAtA, i, uint64(m.TypeSpecClass))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintStruct(dAtA []byte, offset int, v uint64) int {
+	offset -= sovStruct(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *StructuredValue) Size() (n int) {
 	if m == nil {
@@ -1631,6 +1727,18 @@ func (m *StructuredValue_TypeSpecValue) Size() (n int) {
 	_ = l
 	if m.TypeSpecValue != nil {
 		l = m.TypeSpecValue.Size()
+		n += 2 + l + sovStruct(uint64(l))
+	}
+	return n
+}
+func (m *StructuredValue_BoundedTensorSpecValue) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.BoundedTensorSpecValue != nil {
+		l = m.BoundedTensorSpecValue.Size()
 		n += 2 + l + sovStruct(uint64(l))
 	}
 	return n
@@ -1800,6 +1908,34 @@ func (m *TensorSpecProto) Size() (n int) {
 	return n
 }
 
+func (m *BoundedTensorSpecProto) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovStruct(uint64(l))
+	}
+	if m.Shape != nil {
+		l = m.Shape.Size()
+		n += 1 + l + sovStruct(uint64(l))
+	}
+	if m.Dtype != 0 {
+		n += 1 + sovStruct(uint64(m.Dtype))
+	}
+	if m.Minimum != nil {
+		l = m.Minimum.Size()
+		n += 1 + l + sovStruct(uint64(l))
+	}
+	if m.Maximum != nil {
+		l = m.Maximum.Size()
+		n += 1 + l + sovStruct(uint64(l))
+	}
+	return n
+}
+
 func (m *TypeSpecProto) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1821,14 +1957,7 @@ func (m *TypeSpecProto) Size() (n int) {
 }
 
 func sovStruct(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozStruct(x uint64) (n int) {
 	return sovStruct(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1848,7 +1977,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1876,7 +2005,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1885,6 +2014,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1919,7 +2051,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (uint64(b) & 0x7F) << shift
+				v |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1940,7 +2072,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1950,6 +2082,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1969,7 +2104,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1990,7 +2125,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1999,6 +2134,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2022,7 +2160,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (framework.DataType(b) & 0x7F) << shift
+				v |= framework.DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2042,7 +2180,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2051,6 +2189,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2074,7 +2215,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2083,6 +2224,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2091,6 +2235,41 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			m.Kind = &StructuredValue_TypeSpecValue{v}
+			iNdEx = postIndex
+		case 35:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BoundedTensorSpecValue", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStruct
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStruct
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			v := &BoundedTensorSpecProto{}
+			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			m.Kind = &StructuredValue_BoundedTensorSpecValue{v}
 			iNdEx = postIndex
 		case 51:
 			if wireType != 2 {
@@ -2106,7 +2285,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2115,6 +2294,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2138,7 +2320,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2147,6 +2329,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2170,7 +2355,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2179,6 +2364,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2202,7 +2390,7 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2211,6 +2399,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2227,6 +2418,9 @@ func (m *StructuredValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStruct
 			}
 			if (iNdEx + skippy) > l {
@@ -2256,7 +2450,7 @@ func (m *NoneValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2277,6 +2471,9 @@ func (m *NoneValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStruct
 			}
 			if (iNdEx + skippy) > l {
@@ -2306,7 +2503,7 @@ func (m *ListValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2334,7 +2531,7 @@ func (m *ListValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2343,6 +2540,9 @@ func (m *ListValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2358,6 +2558,9 @@ func (m *ListValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStruct
 			}
 			if (iNdEx + skippy) > l {
@@ -2387,7 +2590,7 @@ func (m *TupleValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2415,7 +2618,7 @@ func (m *TupleValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2424,6 +2627,9 @@ func (m *TupleValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2439,6 +2645,9 @@ func (m *TupleValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStruct
 			}
 			if (iNdEx + skippy) > l {
@@ -2468,7 +2677,7 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2496,7 +2705,7 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2505,6 +2714,9 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2525,7 +2737,7 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2542,7 +2754,7 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2552,6 +2764,9 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthStruct
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthStruct
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -2568,7 +2783,7 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2577,7 +2792,7 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthStruct
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthStruct
 					}
 					if postmsgIndex > l {
@@ -2614,6 +2829,9 @@ func (m *DictValue) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthStruct
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2641,7 +2859,7 @@ func (m *PairValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2669,7 +2887,7 @@ func (m *PairValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2679,6 +2897,9 @@ func (m *PairValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2698,7 +2919,7 @@ func (m *PairValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2707,6 +2928,9 @@ func (m *PairValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2724,6 +2948,9 @@ func (m *PairValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStruct
 			}
 			if (iNdEx + skippy) > l {
@@ -2753,7 +2980,7 @@ func (m *NamedTupleValue) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2781,7 +3008,7 @@ func (m *NamedTupleValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2791,6 +3018,9 @@ func (m *NamedTupleValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2810,7 +3040,7 @@ func (m *NamedTupleValue) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2819,6 +3049,9 @@ func (m *NamedTupleValue) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2834,6 +3067,9 @@ func (m *NamedTupleValue) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStruct
 			}
 			if (iNdEx + skippy) > l {
@@ -2863,7 +3099,7 @@ func (m *TensorSpecProto) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2891,7 +3127,7 @@ func (m *TensorSpecProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2901,6 +3137,9 @@ func (m *TensorSpecProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2920,7 +3159,7 @@ func (m *TensorSpecProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2929,6 +3168,9 @@ func (m *TensorSpecProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2953,7 +3195,7 @@ func (m *TensorSpecProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (framework.DataType(b) & 0x7F) << shift
+				m.Dtype |= framework.DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2965,6 +3207,221 @@ func (m *TensorSpecProto) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *BoundedTensorSpecProto) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowStruct
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: BoundedTensorSpecProto: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: BoundedTensorSpecProto: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStruct
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthStruct
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Shape", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStruct
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStruct
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Shape == nil {
+				m.Shape = &framework.TensorShapeProto{}
+			}
+			if err := m.Shape.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dtype", wireType)
+			}
+			m.Dtype = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStruct
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Dtype |= framework.DataType(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Minimum", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStruct
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStruct
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Minimum == nil {
+				m.Minimum = &framework.TensorProto{}
+			}
+			if err := m.Minimum.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Maximum", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStruct
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStruct
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Maximum == nil {
+				m.Maximum = &framework.TensorProto{}
+			}
+			if err := m.Maximum.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipStruct(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStruct
 			}
 			if (iNdEx + skippy) > l {
@@ -2994,7 +3451,7 @@ func (m *TypeSpecProto) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3022,7 +3479,7 @@ func (m *TypeSpecProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.TypeSpecClass |= (TypeSpecProto_TypeSpecClass(b) & 0x7F) << shift
+				m.TypeSpecClass |= TypeSpecProto_TypeSpecClass(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3041,7 +3498,7 @@ func (m *TypeSpecProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3050,6 +3507,9 @@ func (m *TypeSpecProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3074,7 +3534,7 @@ func (m *TypeSpecProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3084,6 +3544,9 @@ func (m *TypeSpecProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthStruct
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStruct
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3096,6 +3559,9 @@ func (m *TypeSpecProto) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthStruct
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthStruct
 			}
 			if (iNdEx + skippy) > l {
@@ -3113,6 +3579,7 @@ func (m *TypeSpecProto) Unmarshal(dAtA []byte) error {
 func skipStruct(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -3144,10 +3611,8 @@ func skipStruct(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -3164,53 +3629,34 @@ func skipStruct(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthStruct
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowStruct
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipStruct(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupStruct
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthStruct
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthStruct = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowStruct   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthStruct        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowStruct          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupStruct = fmt.Errorf("proto: unexpected end of group")
 )

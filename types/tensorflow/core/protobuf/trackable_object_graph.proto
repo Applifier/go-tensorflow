@@ -1,9 +1,9 @@
 syntax = "proto3";
-option go_package = "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf";
-
-option cc_enable_arenas = true;
 
 package tensorflow;
+
+option cc_enable_arenas = true;
+option go_package = "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf";
 
 // A TensorBundle addition which saves extra information about the objects which
 // own variables, allowing for more robust checkpoint loading into modified

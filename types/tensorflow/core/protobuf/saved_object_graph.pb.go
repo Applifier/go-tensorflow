@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type SavedObjectGraph struct {
 	// Flattened list of objects in the object graph.
@@ -47,7 +48,7 @@ func (m *SavedObjectGraph) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_SavedObjectGraph.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +118,7 @@ func (m *SavedObject) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_SavedObject.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -143,25 +144,25 @@ type isSavedObject_Kind interface {
 }
 
 type SavedObject_UserObject struct {
-	UserObject *SavedUserObject `protobuf:"bytes,4,opt,name=user_object,json=userObject,proto3,oneof"`
+	UserObject *SavedUserObject `protobuf:"bytes,4,opt,name=user_object,json=userObject,proto3,oneof" json:"user_object,omitempty"`
 }
 type SavedObject_Asset struct {
-	Asset *SavedAsset `protobuf:"bytes,5,opt,name=asset,proto3,oneof"`
+	Asset *SavedAsset `protobuf:"bytes,5,opt,name=asset,proto3,oneof" json:"asset,omitempty"`
 }
 type SavedObject_Function struct {
-	Function *SavedFunction `protobuf:"bytes,6,opt,name=function,proto3,oneof"`
+	Function *SavedFunction `protobuf:"bytes,6,opt,name=function,proto3,oneof" json:"function,omitempty"`
 }
 type SavedObject_Variable struct {
-	Variable *SavedVariable `protobuf:"bytes,7,opt,name=variable,proto3,oneof"`
+	Variable *SavedVariable `protobuf:"bytes,7,opt,name=variable,proto3,oneof" json:"variable,omitempty"`
 }
 type SavedObject_BareConcreteFunction struct {
-	BareConcreteFunction *SavedBareConcreteFunction `protobuf:"bytes,8,opt,name=bare_concrete_function,json=bareConcreteFunction,proto3,oneof"`
+	BareConcreteFunction *SavedBareConcreteFunction `protobuf:"bytes,8,opt,name=bare_concrete_function,json=bareConcreteFunction,proto3,oneof" json:"bare_concrete_function,omitempty"`
 }
 type SavedObject_Constant struct {
-	Constant *SavedConstant `protobuf:"bytes,9,opt,name=constant,proto3,oneof"`
+	Constant *SavedConstant `protobuf:"bytes,9,opt,name=constant,proto3,oneof" json:"constant,omitempty"`
 }
 type SavedObject_Resource struct {
-	Resource *SavedResource `protobuf:"bytes,10,opt,name=resource,proto3,oneof"`
+	Resource *SavedResource `protobuf:"bytes,10,opt,name=resource,proto3,oneof" json:"resource,omitempty"`
 }
 
 func (*SavedObject_UserObject) isSavedObject_Kind()           {}
@@ -242,9 +243,9 @@ func (m *SavedObject) GetResource() *SavedResource {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*SavedObject) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _SavedObject_OneofMarshaler, _SavedObject_OneofUnmarshaler, _SavedObject_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*SavedObject) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*SavedObject_UserObject)(nil),
 		(*SavedObject_Asset)(nil),
 		(*SavedObject_Function)(nil),
@@ -253,162 +254,6 @@ func (*SavedObject) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) e
 		(*SavedObject_Constant)(nil),
 		(*SavedObject_Resource)(nil),
 	}
-}
-
-func _SavedObject_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*SavedObject)
-	// kind
-	switch x := m.Kind.(type) {
-	case *SavedObject_UserObject:
-		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.UserObject); err != nil {
-			return err
-		}
-	case *SavedObject_Asset:
-		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Asset); err != nil {
-			return err
-		}
-	case *SavedObject_Function:
-		_ = b.EncodeVarint(6<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Function); err != nil {
-			return err
-		}
-	case *SavedObject_Variable:
-		_ = b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Variable); err != nil {
-			return err
-		}
-	case *SavedObject_BareConcreteFunction:
-		_ = b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.BareConcreteFunction); err != nil {
-			return err
-		}
-	case *SavedObject_Constant:
-		_ = b.EncodeVarint(9<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Constant); err != nil {
-			return err
-		}
-	case *SavedObject_Resource:
-		_ = b.EncodeVarint(10<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Resource); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("SavedObject.Kind has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _SavedObject_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*SavedObject)
-	switch tag {
-	case 4: // kind.user_object
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SavedUserObject)
-		err := b.DecodeMessage(msg)
-		m.Kind = &SavedObject_UserObject{msg}
-		return true, err
-	case 5: // kind.asset
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SavedAsset)
-		err := b.DecodeMessage(msg)
-		m.Kind = &SavedObject_Asset{msg}
-		return true, err
-	case 6: // kind.function
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SavedFunction)
-		err := b.DecodeMessage(msg)
-		m.Kind = &SavedObject_Function{msg}
-		return true, err
-	case 7: // kind.variable
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SavedVariable)
-		err := b.DecodeMessage(msg)
-		m.Kind = &SavedObject_Variable{msg}
-		return true, err
-	case 8: // kind.bare_concrete_function
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SavedBareConcreteFunction)
-		err := b.DecodeMessage(msg)
-		m.Kind = &SavedObject_BareConcreteFunction{msg}
-		return true, err
-	case 9: // kind.constant
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SavedConstant)
-		err := b.DecodeMessage(msg)
-		m.Kind = &SavedObject_Constant{msg}
-		return true, err
-	case 10: // kind.resource
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SavedResource)
-		err := b.DecodeMessage(msg)
-		m.Kind = &SavedObject_Resource{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _SavedObject_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*SavedObject)
-	// kind
-	switch x := m.Kind.(type) {
-	case *SavedObject_UserObject:
-		s := proto.Size(x.UserObject)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SavedObject_Asset:
-		s := proto.Size(x.Asset)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SavedObject_Function:
-		s := proto.Size(x.Function)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SavedObject_Variable:
-		s := proto.Size(x.Variable)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SavedObject_BareConcreteFunction:
-		s := proto.Size(x.BareConcreteFunction)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SavedObject_Constant:
-		s := proto.Size(x.Constant)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *SavedObject_Resource:
-		s := proto.Size(x.Resource)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 // A SavedUserObject is an object (in the object-oriented language of the
@@ -440,7 +285,7 @@ func (m *SavedUserObject) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_SavedUserObject.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -507,7 +352,7 @@ func (m *SavedAsset) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_SavedAsset.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -553,7 +398,7 @@ func (m *SavedFunction) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_SavedFunction.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -617,7 +462,7 @@ func (m *SavedConcreteFunction) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return xxx_messageInfo_SavedConcreteFunction.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -680,7 +525,7 @@ func (m *SavedBareConcreteFunction) XXX_Marshal(b []byte, deterministic bool) ([
 		return xxx_messageInfo_SavedBareConcreteFunction.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -739,7 +584,7 @@ func (m *SavedConstant) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_SavedConstant.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -790,7 +635,7 @@ func (m *SavedVariable) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_SavedVariable.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -876,7 +721,7 @@ func (m *FunctionSpec) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_FunctionSpec.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -940,7 +785,7 @@ func (m *SavedResource) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_SavedResource.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -987,82 +832,82 @@ func init() {
 
 var fileDescriptor_4f63c49021beb5aa = []byte{
 	// 1120 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0x4f, 0x8f, 0xdb, 0xc4,
-	0x1b, 0x8e, 0x93, 0x78, 0x9b, 0xbc, 0x69, 0xbb, 0xe9, 0x68, 0x7f, 0xfb, 0x73, 0xb7, 0x25, 0xb4,
-	0x41, 0x15, 0x2b, 0x60, 0x13, 0xd8, 0x82, 0x8a, 0x90, 0x8a, 0x9a, 0x76, 0x59, 0xb6, 0x45, 0x85,
-	0x6a, 0x52, 0x7a, 0x40, 0x80, 0x35, 0xb1, 0x5f, 0x27, 0x66, 0x1d, 0x8f, 0x35, 0x33, 0xde, 0x25,
-	0x95, 0x10, 0xdf, 0x00, 0xf1, 0x2d, 0xf8, 0x00, 0x5c, 0x39, 0x70, 0xe4, 0xd8, 0x23, 0x47, 0xb4,
-	0xfb, 0x25, 0x38, 0x22, 0x8f, 0xed, 0xc4, 0xf9, 0xa7, 0x85, 0x9b, 0xe7, 0x9d, 0xe7, 0x79, 0xe6,
-	0x9d, 0xf7, 0xdf, 0x18, 0xde, 0x53, 0x18, 0x4a, 0x2e, 0xbc, 0x80, 0x9f, 0x76, 0x1d, 0x2e, 0xb0,
-	0x1b, 0x09, 0xae, 0xf8, 0x20, 0xf6, 0xba, 0x92, 0x9d, 0xa0, 0x6b, 0xf3, 0xc1, 0x77, 0xe8, 0x28,
-	0x7b, 0x28, 0x58, 0x34, 0xea, 0xe8, 0x3d, 0x02, 0x33, 0xca, 0xce, 0x07, 0x6b, 0xe9, 0x4a, 0x30,
-	0xe7, 0x98, 0x0d, 0x02, 0x5c, 0x21, 0xb1, 0x73, 0x67, 0xfd, 0xa9, 0x4a, 0xc4, 0x8e, 0xca, 0x60,
-	0xef, 0x2c, 0xc2, 0x3c, 0xc1, 0xc6, 0x78, 0xca, 0xc5, 0x71, 0x37, 0xdd, 0xb1, 0xe5, 0x88, 0x45,
-	0xb8, 0x4e, 0xb4, 0x80, 0x9e, 0x44, 0x28, 0x33, 0xd8, 0xee, 0x7a, 0xd8, 0x09, 0x0a, 0xe9, 0xf3,
-	0xf0, 0xdf, 0x20, 0x99, 0xf0, 0x93, 0xcb, 0xa5, 0xc8, 0xf6, 0x4f, 0x65, 0x68, 0xf6, 0x93, 0x78,
-	0x7d, 0xa1, 0xef, 0xfa, 0x69, 0x72, 0x55, 0xb2, 0x07, 0x66, 0xc8, 0x5d, 0x94, 0x96, 0x71, 0xab,
-	0xb2, 0xdb, 0xd8, 0xff, 0x7f, 0x67, 0x26, 0xd7, 0x29, 0x80, 0x69, 0x8a, 0x22, 0x03, 0x20, 0x0e,
-	0x0f, 0x1d, 0x81, 0x0a, 0x6d, 0x2f, 0x0e, 0x1d, 0x95, 0x78, 0x62, 0x95, 0x35, 0xf7, 0xee, 0x1a,
-	0xae, 0x3e, 0xa8, 0xf3, 0x28, 0xa3, 0x1d, 0xe6, 0xac, 0x4f, 0x42, 0x25, 0x26, 0xf4, 0x9a, 0xb3,
-	0x68, 0xdf, 0x19, 0xc2, 0xf6, 0x6a, 0x30, 0x69, 0x42, 0xe5, 0x18, 0x27, 0x96, 0x71, 0xcb, 0xd8,
-	0xad, 0xd3, 0xe4, 0x93, 0xdc, 0x03, 0xf3, 0x84, 0x05, 0x31, 0x5a, 0xe5, 0x5b, 0xc6, 0x6e, 0x63,
-	0xff, 0xf6, 0x92, 0x0b, 0x8b, 0x4a, 0x34, 0xc5, 0x7f, 0x54, 0xfe, 0xd0, 0x68, 0xff, 0x62, 0x42,
-	0xa3, 0xe0, 0x27, 0xf9, 0x1a, 0x6a, 0xce, 0xc8, 0x0f, 0x5c, 0x81, 0x61, 0x16, 0x8e, 0x07, 0x45,
-	0xbd, 0xe7, 0x79, 0xb1, 0x14, 0xaf, 0xb5, 0x60, 0xec, 0x64, 0xe1, 0x42, 0x0f, 0x05, 0x86, 0x0e,
-	0xd2, 0xa9, 0x22, 0x19, 0xc3, 0x55, 0x19, 0x70, 0x65, 0xe7, 0x59, 0x91, 0x56, 0x45, 0x9f, 0x71,
-	0xf8, 0x9f, 0xcf, 0xe8, 0x07, 0x5c, 0xbd, 0xc8, 0x54, 0x66, 0x27, 0x5d, 0x91, 0x05, 0xb3, 0x24,
-	0x1f, 0x43, 0x23, 0x96, 0x28, 0xb2, 0xc2, 0xb6, 0xaa, 0x3a, 0x3e, 0x37, 0x96, 0xe2, 0xf3, 0xa5,
-	0x44, 0x91, 0xca, 0x1e, 0x95, 0x28, 0xc4, 0xd3, 0x15, 0xe9, 0x80, 0xc9, 0xa4, 0x44, 0x65, 0x99,
-	0x9a, 0xb9, 0xbd, 0xc4, 0xec, 0x25, 0xbb, 0x47, 0x25, 0x9a, 0xc2, 0xc8, 0x3d, 0xa8, 0xe5, 0x05,
-	0x61, 0x6d, 0x68, 0xca, 0xf5, 0x25, 0x4a, 0x9e, 0x84, 0xa3, 0x12, 0x9d, 0x82, 0x13, 0x62, 0x1e,
-	0x12, 0xeb, 0xd2, 0x1a, 0x62, 0x7e, 0xad, 0x84, 0x98, 0x83, 0xc9, 0x37, 0xb0, 0x3d, 0x60, 0x02,
-	0xed, 0xa5, 0x82, 0xb4, 0x6a, 0x5a, 0xe6, 0xce, 0x92, 0xcc, 0x43, 0x26, 0x70, 0xb1, 0x20, 0x8e,
-	0x4a, 0x74, 0x6b, 0xb0, 0xc2, 0x9e, 0xf8, 0xe5, 0xf0, 0x50, 0x2a, 0x16, 0x2a, 0xab, 0xbe, 0xc6,
-	0xaf, 0x47, 0x19, 0x20, 0xf1, 0x2b, 0x07, 0x27, 0x44, 0x81, 0x92, 0xc7, 0xc2, 0x41, 0x0b, 0xd6,
-	0x10, 0x69, 0x06, 0x48, 0x88, 0x39, 0xf8, 0xe1, 0x06, 0x54, 0x8f, 0xfd, 0xd0, 0x7d, 0x52, 0xad,
-	0x95, 0x9b, 0x15, 0x0a, 0x4c, 0x29, 0xe1, 0x0f, 0x62, 0x85, 0xb2, 0xfd, 0x23, 0x6c, 0x2e, 0x64,
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0x4f, 0x8f, 0xdb, 0x44,
+	0x14, 0x8f, 0x93, 0x78, 0x9b, 0xbc, 0xb4, 0xdd, 0x74, 0xb4, 0x2c, 0xee, 0xb6, 0x84, 0x36, 0xa8,
+	0x62, 0x05, 0x6c, 0x02, 0x5b, 0x50, 0x11, 0x52, 0x51, 0xd3, 0x2e, 0xcb, 0xb6, 0xa8, 0x50, 0x4d,
+	0x4a, 0x0f, 0x08, 0xb0, 0x26, 0xf6, 0x73, 0x62, 0xd6, 0xf1, 0x58, 0x33, 0xe3, 0x5d, 0x52, 0x09,
+	0xf1, 0x0d, 0x10, 0xdf, 0x82, 0x0f, 0xc0, 0x95, 0x03, 0x47, 0x8e, 0x3d, 0x72, 0x44, 0xdd, 0x2f,
+	0xc1, 0x11, 0x79, 0x6c, 0x27, 0xce, 0x3f, 0x16, 0x6e, 0x9e, 0xf7, 0x7e, 0xbf, 0xdf, 0xbc, 0x79,
+	0xf3, 0xde, 0xf3, 0xc0, 0x7b, 0x0a, 0x43, 0xc9, 0x85, 0x17, 0xf0, 0xd3, 0xae, 0xc3, 0x05, 0x76,
+	0x23, 0xc1, 0x15, 0x1f, 0xc4, 0x5e, 0x57, 0xb2, 0x13, 0x74, 0x6d, 0x3e, 0xf8, 0x0e, 0x1d, 0x65,
+	0x0f, 0x05, 0x8b, 0x46, 0x1d, 0xed, 0x23, 0x30, 0xa3, 0xec, 0xbc, 0xb3, 0x48, 0xf7, 0x04, 0x1b,
+	0xe3, 0x29, 0x17, 0xc7, 0xdd, 0xd4, 0x63, 0xcb, 0x11, 0x8b, 0x30, 0x65, 0xee, 0xdc, 0xfa, 0x17,
+	0xf4, 0x24, 0x42, 0x99, 0xc1, 0x76, 0xd7, 0xc3, 0x4e, 0x98, 0xf0, 0xd9, 0x20, 0xc0, 0xff, 0x80,
+	0x44, 0x21, 0x7d, 0x1e, 0xca, 0x75, 0x5b, 0xcf, 0xce, 0xa9, 0x44, 0xec, 0xa8, 0x0c, 0xf6, 0xc1,
+	0x5a, 0x98, 0x12, 0xcc, 0x39, 0x4e, 0xb6, 0x5e, 0x91, 0x92, 0xf6, 0x4f, 0x65, 0x68, 0xf6, 0x93,
+	0x7c, 0x7d, 0xa1, 0x7d, 0x9f, 0x26, 0x2e, 0xb2, 0x07, 0x66, 0xc8, 0x5d, 0x94, 0x96, 0x71, 0xa3,
+	0xb2, 0xdb, 0xd8, 0x7f, 0xb5, 0x33, 0xd3, 0xee, 0x14, 0xc0, 0x34, 0x45, 0x91, 0x01, 0x10, 0x87,
+	0x87, 0x8e, 0x40, 0x85, 0xb6, 0x17, 0x87, 0x8e, 0x4a, 0xa2, 0xb7, 0xca, 0x9a, 0x7b, 0x7b, 0x0d,
+	0x57, 0x6f, 0xd4, 0x79, 0x90, 0xd1, 0x0e, 0x73, 0xd6, 0x27, 0xa1, 0x12, 0x13, 0x7a, 0xc5, 0x59,
+	0xb4, 0xef, 0x0c, 0x61, 0x7b, 0x35, 0x98, 0x34, 0xa1, 0x72, 0x8c, 0x13, 0xcb, 0xb8, 0x61, 0xec,
+	0xd6, 0x69, 0xf2, 0x49, 0xee, 0x80, 0x79, 0xc2, 0x82, 0x18, 0xad, 0xf2, 0x0d, 0x63, 0xb7, 0xb1,
+	0x7f, 0x73, 0x29, 0x84, 0x45, 0x25, 0x9a, 0xe2, 0x3f, 0x2a, 0x7f, 0x68, 0xb4, 0x7f, 0x31, 0xa1,
+	0x51, 0x88, 0x93, 0x7c, 0x0d, 0x35, 0x67, 0xe4, 0x07, 0xae, 0xc0, 0x30, 0x4b, 0xc7, 0xbd, 0xa2,
+	0xde, 0xd3, 0x3c, 0xb9, 0xc5, 0x63, 0x2d, 0x18, 0x3b, 0x59, 0xba, 0xd0, 0x43, 0x81, 0xa1, 0x83,
+	0x74, 0xaa, 0x48, 0xc6, 0x70, 0x59, 0x06, 0x5c, 0xd9, 0x79, 0x75, 0x48, 0xab, 0xa2, 0xf7, 0x38,
+	0xfc, 0xdf, 0x7b, 0xf4, 0x03, 0xae, 0x9e, 0x65, 0x2a, 0xb3, 0x9d, 0x2e, 0xc9, 0x82, 0x59, 0x92,
+	0x8f, 0xa1, 0x11, 0x4b, 0x14, 0x59, 0x21, 0x58, 0x55, 0x9d, 0x9f, 0x6b, 0x4b, 0xf9, 0xf9, 0x52,
+	0xa2, 0x48, 0x65, 0x8f, 0x4a, 0x14, 0xe2, 0xe9, 0x8a, 0x74, 0xc0, 0x64, 0x52, 0xa2, 0xb2, 0x4c,
+	0xcd, 0xdc, 0x5e, 0x62, 0xf6, 0x12, 0xef, 0x51, 0x89, 0xa6, 0x30, 0x72, 0x07, 0x6a, 0x79, 0x41,
+	0x58, 0x1b, 0x9a, 0x72, 0x75, 0x89, 0x92, 0x5f, 0xc2, 0x51, 0x89, 0x4e, 0xc1, 0x09, 0x31, 0x4f,
+	0x89, 0x75, 0x61, 0x0d, 0x31, 0x3f, 0x56, 0x42, 0xcc, 0xc1, 0xe4, 0x1b, 0xd8, 0x1e, 0x30, 0x81,
+	0xf6, 0x52, 0x41, 0x5a, 0x35, 0x2d, 0x73, 0x6b, 0x49, 0xe6, 0x3e, 0x13, 0xb8, 0x58, 0x10, 0x47,
+	0x25, 0xba, 0x35, 0x58, 0x61, 0x4f, 0xe2, 0x72, 0x78, 0x28, 0x15, 0x0b, 0x95, 0x55, 0x5f, 0x13,
+	0xd7, 0x83, 0x0c, 0x90, 0xc4, 0x95, 0x83, 0x13, 0xa2, 0x40, 0xc9, 0x63, 0xe1, 0xa0, 0x05, 0x6b,
+	0x88, 0x34, 0x03, 0x24, 0xc4, 0x1c, 0x7c, 0x7f, 0x03, 0xaa, 0xc7, 0x7e, 0xe8, 0x3e, 0xaa, 0xd6,
+	0xca, 0xcd, 0x0a, 0x05, 0xa6, 0x94, 0xf0, 0x07, 0xb1, 0x42, 0xd9, 0xfe, 0x11, 0x36, 0x17, 0x6e,
 	0x8b, 0xb4, 0x00, 0x7c, 0x17, 0x43, 0xe5, 0x7b, 0x3e, 0x8a, 0xac, 0x25, 0x0a, 0x16, 0xf2, 0x2e,
-	0x5c, 0xca, 0x26, 0x45, 0xd6, 0x1b, 0x73, 0x19, 0x7c, 0x91, 0x6e, 0x1d, 0xa0, 0x47, 0x73, 0x18,
-	0xd9, 0x81, 0xda, 0x18, 0x15, 0x73, 0x99, 0x62, 0x56, 0x45, 0xeb, 0x4d, 0xd7, 0xed, 0xfb, 0x00,
-	0xb3, 0xa4, 0x93, 0x2e, 0x6c, 0xe9, 0xa4, 0xdb, 0x9e, 0x1f, 0xa0, 0xed, 0xa2, 0x67, 0xfb, 0xa1,
-	0x8b, 0xdf, 0x6b, 0x2f, 0x4c, 0x7a, 0x4d, 0xef, 0x1d, 0xfa, 0x01, 0x1e, 0xa0, 0xf7, 0x38, 0xd9,
-	0x68, 0xff, 0x00, 0x57, 0xe6, 0x0a, 0x80, 0xec, 0xad, 0x9c, 0x23, 0x49, 0xd3, 0xd5, 0x57, 0x8c,
-	0x04, 0x72, 0x1f, 0xae, 0xe4, 0x28, 0x5b, 0x46, 0xe8, 0x64, 0x57, 0xb2, 0x8a, 0x57, 0xca, 0xd1,
-	0xfd, 0x08, 0x1d, 0x7a, 0xd9, 0x2b, 0xac, 0xda, 0xe7, 0x06, 0xfc, 0x6f, 0xe5, 0x34, 0x20, 0xb7,
-	0xe1, 0xf2, 0x80, 0xc7, 0xa1, 0x6b, 0xfb, 0x61, 0x14, 0xab, 0x74, 0x92, 0x99, 0xb4, 0xa1, 0x6d,
-	0x8f, 0xb5, 0x89, 0xd8, 0xf0, 0x9a, 0xc3, 0x42, 0x1e, 0xfa, 0x0e, 0x0b, 0xfc, 0x97, 0x98, 0x41,
-	0x6d, 0xe9, 0x0f, 0x43, 0xa6, 0x62, 0x81, 0x3a, 0x56, 0x8b, 0xad, 0xa5, 0x1f, 0x88, 0x58, 0x24,
-	0x95, 0x1b, 0xc4, 0x48, 0x6f, 0xcc, 0x29, 0x68, 0xe1, 0x7e, 0xce, 0x27, 0x87, 0xd0, 0xe4, 0xb1,
-	0x9a, 0xd7, 0xac, 0x5e, 0xac, 0xb9, 0x99, 0x92, 0xa6, 0x3a, 0xed, 0xdf, 0x0d, 0xb8, 0xbe, 0xb6,
-	0xcc, 0xc9, 0xfb, 0xb0, 0xbd, 0x14, 0x71, 0x3b, 0x64, 0x63, 0xcc, 0x6a, 0x67, 0x6b, 0x31, 0xea,
-	0x9f, 0xb3, 0x31, 0x92, 0xb7, 0xe1, 0x1a, 0x13, 0xc3, 0x78, 0x8c, 0xa1, 0xb2, 0x8f, 0x71, 0x72,
-	0xca, 0x85, 0x9b, 0x06, 0xa9, 0x4e, 0x9b, 0xf9, 0xc6, 0x67, 0x99, 0x9d, 0x3c, 0x80, 0x9b, 0x2c,
-	0x08, 0xf8, 0x29, 0xba, 0x76, 0xc4, 0xa5, 0x9f, 0x88, 0xb0, 0xc0, 0xce, 0x61, 0x52, 0x07, 0xaa,
-	0x42, 0x77, 0x32, 0xcc, 0xb3, 0x29, 0xa4, 0x97, 0x23, 0xda, 0x7b, 0x59, 0x9d, 0xe4, 0x7d, 0x45,
-	0x6e, 0x42, 0x9d, 0x47, 0x28, 0x98, 0x6e, 0xeb, 0xd4, 0xd1, 0x99, 0xa1, 0xfd, 0x6b, 0x39, 0xc3,
-	0xe7, 0xf3, 0x81, 0xbc, 0x05, 0xa6, 0x9b, 0xbc, 0xa3, 0x1a, 0x7b, 0x75, 0x7f, 0xab, 0x18, 0xc0,
-	0x03, 0xa6, 0xd8, 0xf3, 0x49, 0x84, 0x34, 0x85, 0x90, 0x7d, 0x30, 0xf5, 0xcb, 0x9c, 0x15, 0xd3,
-	0xcd, 0xb9, 0x39, 0xac, 0x3f, 0xfb, 0xc9, 0xf6, 0xb3, 0xe4, 0xf1, 0xa4, 0x29, 0x34, 0xf1, 0x47,
-	0x09, 0xe6, 0x87, 0x7a, 0x5a, 0x25, 0xf7, 0xa9, 0xd1, 0x99, 0x81, 0x3c, 0x85, 0x4d, 0x39, 0x09,
-	0x9d, 0x91, 0xe0, 0xa1, 0xff, 0x32, 0xf5, 0xb9, 0xaa, 0xfd, 0x78, 0x63, 0xae, 0xf7, 0x32, 0x67,
-	0xfb, 0xf3, 0x50, 0xba, 0xc8, 0x25, 0x3d, 0x68, 0xb0, 0xe1, 0x50, 0xe0, 0x30, 0x95, 0x32, 0xb5,
-	0xd4, 0xeb, 0xab, 0xa4, 0x7a, 0x33, 0x18, 0x2d, 0x72, 0x08, 0x81, 0xaa, 0xce, 0xf1, 0x86, 0x0e,
-	0x9d, 0xfe, 0x6e, 0xff, 0x66, 0xc0, 0xe5, 0x62, 0xb3, 0x90, 0xfb, 0xd0, 0xf0, 0xe2, 0x20, 0x60,
-	0x62, 0xa8, 0x7b, 0xcb, 0xb8, 0xb8, 0xf6, 0x8a, 0x78, 0x72, 0x03, 0xea, 0xbe, 0xb4, 0xc7, 0xa8,
-	0x46, 0xdc, 0xd5, 0xb1, 0xac, 0xd1, 0x9a, 0x2f, 0x9f, 0xea, 0x35, 0x39, 0x80, 0xcd, 0xc5, 0x7e,
-	0x31, 0x2f, 0xd6, 0xbf, 0xea, 0xcf, 0xb5, 0xc8, 0x93, 0x6a, 0xad, 0xd2, 0xac, 0x3e, 0xa9, 0xd6,
-	0xaa, 0x4d, 0xb3, 0xfd, 0x66, 0x96, 0xf3, 0x7c, 0x84, 0x92, 0x6d, 0xd8, 0x70, 0xf1, 0xc4, 0x77,
-	0xf2, 0x4a, 0xce, 0x56, 0x0f, 0xbf, 0xfd, 0xe3, 0xac, 0x65, 0xbc, 0x3a, 0x6b, 0x19, 0x7f, 0x9d,
-	0xb5, 0x8c, 0x9f, 0xcf, 0x5b, 0xa5, 0x57, 0xe7, 0xad, 0xd2, 0x9f, 0xe7, 0xad, 0xd2, 0x57, 0xbd,
-	0xa1, 0xaf, 0x46, 0xf1, 0xa0, 0xe3, 0xf0, 0x71, 0xb7, 0x17, 0x45, 0x81, 0x9e, 0x98, 0xdd, 0x21,
-	0xdf, 0x2b, 0xfc, 0x4b, 0xe9, 0xbf, 0xb1, 0xee, 0xba, 0x5f, 0xc0, 0xbf, 0x0d, 0x63, 0xb0, 0xa1,
-	0x17, 0x77, 0xff, 0x09, 0x00, 0x00, 0xff, 0xff, 0xd3, 0x71, 0x63, 0x40, 0x9e, 0x0a, 0x00, 0x00,
+	0x5c, 0xc8, 0xa6, 0x4b, 0xd6, 0x1b, 0x73, 0x37, 0xf8, 0x2c, 0x75, 0x1d, 0xa0, 0x47, 0x73, 0x18,
+	0xd9, 0x81, 0xda, 0x18, 0x15, 0x73, 0x99, 0x62, 0x56, 0x45, 0xeb, 0x4d, 0xd7, 0xed, 0xbb, 0x00,
+	0xb3, 0x4b, 0x27, 0x5d, 0xd8, 0xd2, 0x97, 0x6e, 0x7b, 0x7e, 0x80, 0xb6, 0x8b, 0x9e, 0xed, 0x87,
+	0x2e, 0x7e, 0xaf, 0xa3, 0x30, 0xe9, 0x15, 0xed, 0x3b, 0xf4, 0x03, 0x3c, 0x40, 0xef, 0x61, 0xe2,
+	0x68, 0xff, 0x00, 0x97, 0xe6, 0x0a, 0x80, 0xec, 0xad, 0x9c, 0x23, 0x49, 0xd3, 0xd5, 0x57, 0x8c,
+	0x04, 0x72, 0x17, 0x2e, 0xe5, 0x28, 0x5b, 0x46, 0xe8, 0x64, 0x47, 0xb2, 0x8a, 0x47, 0xca, 0xd1,
+	0xfd, 0x08, 0x1d, 0x7a, 0xd1, 0x2b, 0xac, 0xda, 0x67, 0x06, 0xbc, 0xb2, 0x72, 0x1a, 0x90, 0x9b,
+	0x70, 0x71, 0xc0, 0xe3, 0xd0, 0xb5, 0xfd, 0x30, 0x8a, 0x55, 0x3a, 0xc9, 0x4c, 0xda, 0xd0, 0xb6,
+	0x87, 0xda, 0x44, 0x6c, 0x78, 0xcd, 0x61, 0x21, 0x0f, 0x7d, 0x87, 0x05, 0xfe, 0x73, 0xcc, 0xa0,
+	0xb6, 0xf4, 0x87, 0x21, 0x53, 0xb1, 0x40, 0x9d, 0xab, 0xc5, 0xd6, 0xd2, 0xe3, 0x3a, 0x16, 0x49,
+	0xe5, 0x06, 0x31, 0xd2, 0x6b, 0x73, 0x0a, 0x5a, 0xb8, 0x9f, 0xf3, 0xc9, 0x21, 0x34, 0x79, 0xac,
+	0xe6, 0x35, 0xab, 0xe7, 0x6b, 0x6e, 0xa6, 0xa4, 0xa9, 0x4e, 0xfb, 0x77, 0x03, 0xae, 0xae, 0x2d,
+	0x73, 0xf2, 0x3e, 0x6c, 0x2f, 0x65, 0xdc, 0x0e, 0xd9, 0x18, 0xb3, 0xda, 0xd9, 0x5a, 0xcc, 0xfa,
+	0xe7, 0x6c, 0x8c, 0xe4, 0x6d, 0xb8, 0xc2, 0xc4, 0x30, 0x1e, 0x63, 0xa8, 0xec, 0x63, 0x9c, 0x9c,
+	0x72, 0xe1, 0xa6, 0x49, 0xaa, 0xd3, 0x66, 0xee, 0xf8, 0x2c, 0xb3, 0x93, 0x7b, 0x70, 0x9d, 0x05,
+	0x01, 0x3f, 0x45, 0xd7, 0x8e, 0xb8, 0xf4, 0x13, 0x11, 0x16, 0xd8, 0x39, 0x4c, 0xea, 0x44, 0x55,
+	0xe8, 0x4e, 0x86, 0x79, 0x32, 0x85, 0xf4, 0x72, 0x44, 0x7b, 0x2f, 0xab, 0x93, 0xbc, 0xaf, 0xc8,
+	0x75, 0xa8, 0xf3, 0x08, 0x05, 0xd3, 0x6d, 0x9d, 0x06, 0x3a, 0x33, 0xb4, 0x7f, 0x2d, 0x67, 0xf8,
+	0x7c, 0x3e, 0x90, 0xb7, 0xc0, 0x74, 0x93, 0xbf, 0xb4, 0xc6, 0x5e, 0xde, 0xdf, 0x2a, 0x26, 0xf0,
+	0x80, 0x29, 0xf6, 0x74, 0x12, 0x21, 0x4d, 0x21, 0x64, 0x1f, 0x4c, 0xfd, 0xdf, 0xcf, 0x8a, 0xe9,
+	0xfa, 0xdc, 0x1c, 0xd6, 0x9f, 0xfd, 0xc4, 0xfd, 0x24, 0xf9, 0x79, 0xd2, 0x14, 0x9a, 0xc4, 0xa3,
+	0x04, 0xf3, 0x43, 0x3d, 0xad, 0x92, 0xf3, 0xd4, 0xe8, 0xcc, 0x40, 0x1e, 0xc3, 0xa6, 0x9c, 0x84,
+	0xce, 0x48, 0xf0, 0xd0, 0x7f, 0x9e, 0xc6, 0x5c, 0xd5, 0x71, 0xbc, 0x31, 0xd7, 0x7b, 0x59, 0xb0,
+	0xfd, 0x79, 0x28, 0x5d, 0xe4, 0x92, 0x1e, 0x34, 0xd8, 0x70, 0x28, 0x70, 0x98, 0x4a, 0x99, 0x5a,
+	0xea, 0xf5, 0x55, 0x52, 0xbd, 0x19, 0x8c, 0x16, 0x39, 0x84, 0x40, 0x55, 0xdf, 0xf1, 0x86, 0x4e,
+	0x9d, 0xfe, 0x6e, 0xff, 0x66, 0xc0, 0xc5, 0x62, 0xb3, 0x90, 0xbb, 0xd0, 0xf0, 0xe2, 0x20, 0x60,
+	0x62, 0xa8, 0x7b, 0xcb, 0x38, 0xbf, 0xf6, 0x8a, 0x78, 0x72, 0x0d, 0xea, 0xbe, 0xb4, 0xc7, 0xa8,
+	0x46, 0xdc, 0xd5, 0xb9, 0xac, 0xd1, 0x9a, 0x2f, 0x1f, 0xeb, 0x35, 0x39, 0x80, 0xcd, 0xc5, 0x7e,
+	0x31, 0xcf, 0xd7, 0xbf, 0xec, 0xcf, 0xb5, 0xc8, 0xa3, 0x6a, 0xad, 0xd2, 0xac, 0x3e, 0xaa, 0xd6,
+	0xaa, 0x4d, 0xb3, 0xfd, 0x66, 0x76, 0xe7, 0xf9, 0x08, 0x25, 0xdb, 0xb0, 0xe1, 0xe2, 0x89, 0xef,
+	0xe4, 0x95, 0x9c, 0xad, 0xee, 0x7f, 0xfb, 0xc7, 0xcb, 0x96, 0xf1, 0xe2, 0x65, 0xcb, 0xf8, 0xeb,
+	0x65, 0xcb, 0xf8, 0xf9, 0xac, 0x55, 0x7a, 0x71, 0xd6, 0x2a, 0xfd, 0x79, 0xd6, 0x2a, 0x7d, 0xd5,
+	0x1b, 0xfa, 0x6a, 0x14, 0x0f, 0x3a, 0x0e, 0x1f, 0x77, 0x7b, 0x51, 0x14, 0xe8, 0x89, 0xd9, 0x1d,
+	0xf2, 0xbd, 0xc2, 0xc3, 0x4a, 0xbf, 0xf5, 0xba, 0xeb, 0x5e, 0x5a, 0x7f, 0x1b, 0xc6, 0x60, 0x43,
+	0x2f, 0x6e, 0xff, 0x13, 0x00, 0x00, 0xff, 0xff, 0xb2, 0xac, 0x70, 0x21, 0x9e, 0x0a, 0x00, 0x00,
 }
 
 func (m *SavedObjectGraph) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1070,57 +915,62 @@ func (m *SavedObjectGraph) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedObjectGraph) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObjectGraph) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Nodes) > 0 {
-		for _, msg := range m.Nodes {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.ConcreteFunctions) > 0 {
+		for k := range m.ConcreteFunctions {
+			v := m.ConcreteFunctions[k]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
 			}
-			i += n
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	if len(m.ConcreteFunctions) > 0 {
-		for k, _ := range m.ConcreteFunctions {
-			dAtA[i] = 0x12
-			i++
-			v := m.ConcreteFunctions[k]
-			msgSize := 0
-			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovSavedObjectGraph(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovSavedObjectGraph(uint64(len(k))) + msgSize
-			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintSavedObjectGraph(dAtA, i, uint64(v.Size()))
-				n1, err := v.MarshalTo(dAtA[i:])
+	if len(m.Nodes) > 0 {
+		for iNdEx := len(m.Nodes) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Nodes[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
-				i += n1
+				i -= size
+				i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 			}
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedObject) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1128,146 +978,206 @@ func (m *SavedObject) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedObject) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObject) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Children) > 0 {
-		for _, msg := range m.Children {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
+	if m.Kind != nil {
+		{
+			size := m.Kind.Size()
+			i -= size
+			if _, err := m.Kind.MarshalTo(dAtA[i:]); err != nil {
 				return 0, err
 			}
-			i += n
 		}
 	}
 	if len(m.SlotVariables) > 0 {
-		for _, msg := range m.SlotVariables {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.SlotVariables) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.SlotVariables[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x1a
 		}
 	}
-	if m.Kind != nil {
-		nn2, err := m.Kind.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.Children) > 0 {
+		for iNdEx := len(m.Children) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Children[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
 		}
-		i += nn2
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedObject_UserObject) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObject_UserObject) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.UserObject != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.UserObject.Size()))
-		n3, err := m.UserObject.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.UserObject.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n3
+		i--
+		dAtA[i] = 0x22
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *SavedObject_Asset) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObject_Asset) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Asset != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Asset.Size()))
-		n4, err := m.Asset.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Asset.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *SavedObject_Function) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObject_Function) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Function != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Function.Size()))
-		n5, err := m.Function.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Function.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0x32
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *SavedObject_Variable) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObject_Variable) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Variable != nil {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Variable.Size()))
-		n6, err := m.Variable.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Variable.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n6
+		i--
+		dAtA[i] = 0x3a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *SavedObject_BareConcreteFunction) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObject_BareConcreteFunction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.BareConcreteFunction != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.BareConcreteFunction.Size()))
-		n7, err := m.BareConcreteFunction.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.BareConcreteFunction.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n7
+		i--
+		dAtA[i] = 0x42
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *SavedObject_Constant) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObject_Constant) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Constant != nil {
-		dAtA[i] = 0x4a
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Constant.Size()))
-		n8, err := m.Constant.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Constant.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n8
+		i--
+		dAtA[i] = 0x4a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *SavedObject_Resource) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedObject_Resource) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Resource != nil {
-		dAtA[i] = 0x52
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Resource.Size()))
-		n9, err := m.Resource.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Resource.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n9
+		i--
+		dAtA[i] = 0x52
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *SavedUserObject) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1275,39 +1185,48 @@ func (m *SavedUserObject) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedUserObject) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedUserObject) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Identifier) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.Identifier)))
-		i += copy(dAtA[i:], m.Identifier)
+	if len(m.Metadata) > 0 {
+		i -= len(m.Metadata)
+		copy(dAtA[i:], m.Metadata)
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.Metadata)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.Version != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Version.Size()))
-		n10, err := m.Version.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Version.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n10
+		i--
+		dAtA[i] = 0x12
 	}
-	if len(m.Metadata) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.Metadata)))
-		i += copy(dAtA[i:], m.Metadata)
+	if len(m.Identifier) > 0 {
+		i -= len(m.Identifier)
+		copy(dAtA[i:], m.Identifier)
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.Identifier)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedAsset) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1315,22 +1234,27 @@ func (m *SavedAsset) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedAsset) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedAsset) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.AssetFileDefIndex != 0 {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.AssetFileDefIndex))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedFunction) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1338,42 +1262,43 @@ func (m *SavedFunction) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedFunction) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedFunction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.ConcreteFunctions) > 0 {
-		for _, s := range m.ConcreteFunctions {
-			dAtA[i] = 0xa
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
 	if m.FunctionSpec != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.FunctionSpec.Size()))
-		n11, err := m.FunctionSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.FunctionSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n11
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if len(m.ConcreteFunctions) > 0 {
+		for iNdEx := len(m.ConcreteFunctions) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.ConcreteFunctions[iNdEx])
+			copy(dAtA[i:], m.ConcreteFunctions[iNdEx])
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.ConcreteFunctions[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedConcreteFunction) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1381,55 +1306,65 @@ func (m *SavedConcreteFunction) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedConcreteFunction) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedConcreteFunction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.OutputSignature != nil {
+		{
+			size, err := m.OutputSignature.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.CanonicalizedInputSignature != nil {
+		{
+			size, err := m.CanonicalizedInputSignature.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
 	if len(m.BoundInputs) > 0 {
-		dAtA13 := make([]byte, len(m.BoundInputs)*10)
-		var j12 int
+		dAtA14 := make([]byte, len(m.BoundInputs)*10)
+		var j13 int
 		for _, num1 := range m.BoundInputs {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA13[j12] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA14[j13] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j12++
+				j13++
 			}
-			dAtA13[j12] = uint8(num)
-			j12++
+			dAtA14[j13] = uint8(num)
+			j13++
 		}
+		i -= j13
+		copy(dAtA[i:], dAtA14[:j13])
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(j13))
+		i--
 		dAtA[i] = 0x12
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(j12))
-		i += copy(dAtA[i:], dAtA13[:j12])
 	}
-	if m.CanonicalizedInputSignature != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.CanonicalizedInputSignature.Size()))
-		n14, err := m.CanonicalizedInputSignature.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n14
-	}
-	if m.OutputSignature != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.OutputSignature.Size()))
-		n15, err := m.OutputSignature.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n15
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedBareConcreteFunction) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1437,43 +1372,43 @@ func (m *SavedBareConcreteFunction) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedBareConcreteFunction) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedBareConcreteFunction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.ConcreteFunctionName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.ConcreteFunctionName)))
-		i += copy(dAtA[i:], m.ConcreteFunctionName)
+	if m.AllowedPositionalArguments != 0 {
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.AllowedPositionalArguments))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.ArgumentKeywords) > 0 {
-		for _, s := range m.ArgumentKeywords {
+		for iNdEx := len(m.ArgumentKeywords) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.ArgumentKeywords[iNdEx])
+			copy(dAtA[i:], m.ArgumentKeywords[iNdEx])
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.ArgumentKeywords[iNdEx])))
+			i--
 			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
 		}
 	}
-	if m.AllowedPositionalArguments != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.AllowedPositionalArguments))
+	if len(m.ConcreteFunctionName) > 0 {
+		i -= len(m.ConcreteFunctionName)
+		copy(dAtA[i:], m.ConcreteFunctionName)
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.ConcreteFunctionName)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedConstant) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1481,23 +1416,29 @@ func (m *SavedConstant) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedConstant) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedConstant) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Operation) > 0 {
-		dAtA[i] = 0xa
-		i++
+		i -= len(m.Operation)
+		copy(dAtA[i:], m.Operation)
 		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.Operation)))
-		i += copy(dAtA[i:], m.Operation)
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedVariable) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1505,58 +1446,66 @@ func (m *SavedVariable) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedVariable) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedVariable) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Dtype != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Dtype))
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x32
 	}
-	if m.Shape != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Shape.Size()))
-		n16, err := m.Shape.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n16
+	if m.Aggregation != 0 {
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Aggregation))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.Synchronization != 0 {
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Synchronization))
+		i--
+		dAtA[i] = 0x20
 	}
 	if m.Trainable {
-		dAtA[i] = 0x18
-		i++
+		i--
 		if m.Trainable {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x18
 	}
-	if m.Synchronization != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Synchronization))
+	if m.Shape != nil {
+		{
+			size, err := m.Shape.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.Aggregation != 0 {
-		dAtA[i] = 0x28
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Aggregation))
+	if m.Dtype != 0 {
+		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x8
 	}
-	if len(m.Name) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FunctionSpec) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1564,47 +1513,56 @@ func (m *FunctionSpec) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *FunctionSpec) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FunctionSpec) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Fullargspec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.Fullargspec.Size()))
-		n17, err := m.Fullargspec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if m.InputSignature != nil {
+		{
+			size, err := m.InputSignature.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n17
+		i--
+		dAtA[i] = 0x2a
 	}
 	if m.IsMethod {
-		dAtA[i] = 0x10
-		i++
+		i--
 		if m.IsMethod {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x10
 	}
-	if m.InputSignature != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(m.InputSignature.Size()))
-		n18, err := m.InputSignature.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if m.Fullargspec != nil {
+		{
+			size, err := m.Fullargspec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSavedObjectGraph(dAtA, i, uint64(size))
 		}
-		i += n18
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SavedResource) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1612,27 +1570,35 @@ func (m *SavedResource) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SavedResource) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SavedResource) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Device) > 0 {
-		dAtA[i] = 0xa
-		i++
+		i -= len(m.Device)
+		copy(dAtA[i:], m.Device)
 		i = encodeVarintSavedObjectGraph(dAtA, i, uint64(len(m.Device)))
-		i += copy(dAtA[i:], m.Device)
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintSavedObjectGraph(dAtA []byte, offset int, v uint64) int {
+	offset -= sovSavedObjectGraph(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *SavedObjectGraph) Size() (n int) {
 	if m == nil {
@@ -1944,14 +1910,7 @@ func (m *SavedResource) Size() (n int) {
 }
 
 func sovSavedObjectGraph(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozSavedObjectGraph(x uint64) (n int) {
 	return sovSavedObjectGraph(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1971,7 +1930,7 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1999,7 +1958,7 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2008,6 +1967,9 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2030,7 +1992,7 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2039,6 +2001,9 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2059,7 +2024,7 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2076,7 +2041,7 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2086,6 +2051,9 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthSavedObjectGraph
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthSavedObjectGraph
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -2102,7 +2070,7 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2111,7 +2079,7 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthSavedObjectGraph
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthSavedObjectGraph
 					}
 					if postmsgIndex > l {
@@ -2148,6 +2116,9 @@ func (m *SavedObjectGraph) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2175,7 +2146,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2203,7 +2174,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2212,6 +2183,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2234,7 +2208,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2243,6 +2217,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2265,7 +2242,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2274,6 +2251,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2297,7 +2277,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2306,6 +2286,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2329,7 +2312,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2338,6 +2321,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2361,7 +2347,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2370,6 +2356,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2393,7 +2382,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2402,6 +2391,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2425,7 +2417,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2434,6 +2426,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2457,7 +2452,7 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2466,6 +2461,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2482,6 +2480,9 @@ func (m *SavedObject) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -2511,7 +2512,7 @@ func (m *SavedUserObject) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2539,7 +2540,7 @@ func (m *SavedUserObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2549,6 +2550,9 @@ func (m *SavedUserObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2568,7 +2572,7 @@ func (m *SavedUserObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2577,6 +2581,9 @@ func (m *SavedUserObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2601,7 +2608,7 @@ func (m *SavedUserObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2611,6 +2618,9 @@ func (m *SavedUserObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2623,6 +2633,9 @@ func (m *SavedUserObject) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -2652,7 +2665,7 @@ func (m *SavedAsset) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2680,7 +2693,7 @@ func (m *SavedAsset) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AssetFileDefIndex |= (int32(b) & 0x7F) << shift
+				m.AssetFileDefIndex |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2692,6 +2705,9 @@ func (m *SavedAsset) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -2721,7 +2737,7 @@ func (m *SavedFunction) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2749,7 +2765,7 @@ func (m *SavedFunction) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2759,6 +2775,9 @@ func (m *SavedFunction) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2778,7 +2797,7 @@ func (m *SavedFunction) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2787,6 +2806,9 @@ func (m *SavedFunction) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2804,6 +2826,9 @@ func (m *SavedFunction) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -2833,7 +2858,7 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2859,7 +2884,7 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int32(b) & 0x7F) << shift
+					v |= int32(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2876,7 +2901,7 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2885,12 +2910,15 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthSavedObjectGraph
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthSavedObjectGraph
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -2910,7 +2938,7 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int32(b) & 0x7F) << shift
+						v |= int32(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2934,7 +2962,7 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2943,6 +2971,9 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2967,7 +2998,7 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2976,6 +3007,9 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2993,6 +3027,9 @@ func (m *SavedConcreteFunction) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3022,7 +3059,7 @@ func (m *SavedBareConcreteFunction) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3050,7 +3087,7 @@ func (m *SavedBareConcreteFunction) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3060,6 +3097,9 @@ func (m *SavedBareConcreteFunction) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3079,7 +3119,7 @@ func (m *SavedBareConcreteFunction) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3089,6 +3129,9 @@ func (m *SavedBareConcreteFunction) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3108,7 +3151,7 @@ func (m *SavedBareConcreteFunction) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.AllowedPositionalArguments |= (int64(b) & 0x7F) << shift
+				m.AllowedPositionalArguments |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3120,6 +3163,9 @@ func (m *SavedBareConcreteFunction) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3149,7 +3195,7 @@ func (m *SavedConstant) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3177,7 +3223,7 @@ func (m *SavedConstant) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3187,6 +3233,9 @@ func (m *SavedConstant) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3199,6 +3248,9 @@ func (m *SavedConstant) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3228,7 +3280,7 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3256,7 +3308,7 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (framework.DataType(b) & 0x7F) << shift
+				m.Dtype |= framework.DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3275,7 +3327,7 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3284,6 +3336,9 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3308,7 +3363,7 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3328,7 +3383,7 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Synchronization |= (framework.VariableSynchronization(b) & 0x7F) << shift
+				m.Synchronization |= framework.VariableSynchronization(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3347,7 +3402,7 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Aggregation |= (framework.VariableAggregation(b) & 0x7F) << shift
+				m.Aggregation |= framework.VariableAggregation(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3366,7 +3421,7 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3376,6 +3431,9 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3388,6 +3446,9 @@ func (m *SavedVariable) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3417,7 +3478,7 @@ func (m *FunctionSpec) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3445,7 +3506,7 @@ func (m *FunctionSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3454,6 +3515,9 @@ func (m *FunctionSpec) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3478,7 +3542,7 @@ func (m *FunctionSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3498,7 +3562,7 @@ func (m *FunctionSpec) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3507,6 +3571,9 @@ func (m *FunctionSpec) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3524,6 +3591,9 @@ func (m *FunctionSpec) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3553,7 +3623,7 @@ func (m *SavedResource) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3581,7 +3651,7 @@ func (m *SavedResource) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3591,6 +3661,9 @@ func (m *SavedResource) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3603,6 +3676,9 @@ func (m *SavedResource) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSavedObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSavedObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3620,6 +3696,7 @@ func (m *SavedResource) Unmarshal(dAtA []byte) error {
 func skipSavedObjectGraph(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -3651,10 +3728,8 @@ func skipSavedObjectGraph(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -3671,53 +3746,34 @@ func skipSavedObjectGraph(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthSavedObjectGraph
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowSavedObjectGraph
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipSavedObjectGraph(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupSavedObjectGraph
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthSavedObjectGraph
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthSavedObjectGraph = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowSavedObjectGraph   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthSavedObjectGraph        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowSavedObjectGraph          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupSavedObjectGraph = fmt.Errorf("proto: unexpected end of group")
 )

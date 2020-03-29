@@ -10,6 +10,7 @@ import (
 	types "github.com/gogo/protobuf/types"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -21,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Message returned for "signature_def" field.
 type SignatureDefMap struct {
@@ -42,7 +43,7 @@ func (m *SignatureDefMap) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_SignatureDefMap.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -90,7 +91,7 @@ func (m *GetModelMetadataRequest) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return xxx_messageInfo_GetModelMetadataRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -146,7 +147,7 @@ func (m *GetModelMetadataResponse) XXX_Marshal(b []byte, deterministic bool) ([]
 		return xxx_messageInfo_GetModelMetadataResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -224,7 +225,7 @@ var fileDescriptor_749024f14d1b0d4d = []byte{
 func (m *SignatureDefMap) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -232,45 +233,48 @@ func (m *SignatureDefMap) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SignatureDefMap) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SignatureDefMap) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.SignatureDef) > 0 {
-		for k, _ := range m.SignatureDef {
-			dAtA[i] = 0xa
-			i++
+		for k := range m.SignatureDef {
 			v := m.SignatureDef[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovGetModelMetadata(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovGetModelMetadata(uint64(len(k))) + msgSize
-			i = encodeVarintGetModelMetadata(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintGetModelMetadata(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintGetModelMetadata(dAtA, i, uint64(v.Size()))
-				n1, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintGetModelMetadata(dAtA, i, uint64(size))
 				}
-				i += n1
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintGetModelMetadata(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintGetModelMetadata(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *GetModelMetadataRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -278,42 +282,43 @@ func (m *GetModelMetadataRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GetModelMetadataRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetModelMetadataRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ModelSpec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintGetModelMetadata(dAtA, i, uint64(m.ModelSpec.Size()))
-		n2, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
 	if len(m.MetadataField) > 0 {
-		for _, s := range m.MetadataField {
+		for iNdEx := len(m.MetadataField) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.MetadataField[iNdEx])
+			copy(dAtA[i:], m.MetadataField[iNdEx])
+			i = encodeVarintGetModelMetadata(dAtA, i, uint64(len(m.MetadataField[iNdEx])))
+			i--
 			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
 		}
 	}
-	return i, nil
+	if m.ModelSpec != nil {
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGetModelMetadata(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *GetModelMetadataResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -321,59 +326,66 @@ func (m *GetModelMetadataResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *GetModelMetadataResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GetModelMetadataResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ModelSpec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintGetModelMetadata(dAtA, i, uint64(m.ModelSpec.Size()))
-		n3, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n3
-	}
 	if len(m.Metadata) > 0 {
-		for k, _ := range m.Metadata {
-			dAtA[i] = 0x12
-			i++
+		for k := range m.Metadata {
 			v := m.Metadata[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovGetModelMetadata(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovGetModelMetadata(uint64(len(k))) + msgSize
-			i = encodeVarintGetModelMetadata(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintGetModelMetadata(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintGetModelMetadata(dAtA, i, uint64(v.Size()))
-				n4, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintGetModelMetadata(dAtA, i, uint64(size))
 				}
-				i += n4
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintGetModelMetadata(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintGetModelMetadata(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	return i, nil
+	if m.ModelSpec != nil {
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintGetModelMetadata(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintGetModelMetadata(dAtA []byte, offset int, v uint64) int {
+	offset -= sovGetModelMetadata(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *SignatureDefMap) Size() (n int) {
 	if m == nil {
@@ -443,14 +455,7 @@ func (m *GetModelMetadataResponse) Size() (n int) {
 }
 
 func sovGetModelMetadata(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozGetModelMetadata(x uint64) (n int) {
 	return sovGetModelMetadata(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -470,7 +475,7 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -498,7 +503,7 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -507,6 +512,9 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGetModelMetadata
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGetModelMetadata
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -527,7 +535,7 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -544,7 +552,7 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -554,6 +562,9 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthGetModelMetadata
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthGetModelMetadata
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -570,7 +581,7 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -579,7 +590,7 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthGetModelMetadata
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthGetModelMetadata
 					}
 					if postmsgIndex > l {
@@ -616,6 +627,9 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthGetModelMetadata
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthGetModelMetadata
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -643,7 +657,7 @@ func (m *GetModelMetadataRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -671,7 +685,7 @@ func (m *GetModelMetadataRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -680,6 +694,9 @@ func (m *GetModelMetadataRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGetModelMetadata
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGetModelMetadata
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -704,7 +721,7 @@ func (m *GetModelMetadataRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -714,6 +731,9 @@ func (m *GetModelMetadataRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGetModelMetadata
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGetModelMetadata
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -726,6 +746,9 @@ func (m *GetModelMetadataRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthGetModelMetadata
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthGetModelMetadata
 			}
 			if (iNdEx + skippy) > l {
@@ -755,7 +778,7 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -783,7 +806,7 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -792,6 +815,9 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGetModelMetadata
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGetModelMetadata
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -816,7 +842,7 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -825,6 +851,9 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthGetModelMetadata
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthGetModelMetadata
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -845,7 +874,7 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -862,7 +891,7 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -872,6 +901,9 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthGetModelMetadata
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthGetModelMetadata
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -888,7 +920,7 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -897,7 +929,7 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthGetModelMetadata
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthGetModelMetadata
 					}
 					if postmsgIndex > l {
@@ -934,6 +966,9 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthGetModelMetadata
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthGetModelMetadata
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -949,6 +984,7 @@ func (m *GetModelMetadataResponse) Unmarshal(dAtA []byte) error {
 func skipGetModelMetadata(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -980,10 +1016,8 @@ func skipGetModelMetadata(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1000,53 +1034,34 @@ func skipGetModelMetadata(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthGetModelMetadata
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowGetModelMetadata
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipGetModelMetadata(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupGetModelMetadata
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthGetModelMetadata
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthGetModelMetadata = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowGetModelMetadata   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthGetModelMetadata        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowGetModelMetadata          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupGetModelMetadata = fmt.Errorf("proto: unexpected end of group")
 )

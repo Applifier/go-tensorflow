@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // A version number that identifies a different on-disk checkpoint format.
 // Usually, each subclass of BaseSaverBuilder works with a particular
@@ -92,7 +93,7 @@ func (m *SaverDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_SaverDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -202,7 +203,7 @@ var fileDescriptor_5551ea1a7581c104 = []byte{
 func (m *SaverDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -210,65 +211,75 @@ func (m *SaverDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SaverDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SaverDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.FilenameTensorName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintSaver(dAtA, i, uint64(len(m.FilenameTensorName)))
-		i += copy(dAtA[i:], m.FilenameTensorName)
+	if m.Version != 0 {
+		i = encodeVarintSaver(dAtA, i, uint64(m.Version))
+		i--
+		dAtA[i] = 0x38
 	}
-	if len(m.SaveTensorName) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintSaver(dAtA, i, uint64(len(m.SaveTensorName)))
-		i += copy(dAtA[i:], m.SaveTensorName)
-	}
-	if len(m.RestoreOpName) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintSaver(dAtA, i, uint64(len(m.RestoreOpName)))
-		i += copy(dAtA[i:], m.RestoreOpName)
-	}
-	if m.MaxToKeep != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintSaver(dAtA, i, uint64(m.MaxToKeep))
+	if m.KeepCheckpointEveryNHours != 0 {
+		i -= 4
+		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.KeepCheckpointEveryNHours))))
+		i--
+		dAtA[i] = 0x35
 	}
 	if m.Sharded {
-		dAtA[i] = 0x28
-		i++
+		i--
 		if m.Sharded {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x28
 	}
-	if m.KeepCheckpointEveryNHours != 0 {
-		dAtA[i] = 0x35
-		i++
-		encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(math.Float32bits(float32(m.KeepCheckpointEveryNHours))))
-		i += 4
+	if m.MaxToKeep != 0 {
+		i = encodeVarintSaver(dAtA, i, uint64(m.MaxToKeep))
+		i--
+		dAtA[i] = 0x20
 	}
-	if m.Version != 0 {
-		dAtA[i] = 0x38
-		i++
-		i = encodeVarintSaver(dAtA, i, uint64(m.Version))
+	if len(m.RestoreOpName) > 0 {
+		i -= len(m.RestoreOpName)
+		copy(dAtA[i:], m.RestoreOpName)
+		i = encodeVarintSaver(dAtA, i, uint64(len(m.RestoreOpName)))
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	if len(m.SaveTensorName) > 0 {
+		i -= len(m.SaveTensorName)
+		copy(dAtA[i:], m.SaveTensorName)
+		i = encodeVarintSaver(dAtA, i, uint64(len(m.SaveTensorName)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.FilenameTensorName) > 0 {
+		i -= len(m.FilenameTensorName)
+		copy(dAtA[i:], m.FilenameTensorName)
+		i = encodeVarintSaver(dAtA, i, uint64(len(m.FilenameTensorName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintSaver(dAtA []byte, offset int, v uint64) int {
+	offset -= sovSaver(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *SaverDef) Size() (n int) {
 	if m == nil {
@@ -304,14 +315,7 @@ func (m *SaverDef) Size() (n int) {
 }
 
 func sovSaver(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozSaver(x uint64) (n int) {
 	return sovSaver(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -331,7 +335,7 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -359,7 +363,7 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -369,6 +373,9 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSaver
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSaver
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -388,7 +395,7 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -398,6 +405,9 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSaver
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSaver
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -417,7 +427,7 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -427,6 +437,9 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSaver
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSaver
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -446,7 +459,7 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MaxToKeep |= (int32(b) & 0x7F) << shift
+				m.MaxToKeep |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -465,7 +478,7 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -496,7 +509,7 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Version |= (SaverDef_CheckpointFormatVersion(b) & 0x7F) << shift
+				m.Version |= SaverDef_CheckpointFormatVersion(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -508,6 +521,9 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSaver
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSaver
 			}
 			if (iNdEx + skippy) > l {
@@ -525,6 +541,7 @@ func (m *SaverDef) Unmarshal(dAtA []byte) error {
 func skipSaver(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -556,10 +573,8 @@ func skipSaver(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -576,53 +591,34 @@ func skipSaver(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthSaver
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowSaver
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipSaver(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupSaver
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthSaver
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthSaver = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowSaver   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthSaver        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowSaver          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupSaver = fmt.Errorf("proto: unexpected end of group")
 )

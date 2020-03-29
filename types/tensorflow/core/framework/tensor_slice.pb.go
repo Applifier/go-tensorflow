@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Can only be interpreted if you know the corresponding TensorShape.
 type TensorSliceProto struct {
@@ -45,7 +46,7 @@ func (m *TensorSliceProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_TensorSliceProto.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -100,7 +101,7 @@ func (m *TensorSliceProto_Extent) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return xxx_messageInfo_TensorSliceProto_Extent.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -126,7 +127,7 @@ type isTensorSliceProto_Extent_HasLength interface {
 }
 
 type TensorSliceProto_Extent_Length struct {
-	Length int64 `protobuf:"varint,2,opt,name=length,proto3,oneof"`
+	Length int64 `protobuf:"varint,2,opt,name=length,proto3,oneof" json:"length,omitempty"`
 }
 
 func (*TensorSliceProto_Extent_Length) isTensorSliceProto_Extent_HasLength() {}
@@ -152,54 +153,11 @@ func (m *TensorSliceProto_Extent) GetLength() int64 {
 	return 0
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*TensorSliceProto_Extent) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _TensorSliceProto_Extent_OneofMarshaler, _TensorSliceProto_Extent_OneofUnmarshaler, _TensorSliceProto_Extent_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*TensorSliceProto_Extent) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*TensorSliceProto_Extent_Length)(nil),
 	}
-}
-
-func _TensorSliceProto_Extent_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*TensorSliceProto_Extent)
-	// has_length
-	switch x := m.HasLength.(type) {
-	case *TensorSliceProto_Extent_Length:
-		_ = b.EncodeVarint(2<<3 | proto.WireVarint)
-		_ = b.EncodeVarint(uint64(x.Length))
-	case nil:
-	default:
-		return fmt.Errorf("TensorSliceProto_Extent.HasLength has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _TensorSliceProto_Extent_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*TensorSliceProto_Extent)
-	switch tag {
-	case 2: // has_length.length
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.HasLength = &TensorSliceProto_Extent_Length{int64(x)}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _TensorSliceProto_Extent_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*TensorSliceProto_Extent)
-	// has_length
-	switch x := m.HasLength.(type) {
-	case *TensorSliceProto_Extent_Length:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Length))
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 func init() {
@@ -234,7 +192,7 @@ var fileDescriptor_efadfca37d8372d8 = []byte{
 func (m *TensorSliceProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -242,29 +200,36 @@ func (m *TensorSliceProto) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TensorSliceProto) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorSliceProto) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Extent) > 0 {
-		for _, msg := range m.Extent {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintTensorSlice(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Extent) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Extent[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTensorSlice(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *TensorSliceProto_Extent) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -272,40 +237,54 @@ func (m *TensorSliceProto_Extent) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TensorSliceProto_Extent) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorSliceProto_Extent) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Start != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintTensorSlice(dAtA, i, uint64(m.Start))
-	}
 	if m.HasLength != nil {
-		nn1, err := m.HasLength.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.HasLength.Size()
+			i -= size
+			if _, err := m.HasLength.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn1
 	}
-	return i, nil
+	if m.Start != 0 {
+		i = encodeVarintTensorSlice(dAtA, i, uint64(m.Start))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *TensorSliceProto_Extent_Length) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0x10
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorSliceProto_Extent_Length) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	i = encodeVarintTensorSlice(dAtA, i, uint64(m.Length))
-	return i, nil
+	i--
+	dAtA[i] = 0x10
+	return len(dAtA) - i, nil
 }
 func encodeVarintTensorSlice(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTensorSlice(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *TensorSliceProto) Size() (n int) {
 	if m == nil {
@@ -348,14 +327,7 @@ func (m *TensorSliceProto_Extent_Length) Size() (n int) {
 }
 
 func sovTensorSlice(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozTensorSlice(x uint64) (n int) {
 	return sovTensorSlice(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -375,7 +347,7 @@ func (m *TensorSliceProto) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -403,7 +375,7 @@ func (m *TensorSliceProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -412,6 +384,9 @@ func (m *TensorSliceProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTensorSlice
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTensorSlice
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -427,6 +402,9 @@ func (m *TensorSliceProto) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTensorSlice
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTensorSlice
 			}
 			if (iNdEx + skippy) > l {
@@ -456,7 +434,7 @@ func (m *TensorSliceProto_Extent) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -484,7 +462,7 @@ func (m *TensorSliceProto_Extent) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Start |= (int64(b) & 0x7F) << shift
+				m.Start |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -503,7 +481,7 @@ func (m *TensorSliceProto_Extent) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int64(b) & 0x7F) << shift
+				v |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -516,6 +494,9 @@ func (m *TensorSliceProto_Extent) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTensorSlice
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTensorSlice
 			}
 			if (iNdEx + skippy) > l {
@@ -533,6 +514,7 @@ func (m *TensorSliceProto_Extent) Unmarshal(dAtA []byte) error {
 func skipTensorSlice(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -564,10 +546,8 @@ func skipTensorSlice(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -584,53 +564,34 @@ func skipTensorSlice(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthTensorSlice
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowTensorSlice
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipTensorSlice(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTensorSlice
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTensorSlice
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthTensorSlice = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowTensorSlice   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthTensorSlice        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTensorSlice          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTensorSlice = fmt.Errorf("proto: unexpected end of group")
 )

@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type TrackableObjectGraph struct {
 	Nodes []*TrackableObjectGraph_TrackableObject `protobuf:"bytes,1,rep,name=nodes,proto3" json:"nodes,omitempty"`
@@ -39,7 +40,7 @@ func (m *TrackableObjectGraph) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_TrackableObjectGraph.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -88,7 +89,7 @@ func (m *TrackableObjectGraph_TrackableObject) XXX_Marshal(b []byte, determinist
 		return xxx_messageInfo_TrackableObjectGraph_TrackableObject.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -154,7 +155,7 @@ func (m *TrackableObjectGraph_TrackableObject_ObjectReference) XXX_Marshal(b []b
 		return xxx_messageInfo_TrackableObjectGraph_TrackableObject_ObjectReference.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -223,7 +224,7 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) XXX_Marshal(b []
 		return xxx_messageInfo_TrackableObjectGraph_TrackableObject_SerializedTensor.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -299,7 +300,7 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) XXX_Marshal
 		return xxx_messageInfo_TrackableObjectGraph_TrackableObject_SlotVariableReference.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -389,7 +390,7 @@ var fileDescriptor_120a5309f807e789 = []byte{
 func (m *TrackableObjectGraph) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -397,29 +398,36 @@ func (m *TrackableObjectGraph) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TrackableObjectGraph) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TrackableObjectGraph) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Nodes) > 0 {
-		for _, msg := range m.Nodes {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Nodes) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Nodes[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *TrackableObjectGraph_TrackableObject) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -427,53 +435,64 @@ func (m *TrackableObjectGraph_TrackableObject) Marshal() (dAtA []byte, err error
 }
 
 func (m *TrackableObjectGraph_TrackableObject) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TrackableObjectGraph_TrackableObject) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Children) > 0 {
-		for _, msg := range m.Children {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.SlotVariables) > 0 {
+		for iNdEx := len(m.SlotVariables) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.SlotVariables[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0x1a
 		}
 	}
 	if len(m.Attributes) > 0 {
-		for _, msg := range m.Attributes {
+		for iNdEx := len(m.Attributes) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Attributes[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(size))
+			}
+			i--
 			dAtA[i] = 0x12
-			i++
-			i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
 		}
 	}
-	if len(m.SlotVariables) > 0 {
-		for _, msg := range m.SlotVariables {
-			dAtA[i] = 0x1a
-			i++
-			i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+	if len(m.Children) > 0 {
+		for iNdEx := len(m.Children) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Children[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *TrackableObjectGraph_TrackableObject_ObjectReference) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -481,28 +500,34 @@ func (m *TrackableObjectGraph_TrackableObject_ObjectReference) Marshal() (dAtA [
 }
 
 func (m *TrackableObjectGraph_TrackableObject_ObjectReference) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TrackableObjectGraph_TrackableObject_ObjectReference) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.NodeId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(m.NodeId))
-	}
 	if len(m.LocalName) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.LocalName)
+		copy(dAtA[i:], m.LocalName)
 		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(len(m.LocalName)))
-		i += copy(dAtA[i:], m.LocalName)
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.NodeId != 0 {
+		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(m.NodeId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -510,45 +535,53 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Marshal() (dAtA 
 }
 
 func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if len(m.FullName) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(len(m.FullName)))
-		i += copy(dAtA[i:], m.FullName)
-	}
-	if len(m.CheckpointKey) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(len(m.CheckpointKey)))
-		i += copy(dAtA[i:], m.CheckpointKey)
-	}
 	if m.OptionalRestore {
-		dAtA[i] = 0x20
-		i++
+		i--
 		if m.OptionalRestore {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x20
 	}
-	return i, nil
+	if len(m.CheckpointKey) > 0 {
+		i -= len(m.CheckpointKey)
+		copy(dAtA[i:], m.CheckpointKey)
+		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(len(m.CheckpointKey)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.FullName) > 0 {
+		i -= len(m.FullName)
+		copy(dAtA[i:], m.FullName)
+		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(len(m.FullName)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -556,37 +589,45 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Marshal() (
 }
 
 func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.OriginalVariableNodeId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(m.OriginalVariableNodeId))
+	if m.SlotVariableNodeId != 0 {
+		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(m.SlotVariableNodeId))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.SlotName) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.SlotName)
+		copy(dAtA[i:], m.SlotName)
 		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(len(m.SlotName)))
-		i += copy(dAtA[i:], m.SlotName)
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.SlotVariableNodeId != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(m.SlotVariableNodeId))
+	if m.OriginalVariableNodeId != 0 {
+		i = encodeVarintTrackableObjectGraph(dAtA, i, uint64(m.OriginalVariableNodeId))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintTrackableObjectGraph(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTrackableObjectGraph(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *TrackableObjectGraph) Size() (n int) {
 	if m == nil {
@@ -690,14 +731,7 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Size() (n i
 }
 
 func sovTrackableObjectGraph(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozTrackableObjectGraph(x uint64) (n int) {
 	return sovTrackableObjectGraph(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -717,7 +751,7 @@ func (m *TrackableObjectGraph) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -745,7 +779,7 @@ func (m *TrackableObjectGraph) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -754,6 +788,9 @@ func (m *TrackableObjectGraph) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -769,6 +806,9 @@ func (m *TrackableObjectGraph) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -798,7 +838,7 @@ func (m *TrackableObjectGraph_TrackableObject) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -826,7 +866,7 @@ func (m *TrackableObjectGraph_TrackableObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -835,6 +875,9 @@ func (m *TrackableObjectGraph_TrackableObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -857,7 +900,7 @@ func (m *TrackableObjectGraph_TrackableObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -866,6 +909,9 @@ func (m *TrackableObjectGraph_TrackableObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -888,7 +934,7 @@ func (m *TrackableObjectGraph_TrackableObject) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -897,6 +943,9 @@ func (m *TrackableObjectGraph_TrackableObject) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -912,6 +961,9 @@ func (m *TrackableObjectGraph_TrackableObject) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -941,7 +993,7 @@ func (m *TrackableObjectGraph_TrackableObject_ObjectReference) Unmarshal(dAtA []
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -969,7 +1021,7 @@ func (m *TrackableObjectGraph_TrackableObject_ObjectReference) Unmarshal(dAtA []
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NodeId |= (int32(b) & 0x7F) << shift
+				m.NodeId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -988,7 +1040,7 @@ func (m *TrackableObjectGraph_TrackableObject_ObjectReference) Unmarshal(dAtA []
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -998,6 +1050,9 @@ func (m *TrackableObjectGraph_TrackableObject_ObjectReference) Unmarshal(dAtA []
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1010,6 +1065,9 @@ func (m *TrackableObjectGraph_TrackableObject_ObjectReference) Unmarshal(dAtA []
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -1039,7 +1097,7 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1067,7 +1125,7 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1077,6 +1135,9 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1096,7 +1157,7 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1106,6 +1167,9 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1125,7 +1189,7 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1135,6 +1199,9 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1154,7 +1221,7 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1167,6 +1234,9 @@ func (m *TrackableObjectGraph_TrackableObject_SerializedTensor) Unmarshal(dAtA [
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -1196,7 +1266,7 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Unmarshal(d
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1224,7 +1294,7 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Unmarshal(d
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OriginalVariableNodeId |= (int32(b) & 0x7F) << shift
+				m.OriginalVariableNodeId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1243,7 +1313,7 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Unmarshal(d
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1253,6 +1323,9 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Unmarshal(d
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1272,7 +1345,7 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Unmarshal(d
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.SlotVariableNodeId |= (int32(b) & 0x7F) << shift
+				m.SlotVariableNodeId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1284,6 +1357,9 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Unmarshal(d
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthTrackableObjectGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthTrackableObjectGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -1301,6 +1377,7 @@ func (m *TrackableObjectGraph_TrackableObject_SlotVariableReference) Unmarshal(d
 func skipTrackableObjectGraph(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1332,10 +1409,8 @@ func skipTrackableObjectGraph(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1352,53 +1427,34 @@ func skipTrackableObjectGraph(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthTrackableObjectGraph
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowTrackableObjectGraph
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipTrackableObjectGraph(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupTrackableObjectGraph
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthTrackableObjectGraph
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthTrackableObjectGraph = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowTrackableObjectGraph   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthTrackableObjectGraph        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowTrackableObjectGraph          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupTrackableObjectGraph = fmt.Errorf("proto: unexpected end of group")
 )

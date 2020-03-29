@@ -11,6 +11,7 @@ import (
 	types "github.com/gogo/protobuf/types"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -22,7 +23,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // NOTE: This protocol buffer is evolving, and will go through revisions in the
 // coming months.
@@ -70,7 +71,7 @@ func (m *MetaGraphDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_MetaGraphDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -168,6 +169,8 @@ type MetaGraphDef_MetaInfoDef struct {
 	// A flag to denote whether default-valued attrs have been stripped from
 	// the nodes in this graph_def.
 	StrippedDefaultAttrs bool `protobuf:"varint,7,opt,name=stripped_default_attrs,json=strippedDefaultAttrs,proto3" json:"stripped_default_attrs,omitempty"`
+	// FunctionDef name to aliases mapping.
+	FunctionAliases map[string]string `protobuf:"bytes,8,rep,name=function_aliases,json=functionAliases,proto3" json:"function_aliases,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *MetaGraphDef_MetaInfoDef) Reset()         { *m = MetaGraphDef_MetaInfoDef{} }
@@ -184,7 +187,7 @@ func (m *MetaGraphDef_MetaInfoDef) XXX_Marshal(b []byte, deterministic bool) ([]
 		return xxx_messageInfo_MetaGraphDef_MetaInfoDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -250,6 +253,13 @@ func (m *MetaGraphDef_MetaInfoDef) GetStrippedDefaultAttrs() bool {
 		return m.StrippedDefaultAttrs
 	}
 	return false
+}
+
+func (m *MetaGraphDef_MetaInfoDef) GetFunctionAliases() map[string]string {
+	if m != nil {
+		return m.FunctionAliases
+	}
+	return nil
 }
 
 // CollectionDef should cover most collections.
@@ -338,7 +348,7 @@ func (m *CollectionDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_CollectionDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -364,19 +374,19 @@ type isCollectionDef_Kind interface {
 }
 
 type CollectionDef_NodeList_ struct {
-	NodeList *CollectionDef_NodeList `protobuf:"bytes,1,opt,name=node_list,json=nodeList,proto3,oneof"`
+	NodeList *CollectionDef_NodeList `protobuf:"bytes,1,opt,name=node_list,json=nodeList,proto3,oneof" json:"node_list,omitempty"`
 }
 type CollectionDef_BytesList_ struct {
-	BytesList *CollectionDef_BytesList `protobuf:"bytes,2,opt,name=bytes_list,json=bytesList,proto3,oneof"`
+	BytesList *CollectionDef_BytesList `protobuf:"bytes,2,opt,name=bytes_list,json=bytesList,proto3,oneof" json:"bytes_list,omitempty"`
 }
 type CollectionDef_Int64List_ struct {
-	Int64List *CollectionDef_Int64List `protobuf:"bytes,3,opt,name=int64_list,json=int64List,proto3,oneof"`
+	Int64List *CollectionDef_Int64List `protobuf:"bytes,3,opt,name=int64_list,json=int64List,proto3,oneof" json:"int64_list,omitempty"`
 }
 type CollectionDef_FloatList_ struct {
-	FloatList *CollectionDef_FloatList `protobuf:"bytes,4,opt,name=float_list,json=floatList,proto3,oneof"`
+	FloatList *CollectionDef_FloatList `protobuf:"bytes,4,opt,name=float_list,json=floatList,proto3,oneof" json:"float_list,omitempty"`
 }
 type CollectionDef_AnyList_ struct {
-	AnyList *CollectionDef_AnyList `protobuf:"bytes,5,opt,name=any_list,json=anyList,proto3,oneof"`
+	AnyList *CollectionDef_AnyList `protobuf:"bytes,5,opt,name=any_list,json=anyList,proto3,oneof" json:"any_list,omitempty"`
 }
 
 func (*CollectionDef_NodeList_) isCollectionDef_Kind()  {}
@@ -427,135 +437,15 @@ func (m *CollectionDef) GetAnyList() *CollectionDef_AnyList {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*CollectionDef) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _CollectionDef_OneofMarshaler, _CollectionDef_OneofUnmarshaler, _CollectionDef_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*CollectionDef) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*CollectionDef_NodeList_)(nil),
 		(*CollectionDef_BytesList_)(nil),
 		(*CollectionDef_Int64List_)(nil),
 		(*CollectionDef_FloatList_)(nil),
 		(*CollectionDef_AnyList_)(nil),
 	}
-}
-
-func _CollectionDef_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*CollectionDef)
-	// kind
-	switch x := m.Kind.(type) {
-	case *CollectionDef_NodeList_:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.NodeList); err != nil {
-			return err
-		}
-	case *CollectionDef_BytesList_:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.BytesList); err != nil {
-			return err
-		}
-	case *CollectionDef_Int64List_:
-		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Int64List); err != nil {
-			return err
-		}
-	case *CollectionDef_FloatList_:
-		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.FloatList); err != nil {
-			return err
-		}
-	case *CollectionDef_AnyList_:
-		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.AnyList); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("CollectionDef.Kind has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _CollectionDef_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*CollectionDef)
-	switch tag {
-	case 1: // kind.node_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(CollectionDef_NodeList)
-		err := b.DecodeMessage(msg)
-		m.Kind = &CollectionDef_NodeList_{msg}
-		return true, err
-	case 2: // kind.bytes_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(CollectionDef_BytesList)
-		err := b.DecodeMessage(msg)
-		m.Kind = &CollectionDef_BytesList_{msg}
-		return true, err
-	case 3: // kind.int64_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(CollectionDef_Int64List)
-		err := b.DecodeMessage(msg)
-		m.Kind = &CollectionDef_Int64List_{msg}
-		return true, err
-	case 4: // kind.float_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(CollectionDef_FloatList)
-		err := b.DecodeMessage(msg)
-		m.Kind = &CollectionDef_FloatList_{msg}
-		return true, err
-	case 5: // kind.any_list
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(CollectionDef_AnyList)
-		err := b.DecodeMessage(msg)
-		m.Kind = &CollectionDef_AnyList_{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _CollectionDef_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*CollectionDef)
-	// kind
-	switch x := m.Kind.(type) {
-	case *CollectionDef_NodeList_:
-		s := proto.Size(x.NodeList)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *CollectionDef_BytesList_:
-		s := proto.Size(x.BytesList)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *CollectionDef_Int64List_:
-		s := proto.Size(x.Int64List)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *CollectionDef_FloatList_:
-		s := proto.Size(x.FloatList)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *CollectionDef_AnyList_:
-		s := proto.Size(x.AnyList)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 // NodeList is used for collecting nodes in graph. For example
@@ -586,7 +476,7 @@ func (m *CollectionDef_NodeList) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_CollectionDef_NodeList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -643,7 +533,7 @@ func (m *CollectionDef_BytesList) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return xxx_messageInfo_CollectionDef_BytesList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -688,7 +578,7 @@ func (m *CollectionDef_Int64List) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return xxx_messageInfo_CollectionDef_Int64List.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -733,7 +623,7 @@ func (m *CollectionDef_FloatList) XXX_Marshal(b []byte, deterministic bool) ([]b
 		return xxx_messageInfo_CollectionDef_FloatList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -778,7 +668,7 @@ func (m *CollectionDef_AnyList) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return xxx_messageInfo_CollectionDef_AnyList.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -832,7 +722,7 @@ func (m *TensorInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_TensorInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -858,13 +748,13 @@ type isTensorInfo_Encoding interface {
 }
 
 type TensorInfo_Name struct {
-	Name string `protobuf:"bytes,1,opt,name=name,proto3,oneof"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"`
 }
 type TensorInfo_CooSparse_ struct {
-	CooSparse *TensorInfo_CooSparse `protobuf:"bytes,4,opt,name=coo_sparse,json=cooSparse,proto3,oneof"`
+	CooSparse *TensorInfo_CooSparse `protobuf:"bytes,4,opt,name=coo_sparse,json=cooSparse,proto3,oneof" json:"coo_sparse,omitempty"`
 }
 type TensorInfo_CompositeTensor_ struct {
-	CompositeTensor *TensorInfo_CompositeTensor `protobuf:"bytes,5,opt,name=composite_tensor,json=compositeTensor,proto3,oneof"`
+	CompositeTensor *TensorInfo_CompositeTensor `protobuf:"bytes,5,opt,name=composite_tensor,json=compositeTensor,proto3,oneof" json:"composite_tensor,omitempty"`
 }
 
 func (*TensorInfo_Name) isTensorInfo_Encoding()             {}
@@ -913,93 +803,13 @@ func (m *TensorInfo) GetTensorShape() *framework.TensorShapeProto {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*TensorInfo) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _TensorInfo_OneofMarshaler, _TensorInfo_OneofUnmarshaler, _TensorInfo_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*TensorInfo) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*TensorInfo_Name)(nil),
 		(*TensorInfo_CooSparse_)(nil),
 		(*TensorInfo_CompositeTensor_)(nil),
 	}
-}
-
-func _TensorInfo_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*TensorInfo)
-	// encoding
-	switch x := m.Encoding.(type) {
-	case *TensorInfo_Name:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		_ = b.EncodeStringBytes(x.Name)
-	case *TensorInfo_CooSparse_:
-		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.CooSparse); err != nil {
-			return err
-		}
-	case *TensorInfo_CompositeTensor_:
-		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.CompositeTensor); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("TensorInfo.Encoding has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _TensorInfo_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*TensorInfo)
-	switch tag {
-	case 1: // encoding.name
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeStringBytes()
-		m.Encoding = &TensorInfo_Name{x}
-		return true, err
-	case 4: // encoding.coo_sparse
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(TensorInfo_CooSparse)
-		err := b.DecodeMessage(msg)
-		m.Encoding = &TensorInfo_CooSparse_{msg}
-		return true, err
-	case 5: // encoding.composite_tensor
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(TensorInfo_CompositeTensor)
-		err := b.DecodeMessage(msg)
-		m.Encoding = &TensorInfo_CompositeTensor_{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _TensorInfo_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*TensorInfo)
-	// encoding
-	switch x := m.Encoding.(type) {
-	case *TensorInfo_Name:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.Name)))
-		n += len(x.Name)
-	case *TensorInfo_CooSparse_:
-		s := proto.Size(x.CooSparse)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *TensorInfo_CompositeTensor_:
-		s := proto.Size(x.CompositeTensor)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 // For sparse tensors, The COO encoding stores a triple of values, indices,
@@ -1029,7 +839,7 @@ func (m *TensorInfo_CooSparse) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_TensorInfo_CooSparse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1091,7 +901,7 @@ func (m *TensorInfo_CompositeTensor) XXX_Marshal(b []byte, deterministic bool) (
 		return xxx_messageInfo_TensorInfo_CompositeTensor.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1211,7 +1021,7 @@ func (m *SignatureDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_SignatureDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1276,7 +1086,7 @@ func (m *AssetFileDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_AssetFileDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1314,6 +1124,7 @@ func init() {
 	proto.RegisterMapType((map[string]*CollectionDef)(nil), "tensorflow.MetaGraphDef.CollectionDefEntry")
 	proto.RegisterMapType((map[string]*SignatureDef)(nil), "tensorflow.MetaGraphDef.SignatureDefEntry")
 	proto.RegisterType((*MetaGraphDef_MetaInfoDef)(nil), "tensorflow.MetaGraphDef.MetaInfoDef")
+	proto.RegisterMapType((map[string]string)(nil), "tensorflow.MetaGraphDef.MetaInfoDef.FunctionAliasesEntry")
 	proto.RegisterType((*CollectionDef)(nil), "tensorflow.CollectionDef")
 	proto.RegisterType((*CollectionDef_NodeList)(nil), "tensorflow.CollectionDef.NodeList")
 	proto.RegisterType((*CollectionDef_BytesList)(nil), "tensorflow.CollectionDef.BytesList")
@@ -1334,88 +1145,91 @@ func init() {
 }
 
 var fileDescriptor_e94adf32e895c059 = []byte{
-	// 1199 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x56, 0x4f, 0x6f, 0x1b, 0x45,
-	0x14, 0xf7, 0xda, 0x4e, 0x62, 0x3f, 0x3b, 0xa9, 0x3b, 0x44, 0x25, 0x5d, 0x55, 0x26, 0x35, 0x4d,
-	0x55, 0x4a, 0x6a, 0x2b, 0xa5, 0x0d, 0x08, 0x55, 0xad, 0xec, 0x9a, 0x34, 0x91, 0xa0, 0x29, 0xeb,
-	0x0a, 0x09, 0x38, 0xac, 0xd6, 0xbb, 0xb3, 0xce, 0x12, 0x7b, 0x66, 0xb5, 0x33, 0x4e, 0xe5, 0x23,
-	0x67, 0x2e, 0x7c, 0x04, 0x3e, 0x05, 0x9f, 0x81, 0x63, 0x2f, 0x48, 0xc0, 0x09, 0x25, 0x5f, 0x82,
-	0x1b, 0x68, 0x66, 0xf6, 0xcf, 0x6c, 0x92, 0x6d, 0x2e, 0xdc, 0xf6, 0xcd, 0xfb, 0xbd, 0xdf, 0xbc,
-	0xf7, 0x7b, 0x6f, 0x66, 0x07, 0x3e, 0xe2, 0x98, 0x30, 0x1a, 0xf9, 0x53, 0xfa, 0xa6, 0xe7, 0xd2,
-	0x08, 0xf7, 0xc2, 0x88, 0x72, 0x3a, 0x9e, 0xfb, 0xbd, 0x19, 0xe6, 0x8e, 0x3d, 0x89, 0x9c, 0xf0,
-	0xa8, 0x2b, 0xd7, 0x10, 0x64, 0x50, 0xf3, 0xe6, 0x84, 0xd2, 0xc9, 0x54, 0x43, 0x3b, 0x64, 0xa1,
-	0x60, 0xe6, 0xd6, 0x79, 0x46, 0x3f, 0x72, 0x66, 0xf8, 0x0d, 0x8d, 0x8e, 0x7b, 0x1a, 0x9b, 0x79,
-	0xb7, 0x18, 0x46, 0x43, 0xdb, 0xc3, 0x7e, 0x8c, 0xdb, 0x2e, 0xc6, 0x29, 0x8f, 0xcd, 0x8e, 0x9c,
-	0x10, 0x5f, 0xbd, 0x39, 0x5f, 0x84, 0x98, 0xc5, 0xb0, 0x9d, 0xc2, 0xaa, 0x99, 0x73, 0x82, 0x3d,
-	0x9b, 0x8e, 0x7f, 0xc0, 0x2e, 0xd7, 0xab, 0x37, 0xef, 0xbc, 0x33, 0x24, 0x2a, 0xda, 0x3f, 0x43,
-	0xf1, 0x68, 0xee, 0x72, 0x05, 0xeb, 0xfc, 0xbb, 0x02, 0xcd, 0xaf, 0x30, 0x77, 0x5e, 0x88, 0x0d,
-	0x86, 0xd8, 0x47, 0xfb, 0xb0, 0x2a, 0xf5, 0x0e, 0x88, 0x4f, 0x45, 0xf1, 0x1b, 0xc6, 0xa6, 0x71,
-	0xaf, 0xf1, 0xf0, 0x4e, 0x37, 0xe3, 0xeb, 0xea, 0x01, 0xd2, 0x38, 0x20, 0x3e, 0x1d, 0x62, 0xdf,
-	0x6a, 0xcc, 0x32, 0x03, 0xed, 0x40, 0x5d, 0xa6, 0x2d, 0x59, 0xca, 0x92, 0x65, 0x5d, 0x67, 0x49,
-	0x18, 0xac, 0xda, 0x24, 0xd9, 0x7c, 0x07, 0xea, 0xb2, 0x06, 0x19, 0x52, 0xb9, 0x18, 0x32, 0x12,
-	0x4e, 0x19, 0xc2, 0xe2, 0x2f, 0x64, 0xc1, 0x9a, 0x4b, 0xa7, 0x53, 0xec, 0xf2, 0x80, 0x12, 0x19,
-	0x57, 0xdd, 0xac, 0xdc, 0x6b, 0x3c, 0xfc, 0xb8, 0x30, 0xe1, 0xe7, 0x29, 0x7c, 0x88, 0xfd, 0x2f,
-	0x08, 0x8f, 0x16, 0xd6, 0xaa, 0xab, 0xaf, 0xa1, 0x43, 0x58, 0x65, 0xc1, 0x84, 0x38, 0x7c, 0x1e,
-	0x61, 0x49, 0xb9, 0x24, 0x29, 0xef, 0x17, 0x52, 0x8e, 0x12, 0x74, 0xca, 0xd8, 0x64, 0xda, 0x12,
-	0x7a, 0x0a, 0x6b, 0x0e, 0x63, 0x98, 0xdb, 0x7e, 0x30, 0x55, 0x8c, 0xcb, 0x92, 0x71, 0x43, 0x67,
-	0xec, 0x0b, 0xc4, 0x5e, 0x30, 0x15, 0x11, 0x56, 0xd3, 0xd1, 0x2c, 0xb4, 0x07, 0x2d, 0x7d, 0x10,
-	0x24, 0xc3, 0x8a, 0x94, 0xe7, 0xd6, 0x79, 0x79, 0xbc, 0x43, 0x09, 0x94, 0xa9, 0x59, 0x6b, 0x34,
-	0x33, 0x86, 0xd8, 0x37, 0xff, 0x2c, 0x43, 0x43, 0xeb, 0x17, 0xda, 0x06, 0x94, 0x1d, 0x2e, 0xfb,
-	0x04, 0x47, 0x2c, 0xa0, 0x44, 0x76, 0xbc, 0x6e, 0xb5, 0x66, 0x49, 0x85, 0xdf, 0xa8, 0x75, 0xf4,
-	0x04, 0x5a, 0x8c, 0x47, 0x41, 0x18, 0x8a, 0xb9, 0x0c, 0xed, 0x69, 0xc0, 0x78, 0xdc, 0x57, 0xa4,
-	0x67, 0x71, 0x18, 0x7e, 0x19, 0x30, 0x6e, 0xad, 0x25, 0x58, 0x65, 0xa3, 0x1e, 0xd4, 0x1c, 0xb2,
-	0x90, 0x73, 0x95, 0xb6, 0x56, 0x9d, 0xdd, 0x6e, 0x32, 0x9a, 0xdd, 0x3e, 0x59, 0x58, 0x2b, 0x0e,
-	0x59, 0x88, 0xfc, 0x10, 0x82, 0x2a, 0x77, 0x26, 0x4c, 0xf6, 0xb3, 0x6e, 0xc9, 0x6f, 0xf4, 0x00,
-	0x50, 0xb6, 0x53, 0x9a, 0xf0, 0x92, 0x4c, 0xf8, 0x7a, 0xe6, 0x49, 0x32, 0x7e, 0x04, 0x37, 0x34,
-	0xf8, 0x24, 0xe0, 0x69, 0xc8, 0xb2, 0x0c, 0x59, 0xcf, 0xbc, 0x2f, 0x02, 0xae, 0x45, 0xa5, 0x75,
-	0x7a, 0xd8, 0x77, 0xe6, 0x53, 0x6e, 0x3b, 0x9c, 0x47, 0x4c, 0x6a, 0x5e, 0xb3, 0xd6, 0x13, 0xef,
-	0x50, 0x39, 0xfb, 0xc2, 0x67, 0x7e, 0x0f, 0xe8, 0xe2, 0x64, 0xa1, 0x16, 0x54, 0x8e, 0xf1, 0x22,
-	0x96, 0x54, 0x7c, 0xa2, 0x1e, 0x2c, 0x9d, 0x38, 0xd3, 0x39, 0x8e, 0xa5, 0xbb, 0xa9, 0x4b, 0x97,
-	0x23, 0xb0, 0x14, 0xee, 0xf3, 0xf2, 0x67, 0x86, 0xf9, 0x2d, 0x5c, 0xbf, 0x30, 0x63, 0x97, 0x70,
-	0x77, 0xf3, 0xdc, 0xb9, 0xf1, 0xd2, 0xe3, 0x35, 0xea, 0xce, 0xaf, 0x55, 0x58, 0xcd, 0xed, 0x8b,
-	0xfa, 0x50, 0x27, 0xd4, 0xc3, 0xaa, 0xc1, 0xea, 0xf8, 0x77, 0x0a, 0xb3, 0xec, 0xbe, 0xa4, 0x1e,
-	0x16, 0x0d, 0xde, 0x2f, 0x59, 0x35, 0x12, 0x7f, 0xa3, 0x21, 0xc0, 0x78, 0xc1, 0x31, 0xd3, 0x87,
-	0xe4, 0xc3, 0x62, 0x8e, 0x81, 0xc0, 0xc6, 0x24, 0xf5, 0x71, 0x62, 0x08, 0x96, 0x80, 0xf0, 0xdd,
-	0x47, 0x8a, 0xa5, 0x72, 0x15, 0xcb, 0x81, 0xc0, 0x26, 0x2c, 0x41, 0x62, 0x08, 0x16, 0x7f, 0x4a,
-	0x1d, 0xae, 0x58, 0xaa, 0x57, 0xb1, 0xec, 0x09, 0x6c, 0xc2, 0xe2, 0x27, 0x06, 0x7a, 0xaa, 0xc6,
-	0x57, 0x72, 0x2c, 0x49, 0x8e, 0xdb, 0xc5, 0x1c, 0x7d, 0xb2, 0x88, 0x19, 0xc4, 0x34, 0x8b, 0x4f,
-	0x73, 0x13, 0x6a, 0x89, 0x52, 0x68, 0x3d, 0x69, 0x93, 0x21, 0x47, 0x5b, 0x19, 0xe6, 0x6d, 0xa8,
-	0xa7, 0x3a, 0xe4, 0x21, 0xcd, 0x04, 0xb2, 0x05, 0xf5, 0xb4, 0x48, 0xb4, 0xa1, 0x43, 0x2a, 0x83,
-	0x72, 0xcb, 0xd0, 0x60, 0x69, 0x15, 0x79, 0x58, 0x59, 0x87, 0x3d, 0x86, 0x95, 0x38, 0x51, 0x74,
-	0x5f, 0x07, 0x15, 0x9d, 0x4c, 0x05, 0x19, 0x2c, 0x43, 0xf5, 0x38, 0x20, 0x5e, 0xe7, 0xaf, 0x2a,
-	0xc0, 0x6b, 0xa9, 0x80, 0x3c, 0xae, 0xeb, 0x50, 0x25, 0xce, 0x0c, 0xab, 0x71, 0xdc, 0x2f, 0x59,
-	0xd2, 0x42, 0x7d, 0x00, 0x97, 0x52, 0x9b, 0x85, 0x4e, 0xc4, 0x70, 0x2c, 0xfe, 0xa6, 0x2e, 0x5c,
-	0xc6, 0xd0, 0x7d, 0x4e, 0xe9, 0x48, 0xe2, 0x84, 0xf2, 0x6e, 0x62, 0xa0, 0x11, 0xb4, 0x5c, 0x3a,
-	0x0b, 0x29, 0x0b, 0x38, 0xb6, 0x55, 0x64, 0xdc, 0x81, 0xbb, 0x85, 0x44, 0x31, 0x5c, 0xad, 0xed,
-	0x97, 0xac, 0x6b, 0x6e, 0x7e, 0x49, 0x14, 0xec, 0x89, 0xff, 0xb0, 0x9c, 0xcd, 0xb5, 0xfc, 0x5f,
-	0x66, 0xe8, 0x70, 0xe7, 0xf5, 0x22, 0xc4, 0x96, 0x82, 0xa0, 0x67, 0xd0, 0xd4, 0x7f, 0xf0, 0xf1,
-	0x20, 0xde, 0xba, 0xb8, 0xf9, 0x48, 0xb8, 0x5f, 0x09, 0xc9, 0xac, 0x06, 0xcf, 0x56, 0xcc, 0x5f,
-	0x0c, 0xa8, 0xa7, 0xc5, 0x89, 0x4b, 0x57, 0x0a, 0xc9, 0xe2, 0x62, 0xec, 0x4c, 0x36, 0xab, 0xa5,
-	0x3c, 0x8a, 0xee, 0xa5, 0x10, 0xb0, 0x0b, 0xef, 0x05, 0xc4, 0x0b, 0xdc, 0x73, 0xf0, 0xb2, 0xba,
-	0xf2, 0x62, 0x97, 0x86, 0x7f, 0x0c, 0xef, 0x7b, 0x98, 0x30, 0xac, 0x72, 0xcd, 0xc5, 0x54, 0xd4,
-	0x9d, 0x27, 0xdd, 0x32, 0xb1, 0x2c, 0xcc, 0xfc, 0xd1, 0x80, 0x6b, 0xe7, 0x64, 0x43, 0xbb, 0x50,
-	0x17, 0xf5, 0xdb, 0x2c, 0xc4, 0x6e, 0x7c, 0x0f, 0xe4, 0x6e, 0x2b, 0xa1, 0xd1, 0x28, 0xc4, 0xae,
-	0xaa, 0xb8, 0xc6, 0x63, 0x13, 0xed, 0x8a, 0x9e, 0xcf, 0x42, 0x4a, 0x30, 0xe1, 0x6c, 0xa3, 0x2c,
-	0x27, 0xea, 0xc6, 0xe5, 0xad, 0xb2, 0x34, 0xe4, 0x00, 0xa0, 0x86, 0x89, 0x4b, 0xbd, 0x80, 0x4c,
-	0x3a, 0xbf, 0x97, 0xa1, 0xa9, 0xdf, 0x58, 0xe8, 0x09, 0x2c, 0x07, 0x24, 0x9c, 0x73, 0x16, 0x8f,
-	0xe8, 0x9d, 0xa2, 0xbb, 0xad, 0x7b, 0x20, 0x61, 0xea, 0x37, 0x1c, 0xc7, 0xa0, 0x67, 0xb0, 0x42,
-	0xe7, 0x5c, 0x86, 0xab, 0x7c, 0xb6, 0x0a, 0xc3, 0x0f, 0x15, 0x4e, 0xc5, 0x27, 0x51, 0xe8, 0x03,
-	0x10, 0x6f, 0x9b, 0x23, 0xea, 0xe9, 0x52, 0x82, 0x5a, 0x92, 0x02, 0x7e, 0x0d, 0x0d, 0x6d, 0xe3,
-	0x4b, 0xee, 0xe6, 0xed, 0xfc, 0xdd, 0x5c, 0x24, 0x88, 0x76, 0xe9, 0x5b, 0xd0, 0xd4, 0x93, 0xf9,
-	0x3f, 0x38, 0x3b, 0x2e, 0x34, 0xf5, 0x77, 0x06, 0xfa, 0x14, 0xe2, 0x49, 0x55, 0x3f, 0x66, 0xe3,
-	0x9d, 0x3c, 0xf1, 0xbb, 0x5b, 0x1e, 0x77, 0x13, 0x6a, 0xe2, 0x31, 0xa3, 0x0d, 0x63, 0x6a, 0x0f,
-	0x7e, 0x32, 0x7e, 0x3b, 0x6d, 0x1b, 0x6f, 0x4f, 0xdb, 0xc6, 0xdf, 0xa7, 0x6d, 0xe3, 0xe7, 0xb3,
-	0x76, 0xe9, 0xed, 0x59, 0xbb, 0xf4, 0xc7, 0x59, 0xbb, 0x04, 0x1b, 0x34, 0x9a, 0xe8, 0xec, 0xe9,
-	0xab, 0x78, 0x70, 0x2d, 0x7d, 0x51, 0xc9, 0x79, 0x62, 0xaf, 0x8c, 0xef, 0xfa, 0x93, 0x80, 0x1f,
-	0xcd, 0xc7, 0x5d, 0x97, 0xce, 0x7a, 0xfd, 0x30, 0x9c, 0x06, 0x7e, 0x80, 0xa3, 0xde, 0x84, 0x3e,
-	0xd0, 0xde, 0xb6, 0xf2, 0x31, 0xdd, 0x2b, 0x7a, 0xec, 0xfe, 0x63, 0x18, 0xe3, 0x65, 0x69, 0x7c,
-	0xf2, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x03, 0x6a, 0xf6, 0xb0, 0x61, 0x0c, 0x00, 0x00,
+	// 1247 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x57, 0x4d, 0x6f, 0x13, 0x47,
+	0x18, 0xce, 0x26, 0x4e, 0xe2, 0x7d, 0xed, 0x24, 0x66, 0x1a, 0x51, 0xb3, 0x42, 0x6e, 0x70, 0x01,
+	0x51, 0x0a, 0x6b, 0x41, 0x81, 0x7e, 0x08, 0x81, 0x6c, 0xdc, 0x10, 0xa4, 0x96, 0xd0, 0x35, 0xaa,
+	0xd4, 0xf6, 0xb0, 0x5a, 0xef, 0xce, 0x3a, 0x5b, 0xd6, 0x33, 0xab, 0x9d, 0x31, 0xc8, 0xc7, 0xaa,
+	0xc7, 0x5e, 0xfa, 0x13, 0x7a, 0xed, 0x1f, 0xe8, 0x6f, 0xe8, 0x91, 0x4b, 0xa5, 0xaa, 0xa7, 0x0a,
+	0xfe, 0x44, 0x8f, 0xd5, 0xcc, 0xec, 0xc7, 0x6c, 0x92, 0x85, 0x1e, 0x7a, 0xdb, 0x77, 0xe6, 0x79,
+	0x9e, 0x79, 0xbf, 0xe6, 0xf5, 0x18, 0x3e, 0xe0, 0x98, 0x30, 0x9a, 0x86, 0x31, 0x7d, 0x31, 0xf0,
+	0x69, 0x8a, 0x07, 0x49, 0x4a, 0x39, 0x9d, 0x2e, 0xc2, 0xc1, 0x1c, 0x73, 0xcf, 0x9d, 0xa5, 0x5e,
+	0x72, 0x64, 0xcb, 0x35, 0x04, 0x25, 0xd4, 0x3a, 0x37, 0xa3, 0x74, 0x16, 0x6b, 0x68, 0x8f, 0x2c,
+	0x15, 0xcc, 0xba, 0x74, 0x5c, 0x31, 0x4c, 0xbd, 0x39, 0x7e, 0x41, 0xd3, 0x67, 0x03, 0x4d, 0xcd,
+	0xba, 0x5c, 0x0f, 0xa3, 0x89, 0x1b, 0xe0, 0x30, 0xc3, 0x5d, 0xab, 0xc7, 0xa9, 0x1d, 0x97, 0x1d,
+	0x79, 0x09, 0x7e, 0xfb, 0xe1, 0x7c, 0x99, 0x60, 0x96, 0xc1, 0x6e, 0xd4, 0x46, 0xcd, 0xbc, 0xe7,
+	0x38, 0x70, 0xe9, 0xf4, 0x7b, 0xec, 0x73, 0x3d, 0x7a, 0xeb, 0xe2, 0x1b, 0x29, 0x69, 0xdd, 0xf9,
+	0x25, 0x8a, 0xa7, 0x0b, 0x9f, 0x2b, 0x58, 0xff, 0x57, 0x13, 0xda, 0x5f, 0x62, 0xee, 0x3d, 0x14,
+	0x07, 0x8c, 0x71, 0x88, 0x0e, 0x60, 0x4b, 0xe6, 0x3b, 0x22, 0x21, 0x15, 0xc1, 0x77, 0x8d, 0x3d,
+	0xe3, 0x4a, 0xeb, 0xe6, 0x45, 0xbb, 0xd4, 0xb3, 0x75, 0x82, 0x34, 0x1e, 0x91, 0x90, 0x8e, 0x71,
+	0xe8, 0xb4, 0xe6, 0xa5, 0x81, 0x6e, 0x80, 0x29, 0xdd, 0x96, 0x2a, 0xab, 0x52, 0x65, 0x57, 0x57,
+	0xc9, 0x15, 0x9c, 0xe6, 0x2c, 0x3f, 0xfc, 0x06, 0x98, 0x32, 0x06, 0x49, 0x59, 0x3b, 0x49, 0x99,
+	0x88, 0x4d, 0x49, 0x61, 0xd9, 0x17, 0x72, 0x60, 0xdb, 0xa7, 0x71, 0x8c, 0x7d, 0x1e, 0x51, 0x22,
+	0x79, 0x8d, 0xbd, 0xb5, 0x2b, 0xad, 0x9b, 0x1f, 0xd6, 0x3a, 0xfc, 0xa0, 0x80, 0x8f, 0x71, 0xf8,
+	0x39, 0xe1, 0xe9, 0xd2, 0xd9, 0xf2, 0xf5, 0x35, 0x74, 0x08, 0x5b, 0x2c, 0x9a, 0x11, 0x8f, 0x2f,
+	0x52, 0x2c, 0x25, 0xd7, 0xa5, 0xe4, 0xd5, 0x5a, 0xc9, 0x49, 0x8e, 0x2e, 0x14, 0xdb, 0x4c, 0x5b,
+	0x42, 0xf7, 0x60, 0xdb, 0x63, 0x0c, 0x73, 0x37, 0x8c, 0x62, 0xa5, 0xb8, 0x21, 0x15, 0xbb, 0xba,
+	0xe2, 0x50, 0x20, 0xf6, 0xa3, 0x58, 0x30, 0x9c, 0xb6, 0xa7, 0x59, 0x68, 0x1f, 0x3a, 0x7a, 0x23,
+	0x48, 0x85, 0x4d, 0x99, 0x9e, 0xf3, 0xc7, 0xd3, 0x13, 0x1c, 0x4a, 0xa0, 0x74, 0xcd, 0xd9, 0xa6,
+	0xa5, 0x31, 0xc6, 0xa1, 0xf5, 0x63, 0x03, 0x5a, 0x5a, 0xbd, 0xd0, 0x35, 0x40, 0xe5, 0xe5, 0x72,
+	0x9f, 0xe3, 0x94, 0x45, 0x94, 0xc8, 0x8a, 0x9b, 0x4e, 0x67, 0x9e, 0x47, 0xf8, 0xb5, 0x5a, 0x47,
+	0x77, 0xa1, 0xc3, 0x78, 0x1a, 0x25, 0x89, 0xe8, 0xcb, 0xc4, 0x8d, 0x23, 0xc6, 0xb3, 0xba, 0x22,
+	0xdd, 0x8b, 0xc3, 0xe4, 0x8b, 0x88, 0x71, 0x67, 0x3b, 0xc7, 0x2a, 0x1b, 0x0d, 0xa0, 0xe9, 0x91,
+	0xa5, 0xec, 0xab, 0xa2, 0xb4, 0xea, 0xee, 0xda, 0x79, 0x6b, 0xda, 0x43, 0xb2, 0x74, 0x36, 0x3d,
+	0xb2, 0x14, 0xfe, 0x21, 0x04, 0x0d, 0xee, 0xcd, 0x98, 0xac, 0xa7, 0xe9, 0xc8, 0x6f, 0x74, 0x1d,
+	0x50, 0x79, 0x52, 0xe1, 0xf0, 0xba, 0x74, 0xf8, 0x4c, 0xb9, 0x93, 0x7b, 0x7c, 0x0b, 0xce, 0x6a,
+	0xf0, 0x59, 0xc4, 0x0b, 0xca, 0x86, 0xa4, 0xec, 0x96, 0xbb, 0x0f, 0x23, 0xae, 0xb1, 0x8a, 0x38,
+	0x03, 0x1c, 0x7a, 0x8b, 0x98, 0xbb, 0x1e, 0xe7, 0x29, 0x93, 0x39, 0x6f, 0x3a, 0xbb, 0xf9, 0xee,
+	0x58, 0x6d, 0x0e, 0xc5, 0x1e, 0x0a, 0xa0, 0x13, 0x2e, 0x88, 0x6a, 0x43, 0x2f, 0x8e, 0x3c, 0x86,
+	0x59, 0xb7, 0x29, 0xab, 0xfc, 0xe9, 0x7f, 0xb9, 0x3b, 0xf6, 0x7e, 0x46, 0x1e, 0x2a, 0xae, 0x6a,
+	0xa3, 0x9d, 0xb0, 0xba, 0x6a, 0x8d, 0x60, 0xf7, 0x34, 0x20, 0xea, 0xc0, 0xda, 0x33, 0xbc, 0xcc,
+	0x4a, 0x27, 0x3e, 0xd1, 0x2e, 0xac, 0x3f, 0xf7, 0xe2, 0x05, 0x96, 0x25, 0x32, 0x1d, 0x65, 0x7c,
+	0xb6, 0xfa, 0x89, 0x61, 0x7d, 0x07, 0xe8, 0xe4, 0x1d, 0x38, 0x45, 0x61, 0xa0, 0x2b, 0xb4, 0x6e,
+	0x9e, 0xd3, 0xc3, 0xa8, 0x08, 0xe8, 0xe2, 0xdf, 0xc0, 0x99, 0x13, 0xb7, 0xe1, 0x14, 0x6d, 0xbb,
+	0xaa, 0x5d, 0xb9, 0x08, 0x3a, 0x5f, 0x93, 0xee, 0xff, 0xd6, 0x80, 0xad, 0xca, 0xb9, 0x68, 0x08,
+	0x26, 0xa1, 0x01, 0x56, 0xad, 0xa8, 0x06, 0x55, 0xbf, 0xd6, 0x4b, 0xfb, 0x31, 0x0d, 0xb0, 0x68,
+	0xc5, 0x83, 0x15, 0xa7, 0x49, 0xb2, 0x6f, 0x34, 0x06, 0x98, 0x2e, 0x39, 0x66, 0x7a, 0x3b, 0xbf,
+	0x5f, 0xaf, 0x31, 0x12, 0xd8, 0x4c, 0xc4, 0x9c, 0xe6, 0x86, 0x50, 0x89, 0x08, 0xbf, 0x73, 0x4b,
+	0xa9, 0xac, 0xbd, 0x4d, 0xe5, 0x91, 0xc0, 0xe6, 0x2a, 0x51, 0x6e, 0x08, 0x95, 0x30, 0xa6, 0x1e,
+	0x57, 0x2a, 0x8d, 0xb7, 0xa9, 0xec, 0x0b, 0x6c, 0xae, 0x12, 0xe6, 0x06, 0xba, 0xa7, 0x2e, 0x9a,
+	0xd4, 0x58, 0x97, 0x1a, 0x17, 0xea, 0x35, 0x86, 0x64, 0x99, 0x29, 0x88, 0x7b, 0x27, 0x3e, 0xad,
+	0x3d, 0x68, 0xe6, 0x99, 0x2a, 0x9b, 0xc8, 0x90, 0x97, 0x50, 0x19, 0xd6, 0x05, 0x30, 0x8b, 0x3c,
+	0x54, 0x21, 0xed, 0x1c, 0x72, 0x09, 0xcc, 0x22, 0x48, 0xd4, 0xd5, 0x21, 0x6b, 0xa3, 0xd5, 0x8e,
+	0xa1, 0xc1, 0x8a, 0x28, 0xaa, 0xb0, 0x55, 0x1d, 0x76, 0x1b, 0x36, 0x33, 0x47, 0xd1, 0x55, 0x1d,
+	0x54, 0x37, 0x43, 0x14, 0x64, 0xb4, 0x01, 0x8d, 0x67, 0x11, 0x09, 0xfa, 0x7f, 0x35, 0x00, 0x9e,
+	0xca, 0x0c, 0xc8, 0xc1, 0xb2, 0x0b, 0x0d, 0xe2, 0xcd, 0xb1, 0x6a, 0xc7, 0x83, 0x15, 0x47, 0x5a,
+	0x68, 0x08, 0xe0, 0x53, 0xea, 0xb2, 0xc4, 0x4b, 0x19, 0xce, 0x92, 0xbf, 0xa7, 0x27, 0xae, 0x54,
+	0xb0, 0x1f, 0x50, 0x3a, 0x91, 0x38, 0x91, 0x79, 0x3f, 0x37, 0xd0, 0x04, 0x3a, 0x3e, 0x9d, 0x27,
+	0x94, 0x45, 0x1c, 0xbb, 0x8a, 0x99, 0x55, 0xe0, 0x72, 0xad, 0x50, 0x06, 0x57, 0x6b, 0x07, 0x2b,
+	0xce, 0x8e, 0x5f, 0x5d, 0x12, 0x01, 0x07, 0xe2, 0xc5, 0x20, 0x7b, 0x73, 0xbb, 0xfa, 0x7b, 0x38,
+	0xf6, 0xb8, 0xf7, 0x74, 0x99, 0x60, 0x47, 0x41, 0xd0, 0x7d, 0x68, 0xeb, 0x4f, 0x91, 0xac, 0x11,
+	0xcf, 0x9f, 0x3c, 0x7c, 0x22, 0xb6, 0x9f, 0x88, 0x94, 0x39, 0x2d, 0x5e, 0xae, 0x58, 0xbf, 0x18,
+	0x60, 0x16, 0xc1, 0x89, 0x9f, 0x07, 0x99, 0x48, 0x96, 0x05, 0xe3, 0x96, 0x69, 0x73, 0x3a, 0x6a,
+	0x47, 0xc9, 0x3d, 0x16, 0x09, 0xb4, 0xe1, 0x9d, 0x88, 0x04, 0x91, 0x7f, 0x0c, 0xae, 0xc6, 0xcf,
+	0x99, 0x6c, 0x4b, 0xc3, 0xdf, 0x86, 0x77, 0x03, 0x4c, 0x18, 0x56, 0xbe, 0x56, 0x38, 0x6b, 0x6a,
+	0x3a, 0xcb, 0x6d, 0xe9, 0x58, 0x49, 0xb3, 0x7e, 0x30, 0x60, 0xe7, 0x58, 0xda, 0xd0, 0x1d, 0x30,
+	0x45, 0xfc, 0x2e, 0x4b, 0xb0, 0x9f, 0xcd, 0x81, 0xca, 0xb4, 0x12, 0x39, 0x9a, 0x24, 0xd8, 0x57,
+	0x11, 0x37, 0x79, 0x66, 0xa2, 0x3b, 0xa2, 0xe6, 0xf3, 0x84, 0x12, 0x4c, 0x38, 0xeb, 0xae, 0xca,
+	0x8e, 0x3a, 0x7b, 0x7a, 0xa9, 0x1c, 0x0d, 0x39, 0x02, 0x68, 0x62, 0xe2, 0xd3, 0x20, 0x22, 0xb3,
+	0xfe, 0x1f, 0xab, 0xd0, 0xd6, 0x27, 0x16, 0xba, 0x0b, 0x1b, 0x11, 0x49, 0x16, 0x9c, 0x65, 0x2d,
+	0x7a, 0xb1, 0x6e, 0xb6, 0xd9, 0x8f, 0x24, 0x4c, 0x4d, 0xfa, 0x8c, 0x83, 0xee, 0xc3, 0x26, 0x5d,
+	0x70, 0x49, 0x57, 0xfe, 0x5c, 0xaa, 0xa5, 0x1f, 0x2a, 0x9c, 0xe2, 0xe7, 0x2c, 0xf4, 0x1e, 0x88,
+	0x57, 0xd8, 0x11, 0x0d, 0xf4, 0x54, 0x82, 0x5a, 0x92, 0x09, 0xfc, 0x0a, 0x5a, 0xda, 0xc1, 0xa7,
+	0xcc, 0xe6, 0x6b, 0xd5, 0xd9, 0x5c, 0x97, 0x10, 0x6d, 0xe8, 0x3b, 0xd0, 0xd6, 0x9d, 0xf9, 0x3f,
+	0x34, 0xfb, 0x3e, 0xb4, 0xf5, 0x17, 0x11, 0xfa, 0x18, 0xb2, 0x4e, 0x55, 0x4f, 0x08, 0xe3, 0x8d,
+	0x3a, 0xd9, 0x3f, 0x04, 0x79, 0xdd, 0x2d, 0x68, 0x8a, 0x67, 0x97, 0xd6, 0x8c, 0x85, 0x3d, 0xfa,
+	0xc9, 0xf8, 0xfd, 0x55, 0xcf, 0x78, 0xf9, 0xaa, 0x67, 0xfc, 0xfd, 0xaa, 0x67, 0xfc, 0xfc, 0xba,
+	0xb7, 0xf2, 0xf2, 0x75, 0x6f, 0xe5, 0xcf, 0xd7, 0xbd, 0x15, 0xe8, 0xd2, 0x74, 0xa6, 0xab, 0x17,
+	0xef, 0xf7, 0xd1, 0x4e, 0xf1, 0x1b, 0x2e, 0xfb, 0x89, 0x3d, 0x31, 0xbe, 0x1d, 0xce, 0x22, 0x7e,
+	0xb4, 0x98, 0xda, 0x3e, 0x9d, 0x0f, 0x86, 0x49, 0x12, 0x47, 0x61, 0x84, 0xd3, 0xc1, 0x8c, 0x5e,
+	0xd7, 0x5e, 0xe1, 0xf2, 0xd9, 0x3f, 0xa8, 0x7b, 0x96, 0xff, 0x63, 0x18, 0xd3, 0x0d, 0x69, 0x7c,
+	0xf4, 0x6f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xad, 0xf0, 0xa5, 0xfe, 0x0b, 0x0d, 0x00, 0x00,
 }
 
 func (m *MetaGraphDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1423,125 +1237,136 @@ func (m *MetaGraphDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MetaGraphDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MetaGraphDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.MetaInfoDef != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.MetaInfoDef.Size()))
-		n1, err := m.MetaInfoDef.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
-	if m.GraphDef != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.GraphDef.Size()))
-		n2, err := m.GraphDef.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
-	if m.SaverDef != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.SaverDef.Size()))
-		n3, err := m.SaverDef.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n3
-	}
-	if len(m.CollectionDef) > 0 {
-		for k, _ := range m.CollectionDef {
-			dAtA[i] = 0x22
-			i++
-			v := m.CollectionDef[k]
-			msgSize := 0
-			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovMetaGraph(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovMetaGraph(uint64(len(k))) + msgSize
-			i = encodeVarintMetaGraph(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintMetaGraph(dAtA, i, uint64(v.Size()))
-				n4, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
-				}
-				i += n4
-			}
-		}
-	}
-	if len(m.SignatureDef) > 0 {
-		for k, _ := range m.SignatureDef {
-			dAtA[i] = 0x2a
-			i++
-			v := m.SignatureDef[k]
-			msgSize := 0
-			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovMetaGraph(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovMetaGraph(uint64(len(k))) + msgSize
-			i = encodeVarintMetaGraph(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintMetaGraph(dAtA, i, uint64(v.Size()))
-				n5, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
-				}
-				i += n5
-			}
-		}
-	}
-	if len(m.AssetFileDef) > 0 {
-		for _, msg := range m.AssetFileDef {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintMetaGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+	if m.ObjectGraphDef != nil {
+		{
+			size, err := m.ObjectGraphDef.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-	}
-	if m.ObjectGraphDef != nil {
+		i--
 		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.ObjectGraphDef.Size()))
-		n6, err := m.ObjectGraphDef.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n6
 	}
-	return i, nil
+	if len(m.AssetFileDef) > 0 {
+		for iNdEx := len(m.AssetFileDef) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.AssetFileDef[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x32
+		}
+	}
+	if len(m.SignatureDef) > 0 {
+		for k := range m.SignatureDef {
+			v := m.SignatureDef[k]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintMetaGraph(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if len(m.CollectionDef) > 0 {
+		for k := range m.CollectionDef {
+			v := m.CollectionDef[k]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintMetaGraph(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if m.SaverDef != nil {
+		{
+			size, err := m.SaverDef.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.GraphDef != nil {
+		{
+			size, err := m.GraphDef.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.MetaInfoDef != nil {
+		{
+			size, err := m.MetaInfoDef.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MetaGraphDef_MetaInfoDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1549,80 +1374,105 @@ func (m *MetaGraphDef_MetaInfoDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MetaGraphDef_MetaInfoDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MetaGraphDef_MetaInfoDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.MetaGraphVersion) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.MetaGraphVersion)))
-		i += copy(dAtA[i:], m.MetaGraphVersion)
-	}
-	if m.StrippedOpList != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.StrippedOpList.Size()))
-		n7, err := m.StrippedOpList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.FunctionAliases) > 0 {
+		for k := range m.FunctionAliases {
+			v := m.FunctionAliases[k]
+			baseI := i
+			i -= len(v)
+			copy(dAtA[i:], v)
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(v)))
+			i--
+			dAtA[i] = 0x12
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintMetaGraph(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x42
 		}
-		i += n7
-	}
-	if m.AnyInfo != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.AnyInfo.Size()))
-		n8, err := m.AnyInfo.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n8
-	}
-	if len(m.Tags) > 0 {
-		for _, s := range m.Tags {
-			dAtA[i] = 0x22
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.TensorflowVersion) > 0 {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.TensorflowVersion)))
-		i += copy(dAtA[i:], m.TensorflowVersion)
-	}
-	if len(m.TensorflowGitVersion) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.TensorflowGitVersion)))
-		i += copy(dAtA[i:], m.TensorflowGitVersion)
 	}
 	if m.StrippedDefaultAttrs {
-		dAtA[i] = 0x38
-		i++
+		i--
 		if m.StrippedDefaultAttrs {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x38
 	}
-	return i, nil
+	if len(m.TensorflowGitVersion) > 0 {
+		i -= len(m.TensorflowGitVersion)
+		copy(dAtA[i:], m.TensorflowGitVersion)
+		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.TensorflowGitVersion)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.TensorflowVersion) > 0 {
+		i -= len(m.TensorflowVersion)
+		copy(dAtA[i:], m.TensorflowVersion)
+		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.TensorflowVersion)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.Tags) > 0 {
+		for iNdEx := len(m.Tags) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Tags[iNdEx])
+			copy(dAtA[i:], m.Tags[iNdEx])
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.Tags[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if m.AnyInfo != nil {
+		{
+			size, err := m.AnyInfo.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.StrippedOpList != nil {
+		{
+			size, err := m.StrippedOpList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.MetaGraphVersion) > 0 {
+		i -= len(m.MetaGraphVersion)
+		copy(dAtA[i:], m.MetaGraphVersion)
+		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.MetaGraphVersion)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *CollectionDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1630,94 +1480,136 @@ func (m *CollectionDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CollectionDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Kind != nil {
-		nn9, err := m.Kind.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Kind.Size()
+			i -= size
+			if _, err := m.Kind.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn9
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *CollectionDef_NodeList_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_NodeList_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.NodeList != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.NodeList.Size()))
-		n10, err := m.NodeList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.NodeList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-		i += n10
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *CollectionDef_BytesList_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_BytesList_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.BytesList != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.BytesList.Size()))
-		n11, err := m.BytesList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.BytesList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-		i += n11
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *CollectionDef_Int64List_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_Int64List_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.Int64List != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.Int64List.Size()))
-		n12, err := m.Int64List.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Int64List.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-		i += n12
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *CollectionDef_FloatList_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_FloatList_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.FloatList != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.FloatList.Size()))
-		n13, err := m.FloatList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.FloatList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-		i += n13
+		i--
+		dAtA[i] = 0x22
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *CollectionDef_AnyList_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_AnyList_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.AnyList != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.AnyList.Size()))
-		n14, err := m.AnyList.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.AnyList.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-		i += n14
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *CollectionDef_NodeList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1725,32 +1617,31 @@ func (m *CollectionDef_NodeList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CollectionDef_NodeList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_NodeList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
-		for _, s := range m.Value {
+		for iNdEx := len(m.Value) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Value[iNdEx])
+			copy(dAtA[i:], m.Value[iNdEx])
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.Value[iNdEx])))
+			i--
 			dAtA[i] = 0xa
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *CollectionDef_BytesList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1758,25 +1649,31 @@ func (m *CollectionDef_BytesList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CollectionDef_BytesList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_BytesList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
-		for _, b := range m.Value {
+		for iNdEx := len(m.Value) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Value[iNdEx])
+			copy(dAtA[i:], m.Value[iNdEx])
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.Value[iNdEx])))
+			i--
 			dAtA[i] = 0xa
-			i++
-			i = encodeVarintMetaGraph(dAtA, i, uint64(len(b)))
-			i += copy(dAtA[i:], b)
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *CollectionDef_Int64List) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1784,35 +1681,41 @@ func (m *CollectionDef_Int64List) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CollectionDef_Int64List) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_Int64List) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
-		dAtA16 := make([]byte, len(m.Value)*10)
-		var j15 int
+		dAtA15 := make([]byte, len(m.Value)*10)
+		var j14 int
 		for _, num1 := range m.Value {
 			num := uint64(num1)
 			for num >= 1<<7 {
-				dAtA16[j15] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA15[j14] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j15++
+				j14++
 			}
-			dAtA16[j15] = uint8(num)
-			j15++
+			dAtA15[j14] = uint8(num)
+			j14++
 		}
+		i -= j14
+		copy(dAtA[i:], dAtA15[:j14])
+		i = encodeVarintMetaGraph(dAtA, i, uint64(j14))
+		i--
 		dAtA[i] = 0xa
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(j15))
-		i += copy(dAtA[i:], dAtA16[:j15])
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *CollectionDef_FloatList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1820,27 +1723,32 @@ func (m *CollectionDef_FloatList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CollectionDef_FloatList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_FloatList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.Value)*4))
-		for _, num := range m.Value {
-			f17 := math.Float32bits(float32(num))
-			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f17))
-			i += 4
+		for iNdEx := len(m.Value) - 1; iNdEx >= 0; iNdEx-- {
+			f16 := math.Float32bits(float32(m.Value[iNdEx]))
+			i -= 4
+			encoding_binary.LittleEndian.PutUint32(dAtA[i:], uint32(f16))
 		}
+		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.Value)*4))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *CollectionDef_AnyList) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1848,29 +1756,36 @@ func (m *CollectionDef_AnyList) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *CollectionDef_AnyList) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CollectionDef_AnyList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Value) > 0 {
-		for _, msg := range m.Value {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintMetaGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Value) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Value[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *TensorInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1878,75 +1793,104 @@ func (m *TensorInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TensorInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Encoding != nil {
-		nn18, err := m.Encoding.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Encoding.Size()
+			i -= size
+			if _, err := m.Encoding.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn18
-	}
-	if m.Dtype != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.Dtype))
 	}
 	if m.TensorShape != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.TensorShape.Size()))
-		n19, err := m.TensorShape.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.TensorShape.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-		i += n19
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	if m.Dtype != 0 {
+		i = encodeVarintMetaGraph(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x10
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *TensorInfo_Name) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
-	dAtA[i] = 0xa
-	i++
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorInfo_Name) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.Name)
+	copy(dAtA[i:], m.Name)
 	i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.Name)))
-	i += copy(dAtA[i:], m.Name)
-	return i, nil
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
 }
 func (m *TensorInfo_CooSparse_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorInfo_CooSparse_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.CooSparse != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.CooSparse.Size()))
-		n20, err := m.CooSparse.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.CooSparse.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-		i += n20
+		i--
+		dAtA[i] = 0x22
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *TensorInfo_CompositeTensor_) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorInfo_CompositeTensor_) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.CompositeTensor != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.CompositeTensor.Size()))
-		n21, err := m.CompositeTensor.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.CompositeTensor.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
-		i += n21
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *TensorInfo_CooSparse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1954,35 +1898,43 @@ func (m *TensorInfo_CooSparse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TensorInfo_CooSparse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorInfo_CooSparse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.ValuesTensorName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.ValuesTensorName)))
-		i += copy(dAtA[i:], m.ValuesTensorName)
+	if len(m.DenseShapeTensorName) > 0 {
+		i -= len(m.DenseShapeTensorName)
+		copy(dAtA[i:], m.DenseShapeTensorName)
+		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.DenseShapeTensorName)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.IndicesTensorName) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.IndicesTensorName)
+		copy(dAtA[i:], m.IndicesTensorName)
 		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.IndicesTensorName)))
-		i += copy(dAtA[i:], m.IndicesTensorName)
+		i--
+		dAtA[i] = 0x12
 	}
-	if len(m.DenseShapeTensorName) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.DenseShapeTensorName)))
-		i += copy(dAtA[i:], m.DenseShapeTensorName)
+	if len(m.ValuesTensorName) > 0 {
+		i -= len(m.ValuesTensorName)
+		copy(dAtA[i:], m.ValuesTensorName)
+		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.ValuesTensorName)))
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *TensorInfo_CompositeTensor) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1990,39 +1942,48 @@ func (m *TensorInfo_CompositeTensor) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *TensorInfo_CompositeTensor) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TensorInfo_CompositeTensor) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.TypeSpec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.TypeSpec.Size()))
-		n22, err := m.TypeSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n22
-	}
 	if len(m.Components) > 0 {
-		for _, msg := range m.Components {
+		for iNdEx := len(m.Components) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Components[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+			}
+			i--
 			dAtA[i] = 0x12
-			i++
-			i = encodeVarintMetaGraph(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+		}
+	}
+	if m.TypeSpec != nil {
+		{
+			size, err := m.TypeSpec.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SignatureDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2030,79 +1991,81 @@ func (m *SignatureDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SignatureDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SignatureDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Inputs) > 0 {
-		for k, _ := range m.Inputs {
-			dAtA[i] = 0xa
-			i++
-			v := m.Inputs[k]
-			msgSize := 0
-			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovMetaGraph(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovMetaGraph(uint64(len(k))) + msgSize
-			i = encodeVarintMetaGraph(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintMetaGraph(dAtA, i, uint64(v.Size()))
-				n23, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
-				}
-				i += n23
-			}
-		}
+	if len(m.MethodName) > 0 {
+		i -= len(m.MethodName)
+		copy(dAtA[i:], m.MethodName)
+		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.MethodName)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.Outputs) > 0 {
-		for k, _ := range m.Outputs {
-			dAtA[i] = 0x12
-			i++
+		for k := range m.Outputs {
 			v := m.Outputs[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovMetaGraph(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovMetaGraph(uint64(len(k))) + msgSize
-			i = encodeVarintMetaGraph(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintMetaGraph(dAtA, i, uint64(v.Size()))
-				n24, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintMetaGraph(dAtA, i, uint64(size))
 				}
-				i += n24
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintMetaGraph(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	if len(m.MethodName) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.MethodName)))
-		i += copy(dAtA[i:], m.MethodName)
+	if len(m.Inputs) > 0 {
+		for k := range m.Inputs {
+			v := m.Inputs[k]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintMetaGraph(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintMetaGraph(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0xa
+		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *AssetFileDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2110,37 +2073,47 @@ func (m *AssetFileDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *AssetFileDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AssetFileDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.TensorInfo != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintMetaGraph(dAtA, i, uint64(m.TensorInfo.Size()))
-		n25, err := m.TensorInfo.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n25
-	}
 	if len(m.Filename) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.Filename)
+		copy(dAtA[i:], m.Filename)
 		i = encodeVarintMetaGraph(dAtA, i, uint64(len(m.Filename)))
-		i += copy(dAtA[i:], m.Filename)
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.TensorInfo != nil {
+		{
+			size, err := m.TensorInfo.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintMetaGraph(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintMetaGraph(dAtA []byte, offset int, v uint64) int {
+	offset -= sovMetaGraph(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *MetaGraphDef) Size() (n int) {
 	if m == nil {
@@ -2233,6 +2206,14 @@ func (m *MetaGraphDef_MetaInfoDef) Size() (n int) {
 	}
 	if m.StrippedDefaultAttrs {
 		n += 2
+	}
+	if len(m.FunctionAliases) > 0 {
+		for k, v := range m.FunctionAliases {
+			_ = k
+			_ = v
+			mapEntrySize := 1 + len(k) + sovMetaGraph(uint64(len(k))) + 1 + len(v) + sovMetaGraph(uint64(len(v)))
+			n += mapEntrySize + 1 + sovMetaGraph(uint64(mapEntrySize))
+		}
 	}
 	return n
 }
@@ -2532,14 +2513,7 @@ func (m *AssetFileDef) Size() (n int) {
 }
 
 func sovMetaGraph(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozMetaGraph(x uint64) (n int) {
 	return sovMetaGraph(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -2559,7 +2533,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -2587,7 +2561,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2596,6 +2570,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2620,7 +2597,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2629,6 +2606,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2653,7 +2633,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2662,6 +2642,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2686,7 +2669,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2695,6 +2678,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2715,7 +2701,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2732,7 +2718,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2742,6 +2728,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthMetaGraph
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -2758,7 +2747,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2767,7 +2756,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthMetaGraph
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthMetaGraph
 					}
 					if postmsgIndex > l {
@@ -2809,7 +2798,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2818,6 +2807,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2838,7 +2830,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -2855,7 +2847,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2865,6 +2857,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthMetaGraph
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -2881,7 +2876,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -2890,7 +2885,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthMetaGraph
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthMetaGraph
 					}
 					if postmsgIndex > l {
@@ -2932,7 +2927,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2941,6 +2936,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2963,7 +2961,7 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -2972,6 +2970,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -2989,6 +2990,9 @@ func (m *MetaGraphDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3018,7 +3022,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3046,7 +3050,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3056,6 +3060,9 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3075,7 +3082,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3084,6 +3091,9 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3108,7 +3118,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3117,6 +3127,9 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3141,7 +3154,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3151,6 +3164,9 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3170,7 +3186,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3180,6 +3196,9 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3199,7 +3218,7 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3209,6 +3228,9 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3228,12 +3250,139 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
 			m.StrippedDefaultAttrs = bool(v != 0)
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FunctionAliases", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMetaGraph
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.FunctionAliases == nil {
+				m.FunctionAliases = make(map[string]string)
+			}
+			var mapkey string
+			var mapvalue string
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowMetaGraph
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowMetaGraph
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var stringLenmapvalue uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowMetaGraph
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapvalue |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapvalue := int(stringLenmapvalue)
+					if intStringLenmapvalue < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
+					postStringIndexmapvalue := iNdEx + intStringLenmapvalue
+					if postStringIndexmapvalue < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
+					if postStringIndexmapvalue > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = string(dAtA[iNdEx:postStringIndexmapvalue])
+					iNdEx = postStringIndexmapvalue
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipMetaGraph(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.FunctionAliases[mapkey] = mapvalue
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMetaGraph(dAtA[iNdEx:])
@@ -3241,6 +3390,9 @@ func (m *MetaGraphDef_MetaInfoDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3270,7 +3422,7 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3298,7 +3450,7 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3307,6 +3459,9 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3330,7 +3485,7 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3339,6 +3494,9 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3362,7 +3520,7 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3371,6 +3529,9 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3394,7 +3555,7 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3403,6 +3564,9 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3426,7 +3590,7 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3435,6 +3599,9 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3451,6 +3618,9 @@ func (m *CollectionDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3480,7 +3650,7 @@ func (m *CollectionDef_NodeList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3508,7 +3678,7 @@ func (m *CollectionDef_NodeList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3518,6 +3688,9 @@ func (m *CollectionDef_NodeList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3530,6 +3703,9 @@ func (m *CollectionDef_NodeList) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3559,7 +3735,7 @@ func (m *CollectionDef_BytesList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3587,7 +3763,7 @@ func (m *CollectionDef_BytesList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= (int(b) & 0x7F) << shift
+				byteLen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3596,6 +3772,9 @@ func (m *CollectionDef_BytesList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3609,6 +3788,9 @@ func (m *CollectionDef_BytesList) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3638,7 +3820,7 @@ func (m *CollectionDef_Int64List) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3664,7 +3846,7 @@ func (m *CollectionDef_Int64List) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -3681,7 +3863,7 @@ func (m *CollectionDef_Int64List) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -3690,12 +3872,15 @@ func (m *CollectionDef_Int64List) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthMetaGraph
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthMetaGraph
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -3715,7 +3900,7 @@ func (m *CollectionDef_Int64List) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -3732,6 +3917,9 @@ func (m *CollectionDef_Int64List) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3761,7 +3949,7 @@ func (m *CollectionDef_FloatList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3796,7 +3984,7 @@ func (m *CollectionDef_FloatList) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -3805,6 +3993,9 @@ func (m *CollectionDef_FloatList) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthMetaGraph
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthMetaGraph
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
@@ -3835,6 +4026,9 @@ func (m *CollectionDef_FloatList) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3862,7 +4056,7 @@ func (m *CollectionDef_AnyList) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3890,7 +4084,7 @@ func (m *CollectionDef_AnyList) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3899,6 +4093,9 @@ func (m *CollectionDef_AnyList) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -3914,6 +4111,9 @@ func (m *CollectionDef_AnyList) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -3943,7 +4143,7 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -3971,7 +4171,7 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3981,6 +4181,9 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4000,7 +4203,7 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (framework.DataType(b) & 0x7F) << shift
+				m.Dtype |= framework.DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4019,7 +4222,7 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4028,6 +4231,9 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4052,7 +4258,7 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4061,6 +4267,9 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4084,7 +4293,7 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4093,6 +4302,9 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4109,6 +4321,9 @@ func (m *TensorInfo) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -4138,7 +4353,7 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4166,7 +4381,7 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4176,6 +4391,9 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4195,7 +4413,7 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4205,6 +4423,9 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4224,7 +4445,7 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4234,6 +4455,9 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4246,6 +4470,9 @@ func (m *TensorInfo_CooSparse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -4275,7 +4502,7 @@ func (m *TensorInfo_CompositeTensor) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4303,7 +4530,7 @@ func (m *TensorInfo_CompositeTensor) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4312,6 +4539,9 @@ func (m *TensorInfo_CompositeTensor) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4336,7 +4566,7 @@ func (m *TensorInfo_CompositeTensor) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4345,6 +4575,9 @@ func (m *TensorInfo_CompositeTensor) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4360,6 +4593,9 @@ func (m *TensorInfo_CompositeTensor) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -4389,7 +4625,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4417,7 +4653,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4426,6 +4662,9 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4446,7 +4685,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -4463,7 +4702,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -4473,6 +4712,9 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthMetaGraph
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -4489,7 +4731,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -4498,7 +4740,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthMetaGraph
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthMetaGraph
 					}
 					if postmsgIndex > l {
@@ -4540,7 +4782,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4549,6 +4791,9 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4569,7 +4814,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -4586,7 +4831,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -4596,6 +4841,9 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthMetaGraph
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthMetaGraph
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -4612,7 +4860,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -4621,7 +4869,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthMetaGraph
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthMetaGraph
 					}
 					if postmsgIndex > l {
@@ -4663,7 +4911,7 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4673,6 +4921,9 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4685,6 +4936,9 @@ func (m *SignatureDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -4714,7 +4968,7 @@ func (m *AssetFileDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -4742,7 +4996,7 @@ func (m *AssetFileDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4751,6 +5005,9 @@ func (m *AssetFileDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4775,7 +5032,7 @@ func (m *AssetFileDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -4785,6 +5042,9 @@ func (m *AssetFileDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthMetaGraph
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -4797,6 +5057,9 @@ func (m *AssetFileDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthMetaGraph
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthMetaGraph
 			}
 			if (iNdEx + skippy) > l {
@@ -4814,6 +5077,7 @@ func (m *AssetFileDef) Unmarshal(dAtA []byte) error {
 func skipMetaGraph(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -4845,10 +5109,8 @@ func skipMetaGraph(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -4865,53 +5127,34 @@ func skipMetaGraph(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthMetaGraph
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowMetaGraph
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipMetaGraph(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupMetaGraph
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthMetaGraph
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthMetaGraph = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowMetaGraph   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthMetaGraph        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowMetaGraph          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupMetaGraph = fmt.Errorf("proto: unexpected end of group")
 )

@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type VarLenFeatureProto struct {
 	Dtype                   framework.DataType `protobuf:"varint,1,opt,name=dtype,proto3,enum=tensorflow.DataType" json:"dtype,omitempty"`
@@ -43,7 +44,7 @@ func (m *VarLenFeatureProto) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return xxx_messageInfo_VarLenFeatureProto.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -111,7 +112,7 @@ func (m *FixedLenFeatureProto) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_FixedLenFeatureProto.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -179,7 +180,7 @@ func (m *FeatureConfiguration) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_FeatureConfiguration.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -205,10 +206,10 @@ type isFeatureConfiguration_Config interface {
 }
 
 type FeatureConfiguration_FixedLenFeature struct {
-	FixedLenFeature *FixedLenFeatureProto `protobuf:"bytes,1,opt,name=fixed_len_feature,json=fixedLenFeature,proto3,oneof"`
+	FixedLenFeature *FixedLenFeatureProto `protobuf:"bytes,1,opt,name=fixed_len_feature,json=fixedLenFeature,proto3,oneof" json:"fixed_len_feature,omitempty"`
 }
 type FeatureConfiguration_VarLenFeature struct {
-	VarLenFeature *VarLenFeatureProto `protobuf:"bytes,2,opt,name=var_len_feature,json=varLenFeature,proto3,oneof"`
+	VarLenFeature *VarLenFeatureProto `protobuf:"bytes,2,opt,name=var_len_feature,json=varLenFeature,proto3,oneof" json:"var_len_feature,omitempty"`
 }
 
 func (*FeatureConfiguration_FixedLenFeature) isFeatureConfiguration_Config() {}
@@ -235,78 +236,12 @@ func (m *FeatureConfiguration) GetVarLenFeature() *VarLenFeatureProto {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*FeatureConfiguration) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _FeatureConfiguration_OneofMarshaler, _FeatureConfiguration_OneofUnmarshaler, _FeatureConfiguration_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*FeatureConfiguration) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*FeatureConfiguration_FixedLenFeature)(nil),
 		(*FeatureConfiguration_VarLenFeature)(nil),
 	}
-}
-
-func _FeatureConfiguration_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*FeatureConfiguration)
-	// config
-	switch x := m.Config.(type) {
-	case *FeatureConfiguration_FixedLenFeature:
-		_ = b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.FixedLenFeature); err != nil {
-			return err
-		}
-	case *FeatureConfiguration_VarLenFeature:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.VarLenFeature); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("FeatureConfiguration.Config has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _FeatureConfiguration_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*FeatureConfiguration)
-	switch tag {
-	case 1: // config.fixed_len_feature
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(FixedLenFeatureProto)
-		err := b.DecodeMessage(msg)
-		m.Config = &FeatureConfiguration_FixedLenFeature{msg}
-		return true, err
-	case 2: // config.var_len_feature
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(VarLenFeatureProto)
-		err := b.DecodeMessage(msg)
-		m.Config = &FeatureConfiguration_VarLenFeature{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _FeatureConfiguration_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*FeatureConfiguration)
-	// config
-	switch x := m.Config.(type) {
-	case *FeatureConfiguration_FixedLenFeature:
-		s := proto.Size(x.FixedLenFeature)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *FeatureConfiguration_VarLenFeature:
-		s := proto.Size(x.VarLenFeature)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type ExampleParserConfiguration struct {
@@ -327,7 +262,7 @@ func (m *ExampleParserConfiguration) XXX_Marshal(b []byte, deterministic bool) (
 		return xxx_messageInfo_ExampleParserConfiguration.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -375,39 +310,39 @@ var fileDescriptor_80ac05576ebb1f2e = []byte{
 	0x49, 0x36, 0xf1, 0xe0, 0xa9, 0x65, 0xde, 0xef, 0xff, 0xde, 0xfc, 0xff, 0xd9, 0x79, 0xb0, 0x2f,
 	0x69, 0x18, 0x31, 0xe1, 0xfa, 0xec, 0xc2, 0xea, 0x31, 0x41, 0x2d, 0x7a, 0x49, 0x02, 0xee, 0x5f,
 	0xff, 0xc5, 0x9c, 0x88, 0x88, 0x0a, 0xdc, 0x63, 0xa1, 0xeb, 0x0d, 0x62, 0x41, 0xa4, 0xc7, 0xc2,
-	0x16, 0x17, 0x4c, 0x32, 0x03, 0x6e, 0xb4, 0xb5, 0xc7, 0xb3, 0x7d, 0x5c, 0x41, 0x02, 0x7a, 0xc1,
-	0xc4, 0xb9, 0xa5, 0x2b, 0x38, 0x3a, 0x23, 0x9c, 0x6a, 0x65, 0xed, 0xe1, 0xbf, 0xe8, 0x94, 0x7b,
-	0xb0, 0x84, 0x1b, 0x71, 0x1a, 0x69, 0xac, 0xf1, 0x1b, 0x81, 0x71, 0x42, 0xc4, 0x5b, 0x1a, 0x1e,
+	0x16, 0x17, 0x4c, 0x32, 0x03, 0x6e, 0xb4, 0xb5, 0x87, 0xb3, 0x7d, 0x5c, 0x41, 0x02, 0x7a, 0xc1,
+	0xc4, 0xb9, 0xa5, 0x2b, 0x5a, 0x53, 0x7b, 0xfc, 0x2f, 0x0e, 0x47, 0x67, 0x84, 0xd3, 0x94, 0x7e,
+	0xb0, 0x84, 0x1e, 0x71, 0x1a, 0x69, 0xac, 0xf1, 0x1b, 0x81, 0x71, 0x42, 0xc4, 0x5b, 0x1a, 0x1e,
 	0x52, 0x22, 0x63, 0x41, 0xbb, 0xea, 0x7e, 0x8f, 0xa0, 0xd4, 0x4f, 0xb0, 0x2a, 0xaa, 0xa3, 0xe6,
 	0x1d, 0x7b, 0xb3, 0x75, 0xd3, 0xad, 0xf5, 0x86, 0x48, 0x72, 0x3c, 0xe2, 0xd4, 0xd1, 0x88, 0xb1,
-	0x07, 0x3b, 0x43, 0xe2, 0xc7, 0x34, 0xc2, 0x2c, 0x96, 0x3c, 0x96, 0x38, 0xbd, 0x75, 0x48, 0x02,
+	0x07, 0x3b, 0x43, 0xe2, 0xc7, 0x34, 0xc2, 0x2c, 0x96, 0x3c, 0x96, 0x38, 0xbd, 0x4d, 0x48, 0x02,
 	0x5a, 0x5d, 0xa9, 0xa3, 0xe6, 0xba, 0xb3, 0xa5, 0x81, 0xf7, 0xaa, 0x7e, 0xac, 0xca, 0x47, 0x24,
 	0xa0, 0xc6, 0x73, 0xa8, 0x79, 0x61, 0xdf, 0xeb, 0xe5, 0x6b, 0x8b, 0x4a, 0xbb, 0x9d, 0x12, 0x73,
-	0xe2, 0x3d, 0xd8, 0x51, 0xc1, 0xe4, 0x6a, 0x57, 0xf5, 0x5c, 0x0d, 0xcc, 0x4a, 0x1b, 0xbf, 0x10,
-	0x6c, 0x1e, 0x7a, 0x97, 0xb4, 0xff, 0x3f, 0xbe, 0x6d, 0x28, 0xa9, 0xf6, 0xca, 0x63, 0xd9, 0xbe,
-	0x9f, 0x65, 0xf5, 0xac, 0x0f, 0x49, 0x59, 0x35, 0x76, 0x34, 0x6a, 0xbc, 0x80, 0x8d, 0x3e, 0x75,
-	0x49, 0xec, 0x4b, 0xac, 0x22, 0x51, 0x1e, 0xcb, 0xf6, 0xf6, 0xbc, 0x56, 0xcb, 0x6e, 0xa7, 0xf4,
-	0x49, 0x02, 0x2f, 0x4f, 0x7a, 0x75, 0x59, 0xd2, 0x8d, 0xaf, 0x89, 0x63, 0xed, 0xf4, 0x75, 0xf6,
-	0x7b, 0x34, 0x8e, 0xe0, 0x9e, 0x9b, 0x24, 0x81, 0x7d, 0x1a, 0x62, 0x57, 0x13, 0xca, 0x7d, 0xd9,
-	0xae, 0x67, 0x6f, 0x95, 0x17, 0x57, 0xa7, 0xe0, 0x54, 0xdc, 0xe9, 0x73, 0xa3, 0x03, 0x95, 0x21,
-	0x11, 0x53, 0xdd, 0x74, 0x3e, 0x66, 0xb6, 0xdb, 0xfc, 0x27, 0xd7, 0x29, 0x38, 0x1b, 0xc3, 0xec,
-	0x69, 0xfb, 0x16, 0xac, 0xe9, 0xa7, 0xd3, 0xf8, 0x8e, 0xa0, 0x76, 0xa0, 0x1f, 0x55, 0x57, 0xbd,
-	0xa9, 0x69, 0x0b, 0x1f, 0xa1, 0x9c, 0x8e, 0xc2, 0x01, 0xe1, 0x55, 0x54, 0x2f, 0x36, 0xcb, 0xf6,
-	0x6e, 0x76, 0xdc, 0x62, 0x71, 0x2b, 0x9d, 0xf6, 0x8e, 0xf0, 0x83, 0x50, 0x8a, 0x91, 0x03, 0xee,
-	0xf5, 0x41, 0x0d, 0x43, 0x65, 0xa6, 0x6c, 0xdc, 0x85, 0xe2, 0x39, 0x1d, 0xa9, 0x80, 0xd6, 0x9d,
-	0xe4, 0x5f, 0x63, 0x17, 0x4a, 0xfa, 0xa7, 0x5c, 0xc9, 0x09, 0x2d, 0x27, 0x71, 0x47, 0xe3, 0xfb,
-	0x2b, 0xcf, 0x50, 0xfb, 0x0b, 0xfa, 0x36, 0x36, 0xd1, 0xd5, 0xd8, 0x44, 0x3f, 0xc7, 0x26, 0xfa,
-	0x3c, 0x31, 0x0b, 0x57, 0x13, 0xb3, 0xf0, 0x63, 0x62, 0x16, 0x60, 0x8b, 0x89, 0x41, 0xb6, 0x55,
-	0xba, 0x54, 0xda, 0xf5, 0xc5, 0x5e, 0x54, 0x8e, 0x51, 0x17, 0x7d, 0x7a, 0x39, 0xf0, 0xe4, 0x59,
-	0x7c, 0xda, 0xea, 0xb1, 0xc0, 0x7a, 0xc5, 0xb9, 0xef, 0xb9, 0x1e, 0x15, 0xd6, 0x80, 0x3d, 0xc9,
-	0xec, 0x04, 0xb5, 0x04, 0xac, 0x05, 0x2b, 0xec, 0x0f, 0x42, 0xa7, 0x6b, 0x6a, 0x41, 0x3c, 0xfd,
-	0x1b, 0x00, 0x00, 0xff, 0xff, 0x56, 0x78, 0xe5, 0x46, 0xe7, 0x04, 0x00, 0x00,
+	0xe2, 0x3d, 0xd8, 0x51, 0x86, 0x73, 0xb5, 0xab, 0x7a, 0xae, 0x06, 0x66, 0xa5, 0x8d, 0x5f, 0x08,
+	0x36, 0x0f, 0xbd, 0x4b, 0xda, 0xff, 0x1f, 0xdf, 0x36, 0x94, 0x54, 0x7b, 0xe5, 0xb1, 0x6c, 0xdf,
+	0xcf, 0xb2, 0x7a, 0xd6, 0x87, 0xa4, 0xac, 0x1a, 0x3b, 0x1a, 0x35, 0x5e, 0xc0, 0x46, 0x9f, 0xba,
+	0x24, 0xf6, 0x25, 0x56, 0x91, 0x28, 0x8f, 0x65, 0x7b, 0x7b, 0x5e, 0xab, 0x65, 0xb7, 0x53, 0xfa,
+	0x24, 0x81, 0x97, 0x27, 0xbd, 0xba, 0x2c, 0xe9, 0xc6, 0xd7, 0xc4, 0xb1, 0x76, 0xfa, 0x3a, 0xfb,
+	0x3d, 0x1a, 0x47, 0x70, 0xcf, 0x4d, 0x92, 0xc0, 0x3e, 0x0d, 0xb1, 0xab, 0x09, 0xe5, 0xbe, 0x6c,
+	0xd7, 0xb3, 0xb7, 0xca, 0x8b, 0xab, 0x53, 0x70, 0x2a, 0xee, 0xf4, 0xb9, 0xd1, 0x81, 0xca, 0x90,
+	0x88, 0xa9, 0x6e, 0x3a, 0x1f, 0x33, 0xdb, 0x6d, 0xfe, 0x93, 0xeb, 0x14, 0x9c, 0x8d, 0x61, 0xf6,
+	0xb4, 0x7d, 0x0b, 0xd6, 0xf4, 0xd3, 0x69, 0x7c, 0x47, 0x50, 0x3b, 0xd0, 0x8f, 0xaa, 0xab, 0xde,
+	0xd4, 0xb4, 0x85, 0x8f, 0x50, 0x4e, 0x47, 0xe1, 0x80, 0xf0, 0x2a, 0xaa, 0x17, 0x9b, 0x65, 0x7b,
+	0x37, 0x3b, 0x6e, 0xb1, 0xb8, 0x95, 0x4e, 0x7b, 0x47, 0xf8, 0x41, 0x28, 0xc5, 0xc8, 0x01, 0xf7,
+	0xfa, 0xa0, 0x86, 0xa1, 0x32, 0x53, 0x36, 0xee, 0x42, 0xf1, 0x9c, 0x8e, 0x54, 0x40, 0xeb, 0x4e,
+	0xf2, 0xaf, 0xb1, 0x0b, 0x25, 0xfd, 0x53, 0xae, 0xe4, 0x84, 0x96, 0x93, 0xb8, 0xa3, 0xf1, 0xfd,
+	0x95, 0x67, 0xa8, 0xfd, 0x05, 0x7d, 0x1b, 0x9b, 0xe8, 0x6a, 0x6c, 0xa2, 0x9f, 0x63, 0x13, 0x7d,
+	0x9e, 0x98, 0x85, 0xab, 0x89, 0x59, 0xf8, 0x31, 0x31, 0x0b, 0xb0, 0xc5, 0xc4, 0x20, 0xdb, 0x2a,
+	0x5d, 0x2a, 0xed, 0xfa, 0x62, 0x2f, 0x2a, 0xc7, 0xa8, 0x8b, 0x3e, 0xbd, 0x1c, 0x78, 0xf2, 0x2c,
+	0x3e, 0x6d, 0xf5, 0x58, 0x60, 0xbd, 0xe2, 0xdc, 0xf7, 0x5c, 0x8f, 0x0a, 0x6b, 0xc0, 0x9e, 0x64,
+	0x76, 0x82, 0x5a, 0x02, 0xd6, 0x82, 0x15, 0xf6, 0x07, 0xa1, 0xd3, 0x35, 0xb5, 0x20, 0x9e, 0xfe,
+	0x0d, 0x00, 0x00, 0xff, 0xff, 0xd0, 0x3e, 0x74, 0x06, 0xe7, 0x04, 0x00, 0x00,
 }
 
 func (m *VarLenFeatureProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -415,40 +350,48 @@ func (m *VarLenFeatureProto) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *VarLenFeatureProto) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VarLenFeatureProto) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Dtype != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(m.Dtype))
-	}
-	if len(m.ValuesOutputTensorName) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(m.ValuesOutputTensorName)))
-		i += copy(dAtA[i:], m.ValuesOutputTensorName)
+	if len(m.ShapesOutputTensorName) > 0 {
+		i -= len(m.ShapesOutputTensorName)
+		copy(dAtA[i:], m.ShapesOutputTensorName)
+		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(m.ShapesOutputTensorName)))
+		i--
+		dAtA[i] = 0x22
 	}
 	if len(m.IndicesOutputTensorName) > 0 {
-		dAtA[i] = 0x1a
-		i++
+		i -= len(m.IndicesOutputTensorName)
+		copy(dAtA[i:], m.IndicesOutputTensorName)
 		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(m.IndicesOutputTensorName)))
-		i += copy(dAtA[i:], m.IndicesOutputTensorName)
+		i--
+		dAtA[i] = 0x1a
 	}
-	if len(m.ShapesOutputTensorName) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(m.ShapesOutputTensorName)))
-		i += copy(dAtA[i:], m.ShapesOutputTensorName)
+	if len(m.ValuesOutputTensorName) > 0 {
+		i -= len(m.ValuesOutputTensorName)
+		copy(dAtA[i:], m.ValuesOutputTensorName)
+		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(m.ValuesOutputTensorName)))
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Dtype != 0 {
+		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *FixedLenFeatureProto) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -456,48 +399,58 @@ func (m *FixedLenFeatureProto) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *FixedLenFeatureProto) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FixedLenFeatureProto) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Dtype != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(m.Dtype))
-	}
-	if m.Shape != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(m.Shape.Size()))
-		n1, err := m.Shape.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
+	if len(m.ValuesOutputTensorName) > 0 {
+		i -= len(m.ValuesOutputTensorName)
+		copy(dAtA[i:], m.ValuesOutputTensorName)
+		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(m.ValuesOutputTensorName)))
+		i--
+		dAtA[i] = 0x22
 	}
 	if m.DefaultValue != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(m.DefaultValue.Size()))
-		n2, err := m.DefaultValue.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.DefaultValue.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(size))
 		}
-		i += n2
+		i--
+		dAtA[i] = 0x1a
 	}
-	if len(m.ValuesOutputTensorName) > 0 {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(m.ValuesOutputTensorName)))
-		i += copy(dAtA[i:], m.ValuesOutputTensorName)
+	if m.Shape != nil {
+		{
+			size, err := m.Shape.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Dtype != 0 {
+		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(m.Dtype))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *FeatureConfiguration) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -505,52 +458,73 @@ func (m *FeatureConfiguration) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *FeatureConfiguration) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FeatureConfiguration) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if m.Config != nil {
-		nn3, err := m.Config.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Config.Size()
+			i -= size
+			if _, err := m.Config.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn3
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *FeatureConfiguration_FixedLenFeature) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FeatureConfiguration_FixedLenFeature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.FixedLenFeature != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(m.FixedLenFeature.Size()))
-		n4, err := m.FixedLenFeature.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.FixedLenFeature.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *FeatureConfiguration_VarLenFeature) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *FeatureConfiguration_VarLenFeature) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.VarLenFeature != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(m.VarLenFeature.Size()))
-		n5, err := m.VarLenFeature.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.VarLenFeature.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *ExampleParserConfiguration) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -558,49 +532,54 @@ func (m *ExampleParserConfiguration) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ExampleParserConfiguration) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ExampleParserConfiguration) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.FeatureMap) > 0 {
-		for k, _ := range m.FeatureMap {
-			dAtA[i] = 0xa
-			i++
+		for k := range m.FeatureMap {
 			v := m.FeatureMap[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovExampleParserConfiguration(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovExampleParserConfiguration(uint64(len(k))) + msgSize
-			i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(v.Size()))
-				n6, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(size))
 				}
-				i += n6
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintExampleParserConfiguration(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintExampleParserConfiguration(dAtA []byte, offset int, v uint64) int {
+	offset -= sovExampleParserConfiguration(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *VarLenFeatureProto) Size() (n int) {
 	if m == nil {
@@ -709,14 +688,7 @@ func (m *ExampleParserConfiguration) Size() (n int) {
 }
 
 func sovExampleParserConfiguration(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozExampleParserConfiguration(x uint64) (n int) {
 	return sovExampleParserConfiguration(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -736,7 +708,7 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -764,7 +736,7 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (framework.DataType(b) & 0x7F) << shift
+				m.Dtype |= framework.DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -783,7 +755,7 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -793,6 +765,9 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -812,7 +787,7 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -822,6 +797,9 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -841,7 +819,7 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -851,6 +829,9 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -863,6 +844,9 @@ func (m *VarLenFeatureProto) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			if (iNdEx + skippy) > l {
@@ -892,7 +876,7 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -920,7 +904,7 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Dtype |= (framework.DataType(b) & 0x7F) << shift
+				m.Dtype |= framework.DataType(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -939,7 +923,7 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -948,6 +932,9 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -972,7 +959,7 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -981,6 +968,9 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1005,7 +995,7 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1015,6 +1005,9 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1027,6 +1020,9 @@ func (m *FixedLenFeatureProto) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			if (iNdEx + skippy) > l {
@@ -1056,7 +1052,7 @@ func (m *FeatureConfiguration) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1084,7 +1080,7 @@ func (m *FeatureConfiguration) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1093,6 +1089,9 @@ func (m *FeatureConfiguration) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1116,7 +1115,7 @@ func (m *FeatureConfiguration) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1125,6 +1124,9 @@ func (m *FeatureConfiguration) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1141,6 +1143,9 @@ func (m *FeatureConfiguration) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			if (iNdEx + skippy) > l {
@@ -1170,7 +1175,7 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1198,7 +1203,7 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1207,6 +1212,9 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1227,7 +1235,7 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1244,7 +1252,7 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1254,6 +1262,9 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthExampleParserConfiguration
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthExampleParserConfiguration
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -1270,7 +1281,7 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1279,7 +1290,7 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthExampleParserConfiguration
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthExampleParserConfiguration
 					}
 					if postmsgIndex > l {
@@ -1316,6 +1327,9 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthExampleParserConfiguration
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthExampleParserConfiguration
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1331,6 +1345,7 @@ func (m *ExampleParserConfiguration) Unmarshal(dAtA []byte) error {
 func skipExampleParserConfiguration(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1362,10 +1377,8 @@ func skipExampleParserConfiguration(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1382,53 +1395,34 @@ func skipExampleParserConfiguration(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthExampleParserConfiguration
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowExampleParserConfiguration
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipExampleParserConfiguration(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupExampleParserConfiguration
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthExampleParserConfiguration
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthExampleParserConfiguration = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowExampleParserConfiguration   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthExampleParserConfiguration        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowExampleParserConfiguration          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupExampleParserConfiguration = fmt.Errorf("proto: unexpected end of group")
 )

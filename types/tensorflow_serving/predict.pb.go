@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // PredictRequest specifies which TensorFlow model to run, as well as
 // how inputs are mapped to tensors and how outputs are filtered before
@@ -58,7 +59,7 @@ func (m *PredictRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return xxx_messageInfo_PredictRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -120,7 +121,7 @@ func (m *PredictResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_PredictResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -191,7 +192,7 @@ var fileDescriptor_30f9dfb075b4507b = []byte{
 func (m *PredictRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -199,70 +200,69 @@ func (m *PredictRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PredictRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ModelSpec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintPredict(dAtA, i, uint64(m.ModelSpec.Size()))
-		n1, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.OutputFilter) > 0 {
+		for iNdEx := len(m.OutputFilter) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.OutputFilter[iNdEx])
+			copy(dAtA[i:], m.OutputFilter[iNdEx])
+			i = encodeVarintPredict(dAtA, i, uint64(len(m.OutputFilter[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
 		}
-		i += n1
 	}
 	if len(m.Inputs) > 0 {
-		for k, _ := range m.Inputs {
-			dAtA[i] = 0x12
-			i++
+		for k := range m.Inputs {
 			v := m.Inputs[k]
-			msgSize := 0
+			baseI := i
 			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovPredict(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovPredict(uint64(len(k))) + msgSize
-			i = encodeVarintPredict(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintPredict(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintPredict(dAtA, i, uint64(v.Size()))
-				n2, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintPredict(dAtA, i, uint64(size))
 				}
-				i += n2
+				i--
+				dAtA[i] = 0x12
 			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintPredict(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintPredict(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	if len(m.OutputFilter) > 0 {
-		for _, s := range m.OutputFilter {
-			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
+	if m.ModelSpec != nil {
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
 			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
+			i -= size
+			i = encodeVarintPredict(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0xa
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *PredictResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -270,59 +270,66 @@ func (m *PredictResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PredictResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Outputs) > 0 {
-		for k, _ := range m.Outputs {
-			dAtA[i] = 0xa
-			i++
-			v := m.Outputs[k]
-			msgSize := 0
-			if v != nil {
-				msgSize = v.Size()
-				msgSize += 1 + sovPredict(uint64(msgSize))
-			}
-			mapSize := 1 + len(k) + sovPredict(uint64(len(k))) + msgSize
-			i = encodeVarintPredict(dAtA, i, uint64(mapSize))
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintPredict(dAtA, i, uint64(len(k)))
-			i += copy(dAtA[i:], k)
-			if v != nil {
-				dAtA[i] = 0x12
-				i++
-				i = encodeVarintPredict(dAtA, i, uint64(v.Size()))
-				n3, err := v.MarshalTo(dAtA[i:])
-				if err != nil {
-					return 0, err
-				}
-				i += n3
-			}
-		}
-	}
 	if m.ModelSpec != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintPredict(dAtA, i, uint64(m.ModelSpec.Size()))
-		n4, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredict(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if len(m.Outputs) > 0 {
+		for k := range m.Outputs {
+			v := m.Outputs[k]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintPredict(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(k)
+			copy(dAtA[i:], k)
+			i = encodeVarintPredict(dAtA, i, uint64(len(k)))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintPredict(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintPredict(dAtA []byte, offset int, v uint64) int {
+	offset -= sovPredict(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *PredictRequest) Size() (n int) {
 	if m == nil {
@@ -383,14 +390,7 @@ func (m *PredictResponse) Size() (n int) {
 }
 
 func sovPredict(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozPredict(x uint64) (n int) {
 	return sovPredict(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -410,7 +410,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -438,7 +438,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -447,6 +447,9 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredict
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredict
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -471,7 +474,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -480,6 +483,9 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredict
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredict
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -500,7 +506,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -517,7 +523,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -527,6 +533,9 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthPredict
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthPredict
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -543,7 +552,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -552,7 +561,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthPredict
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthPredict
 					}
 					if postmsgIndex > l {
@@ -594,7 +603,7 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -604,6 +613,9 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredict
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredict
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -616,6 +628,9 @@ func (m *PredictRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthPredict
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthPredict
 			}
 			if (iNdEx + skippy) > l {
@@ -645,7 +660,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -673,7 +688,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -682,6 +697,9 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredict
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredict
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -702,7 +720,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					wire |= (uint64(b) & 0x7F) << shift
+					wire |= uint64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -719,7 +737,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						stringLenmapkey |= (uint64(b) & 0x7F) << shift
+						stringLenmapkey |= uint64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -729,6 +747,9 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthPredict
 					}
 					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthPredict
+					}
 					if postStringIndexmapkey > l {
 						return io.ErrUnexpectedEOF
 					}
@@ -745,7 +766,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						mapmsglen |= (int(b) & 0x7F) << shift
+						mapmsglen |= int(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -754,7 +775,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 						return ErrInvalidLengthPredict
 					}
 					postmsgIndex := iNdEx + mapmsglen
-					if mapmsglen < 0 {
+					if postmsgIndex < 0 {
 						return ErrInvalidLengthPredict
 					}
 					if postmsgIndex > l {
@@ -796,7 +817,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -805,6 +826,9 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredict
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredict
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -824,6 +848,9 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthPredict
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPredict
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -839,6 +866,7 @@ func (m *PredictResponse) Unmarshal(dAtA []byte) error {
 func skipPredict(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -870,10 +898,8 @@ func skipPredict(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -890,53 +916,34 @@ func skipPredict(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthPredict
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowPredict
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipPredict(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupPredict
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthPredict
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthPredict = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowPredict   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthPredict        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowPredict          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupPredict = fmt.Errorf("proto: unexpected end of group")
 )

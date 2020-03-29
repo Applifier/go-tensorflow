@@ -9,8 +9,11 @@ import (
 	protobuf "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -22,7 +25,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type SessionRunRequest struct {
 	// Model Specification. If version is not specified, will use the latest
@@ -55,7 +58,7 @@ func (m *SessionRunRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_SessionRunRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -133,7 +136,7 @@ func (m *SessionRunResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return xxx_messageInfo_SessionRunResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -249,6 +252,14 @@ type SessionServiceServer interface {
 	SessionRun(context.Context, *SessionRunRequest) (*SessionRunResponse, error)
 }
 
+// UnimplementedSessionServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedSessionServiceServer struct {
+}
+
+func (*UnimplementedSessionServiceServer) SessionRun(ctx context.Context, req *SessionRunRequest) (*SessionRunResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SessionRun not implemented")
+}
+
 func RegisterSessionServiceServer(s *grpc.Server, srv SessionServiceServer) {
 	s.RegisterService(&_SessionService_serviceDesc, srv)
 }
@@ -287,7 +298,7 @@ var _SessionService_serviceDesc = grpc.ServiceDesc{
 func (m *SessionRunRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -295,79 +306,78 @@ func (m *SessionRunRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SessionRunRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SessionRunRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ModelSpec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintSessionService(dAtA, i, uint64(m.ModelSpec.Size()))
-		n1, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
-	if len(m.Feed) > 0 {
-		for _, msg := range m.Feed {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintSessionService(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+	if m.Options != nil {
+		{
+			size, err := m.Options.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintSessionService(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.Target) > 0 {
+		for iNdEx := len(m.Target) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Target[iNdEx])
+			copy(dAtA[i:], m.Target[iNdEx])
+			i = encodeVarintSessionService(dAtA, i, uint64(len(m.Target[iNdEx])))
+			i--
+			dAtA[i] = 0x22
 		}
 	}
 	if len(m.Fetch) > 0 {
-		for _, s := range m.Fetch {
+		for iNdEx := len(m.Fetch) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Fetch[iNdEx])
+			copy(dAtA[i:], m.Fetch[iNdEx])
+			i = encodeVarintSessionService(dAtA, i, uint64(len(m.Fetch[iNdEx])))
+			i--
 			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
+		}
+	}
+	if len(m.Feed) > 0 {
+		for iNdEx := len(m.Feed) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Feed[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintSessionService(dAtA, i, uint64(size))
 			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
+			i--
+			dAtA[i] = 0x12
 		}
 	}
-	if len(m.Target) > 0 {
-		for _, s := range m.Target {
-			dAtA[i] = 0x22
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
+	if m.ModelSpec != nil {
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
 			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
+			i -= size
+			i = encodeVarintSessionService(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0xa
 	}
-	if m.Options != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintSessionService(dAtA, i, uint64(m.Options.Size()))
-		n2, err := m.Options.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *SessionRunResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -375,53 +385,66 @@ func (m *SessionRunResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SessionRunResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SessionRunResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Tensor) > 0 {
-		for _, msg := range m.Tensor {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintSessionService(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+	if m.ModelSpec != nil {
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintSessionService(dAtA, i, uint64(size))
 		}
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.Metadata != nil {
+		{
+			size, err := m.Metadata.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintSessionService(dAtA, i, uint64(size))
+		}
+		i--
 		dAtA[i] = 0x12
-		i++
-		i = encodeVarintSessionService(dAtA, i, uint64(m.Metadata.Size()))
-		n3, err := m.Metadata.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n3
 	}
-	if m.ModelSpec != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintSessionService(dAtA, i, uint64(m.ModelSpec.Size()))
-		n4, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	if len(m.Tensor) > 0 {
+		for iNdEx := len(m.Tensor) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Tensor[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintSessionService(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
 		}
-		i += n4
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintSessionService(dAtA []byte, offset int, v uint64) int {
+	offset -= sovSessionService(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *SessionRunRequest) Size() (n int) {
 	if m == nil {
@@ -482,14 +505,7 @@ func (m *SessionRunResponse) Size() (n int) {
 }
 
 func sovSessionService(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozSessionService(x uint64) (n int) {
 	return sovSessionService(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -509,7 +525,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -537,7 +553,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -546,6 +562,9 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSessionService
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -570,7 +589,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -579,6 +598,9 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSessionService
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -601,7 +623,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -611,6 +633,9 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSessionService
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -630,7 +655,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -640,6 +665,9 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSessionService
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -659,7 +687,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -668,6 +696,9 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSessionService
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -685,6 +716,9 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthSessionService
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthSessionService
 			}
 			if (iNdEx + skippy) > l {
@@ -714,7 +748,7 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -742,7 +776,7 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -751,6 +785,9 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSessionService
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -773,7 +810,7 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -782,6 +819,9 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSessionService
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -806,7 +846,7 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -815,6 +855,9 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthSessionService
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -834,6 +877,9 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthSessionService
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthSessionService
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -849,6 +895,7 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 func skipSessionService(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -880,10 +927,8 @@ func skipSessionService(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -900,53 +945,34 @@ func skipSessionService(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthSessionService
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowSessionService
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipSessionService(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupSessionService
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthSessionService
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthSessionService = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowSessionService   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthSessionService        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowSessionService          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupSessionService = fmt.Errorf("proto: unexpected end of group")
 )

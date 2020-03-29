@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Inference request such as classification, regression, etc...
 type InferenceTask struct {
@@ -47,7 +48,7 @@ func (m *InferenceTask) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_InferenceTask.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -103,7 +104,7 @@ func (m *InferenceResult) XXX_Marshal(b []byte, deterministic bool) ([]byte, err
 		return xxx_messageInfo_InferenceResult.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -129,10 +130,10 @@ type isInferenceResult_Result interface {
 }
 
 type InferenceResult_ClassificationResult struct {
-	ClassificationResult *ClassificationResult `protobuf:"bytes,2,opt,name=classification_result,json=classificationResult,proto3,oneof"`
+	ClassificationResult *ClassificationResult `protobuf:"bytes,2,opt,name=classification_result,json=classificationResult,proto3,oneof" json:"classification_result,omitempty"`
 }
 type InferenceResult_RegressionResult struct {
-	RegressionResult *RegressionResult `protobuf:"bytes,3,opt,name=regression_result,json=regressionResult,proto3,oneof"`
+	RegressionResult *RegressionResult `protobuf:"bytes,3,opt,name=regression_result,json=regressionResult,proto3,oneof" json:"regression_result,omitempty"`
 }
 
 func (*InferenceResult_ClassificationResult) isInferenceResult_Result() {}
@@ -166,78 +167,12 @@ func (m *InferenceResult) GetRegressionResult() *RegressionResult {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*InferenceResult) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _InferenceResult_OneofMarshaler, _InferenceResult_OneofUnmarshaler, _InferenceResult_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*InferenceResult) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*InferenceResult_ClassificationResult)(nil),
 		(*InferenceResult_RegressionResult)(nil),
 	}
-}
-
-func _InferenceResult_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*InferenceResult)
-	// result
-	switch x := m.Result.(type) {
-	case *InferenceResult_ClassificationResult:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ClassificationResult); err != nil {
-			return err
-		}
-	case *InferenceResult_RegressionResult:
-		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.RegressionResult); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("InferenceResult.Result has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _InferenceResult_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*InferenceResult)
-	switch tag {
-	case 2: // result.classification_result
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ClassificationResult)
-		err := b.DecodeMessage(msg)
-		m.Result = &InferenceResult_ClassificationResult{msg}
-		return true, err
-	case 3: // result.regression_result
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(RegressionResult)
-		err := b.DecodeMessage(msg)
-		m.Result = &InferenceResult_RegressionResult{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _InferenceResult_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*InferenceResult)
-	// result
-	switch x := m.Result.(type) {
-	case *InferenceResult_ClassificationResult:
-		s := proto.Size(x.ClassificationResult)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *InferenceResult_RegressionResult:
-		s := proto.Size(x.RegressionResult)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 // Inference request containing one or more requests.
@@ -262,7 +197,7 @@ func (m *MultiInferenceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byt
 		return xxx_messageInfo_MultiInferenceRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -316,7 +251,7 @@ func (m *MultiInferenceResponse) XXX_Marshal(b []byte, deterministic bool) ([]by
 		return xxx_messageInfo_MultiInferenceResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -349,7 +284,9 @@ func init() {
 	proto.RegisterType((*MultiInferenceResponse)(nil), "tensorflow.serving.MultiInferenceResponse")
 }
 
-func init() { proto.RegisterFile("tensorflow_serving/inference.proto", fileDescriptor_adc181a99fb0c242) }
+func init() {
+	proto.RegisterFile("tensorflow_serving/inference.proto", fileDescriptor_adc181a99fb0c242)
+}
 
 var fileDescriptor_adc181a99fb0c242 = []byte{
 	// 385 bytes of a gzipped FileDescriptorProto
@@ -383,7 +320,7 @@ var fileDescriptor_adc181a99fb0c242 = []byte{
 func (m *InferenceTask) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -391,33 +328,41 @@ func (m *InferenceTask) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *InferenceTask) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *InferenceTask) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ModelSpec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintInference(dAtA, i, uint64(m.ModelSpec.Size()))
-		n1, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
 	if len(m.MethodName) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.MethodName)
+		copy(dAtA[i:], m.MethodName)
 		i = encodeVarintInference(dAtA, i, uint64(len(m.MethodName)))
-		i += copy(dAtA[i:], m.MethodName)
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.ModelSpec != nil {
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintInference(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *InferenceResult) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -425,62 +370,85 @@ func (m *InferenceResult) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *InferenceResult) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *InferenceResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.ModelSpec != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintInference(dAtA, i, uint64(m.ModelSpec.Size()))
-		n2, err := m.ModelSpec.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
 	if m.Result != nil {
-		nn3, err := m.Result.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.Result.Size()
+			i -= size
+			if _, err := m.Result.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn3
 	}
-	return i, nil
+	if m.ModelSpec != nil {
+		{
+			size, err := m.ModelSpec.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintInference(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *InferenceResult_ClassificationResult) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *InferenceResult_ClassificationResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ClassificationResult != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintInference(dAtA, i, uint64(m.ClassificationResult.Size()))
-		n4, err := m.ClassificationResult.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ClassificationResult.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintInference(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *InferenceResult_RegressionResult) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *InferenceResult_RegressionResult) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.RegressionResult != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintInference(dAtA, i, uint64(m.RegressionResult.Size()))
-		n5, err := m.RegressionResult.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.RegressionResult.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintInference(dAtA, i, uint64(size))
 		}
-		i += n5
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *MultiInferenceRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -488,39 +456,48 @@ func (m *MultiInferenceRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MultiInferenceRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MultiInferenceRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Tasks) > 0 {
-		for _, msg := range m.Tasks {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintInference(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+	if m.Input != nil {
+		{
+			size, err := m.Input.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintInference(dAtA, i, uint64(size))
 		}
-	}
-	if m.Input != nil {
+		i--
 		dAtA[i] = 0x12
-		i++
-		i = encodeVarintInference(dAtA, i, uint64(m.Input.Size()))
-		n6, err := m.Input.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n6
 	}
-	return i, nil
+	if len(m.Tasks) > 0 {
+		for iNdEx := len(m.Tasks) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Tasks[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintInference(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MultiInferenceResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -528,33 +505,42 @@ func (m *MultiInferenceResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MultiInferenceResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MultiInferenceResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Results) > 0 {
-		for _, msg := range m.Results {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintInference(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Results) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Results[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintInference(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintInference(dAtA []byte, offset int, v uint64) int {
+	offset -= sovInference(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *InferenceTask) Size() (n int) {
 	if m == nil {
@@ -648,14 +634,7 @@ func (m *MultiInferenceResponse) Size() (n int) {
 }
 
 func sovInference(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozInference(x uint64) (n int) {
 	return sovInference(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -675,7 +654,7 @@ func (m *InferenceTask) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -703,7 +682,7 @@ func (m *InferenceTask) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -712,6 +691,9 @@ func (m *InferenceTask) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInference
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInference
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -736,7 +718,7 @@ func (m *InferenceTask) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -746,6 +728,9 @@ func (m *InferenceTask) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInference
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthInference
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -758,6 +743,9 @@ func (m *InferenceTask) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthInference
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthInference
 			}
 			if (iNdEx + skippy) > l {
@@ -787,7 +775,7 @@ func (m *InferenceResult) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -815,7 +803,7 @@ func (m *InferenceResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -824,6 +812,9 @@ func (m *InferenceResult) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInference
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInference
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -848,7 +839,7 @@ func (m *InferenceResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -857,6 +848,9 @@ func (m *InferenceResult) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInference
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInference
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -880,7 +874,7 @@ func (m *InferenceResult) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -889,6 +883,9 @@ func (m *InferenceResult) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInference
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInference
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -905,6 +902,9 @@ func (m *InferenceResult) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthInference
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthInference
 			}
 			if (iNdEx + skippy) > l {
@@ -934,7 +934,7 @@ func (m *MultiInferenceRequest) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -962,7 +962,7 @@ func (m *MultiInferenceRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -971,6 +971,9 @@ func (m *MultiInferenceRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInference
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInference
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -993,7 +996,7 @@ func (m *MultiInferenceRequest) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1002,6 +1005,9 @@ func (m *MultiInferenceRequest) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInference
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInference
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1019,6 +1025,9 @@ func (m *MultiInferenceRequest) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthInference
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthInference
 			}
 			if (iNdEx + skippy) > l {
@@ -1048,7 +1057,7 @@ func (m *MultiInferenceResponse) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1076,7 +1085,7 @@ func (m *MultiInferenceResponse) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1085,6 +1094,9 @@ func (m *MultiInferenceResponse) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthInference
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthInference
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1102,6 +1114,9 @@ func (m *MultiInferenceResponse) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthInference
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthInference
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1117,6 +1132,7 @@ func (m *MultiInferenceResponse) Unmarshal(dAtA []byte) error {
 func skipInference(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1148,10 +1164,8 @@ func skipInference(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1168,53 +1182,34 @@ func skipInference(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthInference
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowInference
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipInference(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupInference
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthInference
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthInference = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowInference   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthInference        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowInference          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupInference = fmt.Errorf("proto: unexpected end of group")
 )

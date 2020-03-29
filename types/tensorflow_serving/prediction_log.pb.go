@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type ClassifyLog struct {
 	Request  *ClassificationRequest  `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
@@ -40,7 +41,7 @@ func (m *ClassifyLog) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_ClassifyLog.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -92,7 +93,7 @@ func (m *RegressLog) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_RegressLog.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -144,7 +145,7 @@ func (m *PredictLog) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PredictLog.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -196,7 +197,7 @@ func (m *MultiInferenceLog) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_MultiInferenceLog.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -248,7 +249,7 @@ func (m *SessionRunLog) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_SessionRunLog.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -307,7 +308,7 @@ func (m *PredictionLog) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_PredictionLog.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -333,19 +334,19 @@ type isPredictionLog_LogType interface {
 }
 
 type PredictionLog_ClassifyLog struct {
-	ClassifyLog *ClassifyLog `protobuf:"bytes,2,opt,name=classify_log,json=classifyLog,proto3,oneof"`
+	ClassifyLog *ClassifyLog `protobuf:"bytes,2,opt,name=classify_log,json=classifyLog,proto3,oneof" json:"classify_log,omitempty"`
 }
 type PredictionLog_RegressLog struct {
-	RegressLog *RegressLog `protobuf:"bytes,3,opt,name=regress_log,json=regressLog,proto3,oneof"`
+	RegressLog *RegressLog `protobuf:"bytes,3,opt,name=regress_log,json=regressLog,proto3,oneof" json:"regress_log,omitempty"`
 }
 type PredictionLog_PredictLog struct {
-	PredictLog *PredictLog `protobuf:"bytes,6,opt,name=predict_log,json=predictLog,proto3,oneof"`
+	PredictLog *PredictLog `protobuf:"bytes,6,opt,name=predict_log,json=predictLog,proto3,oneof" json:"predict_log,omitempty"`
 }
 type PredictionLog_MultiInferenceLog struct {
-	MultiInferenceLog *MultiInferenceLog `protobuf:"bytes,4,opt,name=multi_inference_log,json=multiInferenceLog,proto3,oneof"`
+	MultiInferenceLog *MultiInferenceLog `protobuf:"bytes,4,opt,name=multi_inference_log,json=multiInferenceLog,proto3,oneof" json:"multi_inference_log,omitempty"`
 }
 type PredictionLog_SessionRunLog struct {
-	SessionRunLog *SessionRunLog `protobuf:"bytes,5,opt,name=session_run_log,json=sessionRunLog,proto3,oneof"`
+	SessionRunLog *SessionRunLog `protobuf:"bytes,5,opt,name=session_run_log,json=sessionRunLog,proto3,oneof" json:"session_run_log,omitempty"`
 }
 
 func (*PredictionLog_ClassifyLog) isPredictionLog_LogType()       {}
@@ -403,135 +404,15 @@ func (m *PredictionLog) GetSessionRunLog() *SessionRunLog {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*PredictionLog) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _PredictionLog_OneofMarshaler, _PredictionLog_OneofUnmarshaler, _PredictionLog_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*PredictionLog) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*PredictionLog_ClassifyLog)(nil),
 		(*PredictionLog_RegressLog)(nil),
 		(*PredictionLog_PredictLog)(nil),
 		(*PredictionLog_MultiInferenceLog)(nil),
 		(*PredictionLog_SessionRunLog)(nil),
 	}
-}
-
-func _PredictionLog_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*PredictionLog)
-	// log_type
-	switch x := m.LogType.(type) {
-	case *PredictionLog_ClassifyLog:
-		_ = b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ClassifyLog); err != nil {
-			return err
-		}
-	case *PredictionLog_RegressLog:
-		_ = b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.RegressLog); err != nil {
-			return err
-		}
-	case *PredictionLog_PredictLog:
-		_ = b.EncodeVarint(6<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.PredictLog); err != nil {
-			return err
-		}
-	case *PredictionLog_MultiInferenceLog:
-		_ = b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.MultiInferenceLog); err != nil {
-			return err
-		}
-	case *PredictionLog_SessionRunLog:
-		_ = b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.SessionRunLog); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("PredictionLog.LogType has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _PredictionLog_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*PredictionLog)
-	switch tag {
-	case 2: // log_type.classify_log
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ClassifyLog)
-		err := b.DecodeMessage(msg)
-		m.LogType = &PredictionLog_ClassifyLog{msg}
-		return true, err
-	case 3: // log_type.regress_log
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(RegressLog)
-		err := b.DecodeMessage(msg)
-		m.LogType = &PredictionLog_RegressLog{msg}
-		return true, err
-	case 6: // log_type.predict_log
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(PredictLog)
-		err := b.DecodeMessage(msg)
-		m.LogType = &PredictionLog_PredictLog{msg}
-		return true, err
-	case 4: // log_type.multi_inference_log
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(MultiInferenceLog)
-		err := b.DecodeMessage(msg)
-		m.LogType = &PredictionLog_MultiInferenceLog{msg}
-		return true, err
-	case 5: // log_type.session_run_log
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(SessionRunLog)
-		err := b.DecodeMessage(msg)
-		m.LogType = &PredictionLog_SessionRunLog{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _PredictionLog_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*PredictionLog)
-	// log_type
-	switch x := m.LogType.(type) {
-	case *PredictionLog_ClassifyLog:
-		s := proto.Size(x.ClassifyLog)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *PredictionLog_RegressLog:
-		s := proto.Size(x.RegressLog)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *PredictionLog_PredictLog:
-		s := proto.Size(x.PredictLog)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *PredictionLog_MultiInferenceLog:
-		s := proto.Size(x.MultiInferenceLog)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *PredictionLog_SessionRunLog:
-		s := proto.Size(x.SessionRunLog)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 func init() {
@@ -586,7 +467,7 @@ var fileDescriptor_efdf6e97c18a73fa = []byte{
 func (m *ClassifyLog) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -594,37 +475,46 @@ func (m *ClassifyLog) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ClassifyLog) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ClassifyLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Request != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Request.Size()))
-		n1, err := m.Request.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
 	if m.Response != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Response.Size()))
-		n2, err := m.Response.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Response.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n2
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Request != nil {
+		{
+			size, err := m.Request.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *RegressLog) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -632,37 +522,46 @@ func (m *RegressLog) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *RegressLog) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RegressLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Request != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Request.Size()))
-		n3, err := m.Request.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n3
-	}
 	if m.Response != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Response.Size()))
-		n4, err := m.Response.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Response.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n4
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Request != nil {
+		{
+			size, err := m.Request.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *PredictLog) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -670,37 +569,46 @@ func (m *PredictLog) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PredictLog) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Request != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Request.Size()))
-		n5, err := m.Request.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n5
-	}
 	if m.Response != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Response.Size()))
-		n6, err := m.Response.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Response.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n6
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Request != nil {
+		{
+			size, err := m.Request.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *MultiInferenceLog) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -708,37 +616,46 @@ func (m *MultiInferenceLog) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *MultiInferenceLog) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MultiInferenceLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Request != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Request.Size()))
-		n7, err := m.Request.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n7
-	}
 	if m.Response != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Response.Size()))
-		n8, err := m.Response.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Response.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n8
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Request != nil {
+		{
+			size, err := m.Request.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *SessionRunLog) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -746,37 +663,46 @@ func (m *SessionRunLog) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SessionRunLog) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SessionRunLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Request != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Request.Size()))
-		n9, err := m.Request.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n9
-	}
 	if m.Response != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.Response.Size()))
-		n10, err := m.Response.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.Response.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n10
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Request != nil {
+		{
+			size, err := m.Request.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *PredictionLog) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -784,108 +710,154 @@ func (m *PredictionLog) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PredictionLog) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictionLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.LogMetadata != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.LogMetadata.Size()))
-		n11, err := m.LogMetadata.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n11
-	}
 	if m.LogType != nil {
-		nn12, err := m.LogType.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size := m.LogType.Size()
+			i -= size
+			if _, err := m.LogType.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
 		}
-		i += nn12
 	}
-	return i, nil
+	if m.LogMetadata != nil {
+		{
+			size, err := m.LogMetadata.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *PredictionLog_ClassifyLog) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictionLog_ClassifyLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.ClassifyLog != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.ClassifyLog.Size()))
-		n13, err := m.ClassifyLog.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.ClassifyLog.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n13
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *PredictionLog_RegressLog) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictionLog_RegressLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.RegressLog != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.RegressLog.Size()))
-		n14, err := m.RegressLog.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.RegressLog.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n14
+		i--
+		dAtA[i] = 0x1a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *PredictionLog_MultiInferenceLog) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictionLog_MultiInferenceLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.MultiInferenceLog != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.MultiInferenceLog.Size()))
-		n15, err := m.MultiInferenceLog.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.MultiInferenceLog.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n15
+		i--
+		dAtA[i] = 0x22
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *PredictionLog_SessionRunLog) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictionLog_SessionRunLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.SessionRunLog != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.SessionRunLog.Size()))
-		n16, err := m.SessionRunLog.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.SessionRunLog.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n16
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func (m *PredictionLog_PredictLog) MarshalTo(dAtA []byte) (int, error) {
-	i := 0
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PredictionLog_PredictLog) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	if m.PredictLog != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintPredictionLog(dAtA, i, uint64(m.PredictLog.Size()))
-		n17, err := m.PredictLog.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+		{
+			size, err := m.PredictLog.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintPredictionLog(dAtA, i, uint64(size))
 		}
-		i += n17
+		i--
+		dAtA[i] = 0x32
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 func encodeVarintPredictionLog(dAtA []byte, offset int, v uint64) int {
+	offset -= sovPredictionLog(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *ClassifyLog) Size() (n int) {
 	if m == nil {
@@ -1050,14 +1022,7 @@ func (m *PredictionLog_PredictLog) Size() (n int) {
 }
 
 func sovPredictionLog(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozPredictionLog(x uint64) (n int) {
 	return sovPredictionLog(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -1077,7 +1042,7 @@ func (m *ClassifyLog) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1105,7 +1070,7 @@ func (m *ClassifyLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1114,6 +1079,9 @@ func (m *ClassifyLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1138,7 +1106,7 @@ func (m *ClassifyLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1147,6 +1115,9 @@ func (m *ClassifyLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1164,6 +1135,9 @@ func (m *ClassifyLog) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthPredictionLog
 			}
 			if (iNdEx + skippy) > l {
@@ -1193,7 +1167,7 @@ func (m *RegressLog) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1221,7 +1195,7 @@ func (m *RegressLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1230,6 +1204,9 @@ func (m *RegressLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1254,7 +1231,7 @@ func (m *RegressLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1263,6 +1240,9 @@ func (m *RegressLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1280,6 +1260,9 @@ func (m *RegressLog) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthPredictionLog
 			}
 			if (iNdEx + skippy) > l {
@@ -1309,7 +1292,7 @@ func (m *PredictLog) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1337,7 +1320,7 @@ func (m *PredictLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1346,6 +1329,9 @@ func (m *PredictLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1370,7 +1356,7 @@ func (m *PredictLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1379,6 +1365,9 @@ func (m *PredictLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1396,6 +1385,9 @@ func (m *PredictLog) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthPredictionLog
 			}
 			if (iNdEx + skippy) > l {
@@ -1425,7 +1417,7 @@ func (m *MultiInferenceLog) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1453,7 +1445,7 @@ func (m *MultiInferenceLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1462,6 +1454,9 @@ func (m *MultiInferenceLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1486,7 +1481,7 @@ func (m *MultiInferenceLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1495,6 +1490,9 @@ func (m *MultiInferenceLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1512,6 +1510,9 @@ func (m *MultiInferenceLog) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthPredictionLog
 			}
 			if (iNdEx + skippy) > l {
@@ -1541,7 +1542,7 @@ func (m *SessionRunLog) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1569,7 +1570,7 @@ func (m *SessionRunLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1578,6 +1579,9 @@ func (m *SessionRunLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1602,7 +1606,7 @@ func (m *SessionRunLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1611,6 +1615,9 @@ func (m *SessionRunLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1628,6 +1635,9 @@ func (m *SessionRunLog) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthPredictionLog
 			}
 			if (iNdEx + skippy) > l {
@@ -1657,7 +1667,7 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1685,7 +1695,7 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1694,6 +1704,9 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1718,7 +1731,7 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1727,6 +1740,9 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1750,7 +1766,7 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1759,6 +1775,9 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1782,7 +1801,7 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1791,6 +1810,9 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1814,7 +1836,7 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1823,6 +1845,9 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1846,7 +1871,7 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1855,6 +1880,9 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthPredictionLog
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1873,6 +1901,9 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthPredictionLog
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthPredictionLog
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1888,6 +1919,7 @@ func (m *PredictionLog) Unmarshal(dAtA []byte) error {
 func skipPredictionLog(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1919,10 +1951,8 @@ func skipPredictionLog(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1939,53 +1969,34 @@ func skipPredictionLog(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthPredictionLog
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowPredictionLog
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipPredictionLog(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupPredictionLog
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthPredictionLog
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthPredictionLog = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowPredictionLog   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthPredictionLog        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowPredictionLog          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupPredictionLog = fmt.Errorf("proto: unexpected end of group")
 )

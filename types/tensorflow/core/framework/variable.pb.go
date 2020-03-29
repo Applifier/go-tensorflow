@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Indicates when a distributed variable will be synced.
 type VariableSynchronization int32
@@ -139,7 +140,7 @@ func (m *VariableDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_VariableDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -246,7 +247,7 @@ func (m *SaveSliceInfoDef) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_SaveSliceInfoDef.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -350,7 +351,7 @@ var fileDescriptor_908f2d03adae2778 = []byte{
 func (m *VariableDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -358,81 +359,92 @@ func (m *VariableDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *VariableDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *VariableDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.VariableName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintVariable(dAtA, i, uint64(len(m.VariableName)))
-		i += copy(dAtA[i:], m.VariableName)
+	if m.Aggregation != 0 {
+		i = encodeVarintVariable(dAtA, i, uint64(m.Aggregation))
+		i--
+		dAtA[i] = 0x48
 	}
-	if len(m.InitializerName) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintVariable(dAtA, i, uint64(len(m.InitializerName)))
-		i += copy(dAtA[i:], m.InitializerName)
-	}
-	if len(m.SnapshotName) > 0 {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintVariable(dAtA, i, uint64(len(m.SnapshotName)))
-		i += copy(dAtA[i:], m.SnapshotName)
-	}
-	if m.SaveSliceInfoDef != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintVariable(dAtA, i, uint64(m.SaveSliceInfoDef.Size()))
-		n1, err := m.SaveSliceInfoDef.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
-	if m.IsResource {
-		dAtA[i] = 0x28
-		i++
-		if m.IsResource {
-			dAtA[i] = 1
-		} else {
-			dAtA[i] = 0
-		}
-		i++
-	}
-	if len(m.InitialValueName) > 0 {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintVariable(dAtA, i, uint64(len(m.InitialValueName)))
-		i += copy(dAtA[i:], m.InitialValueName)
+	if m.Synchronization != 0 {
+		i = encodeVarintVariable(dAtA, i, uint64(m.Synchronization))
+		i--
+		dAtA[i] = 0x40
 	}
 	if m.Trainable {
-		dAtA[i] = 0x38
-		i++
+		i--
 		if m.Trainable {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x38
 	}
-	if m.Synchronization != 0 {
-		dAtA[i] = 0x40
-		i++
-		i = encodeVarintVariable(dAtA, i, uint64(m.Synchronization))
+	if len(m.InitialValueName) > 0 {
+		i -= len(m.InitialValueName)
+		copy(dAtA[i:], m.InitialValueName)
+		i = encodeVarintVariable(dAtA, i, uint64(len(m.InitialValueName)))
+		i--
+		dAtA[i] = 0x32
 	}
-	if m.Aggregation != 0 {
-		dAtA[i] = 0x48
-		i++
-		i = encodeVarintVariable(dAtA, i, uint64(m.Aggregation))
+	if m.IsResource {
+		i--
+		if m.IsResource {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x28
 	}
-	return i, nil
+	if m.SaveSliceInfoDef != nil {
+		{
+			size, err := m.SaveSliceInfoDef.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintVariable(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.SnapshotName) > 0 {
+		i -= len(m.SnapshotName)
+		copy(dAtA[i:], m.SnapshotName)
+		i = encodeVarintVariable(dAtA, i, uint64(len(m.SnapshotName)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.InitializerName) > 0 {
+		i -= len(m.InitializerName)
+		copy(dAtA[i:], m.InitializerName)
+		i = encodeVarintVariable(dAtA, i, uint64(len(m.InitializerName)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.VariableName) > 0 {
+		i -= len(m.VariableName)
+		copy(dAtA[i:], m.VariableName)
+		i = encodeVarintVariable(dAtA, i, uint64(len(m.VariableName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *SaveSliceInfoDef) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -440,20 +452,19 @@ func (m *SaveSliceInfoDef) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *SaveSliceInfoDef) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SaveSliceInfoDef) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.FullName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintVariable(dAtA, i, uint64(len(m.FullName)))
-		i += copy(dAtA[i:], m.FullName)
-	}
-	if len(m.FullShape) > 0 {
-		dAtA3 := make([]byte, len(m.FullShape)*10)
+	if len(m.VarShape) > 0 {
+		dAtA3 := make([]byte, len(m.VarShape)*10)
 		var j2 int
-		for _, num1 := range m.FullShape {
+		for _, num1 := range m.VarShape {
 			num := uint64(num1)
 			for num >= 1<<7 {
 				dAtA3[j2] = uint8(uint64(num)&0x7f | 0x80)
@@ -463,10 +474,11 @@ func (m *SaveSliceInfoDef) MarshalTo(dAtA []byte) (int, error) {
 			dAtA3[j2] = uint8(num)
 			j2++
 		}
-		dAtA[i] = 0x12
-		i++
+		i -= j2
+		copy(dAtA[i:], dAtA3[:j2])
 		i = encodeVarintVariable(dAtA, i, uint64(j2))
-		i += copy(dAtA[i:], dAtA3[:j2])
+		i--
+		dAtA[i] = 0x22
 	}
 	if len(m.VarOffset) > 0 {
 		dAtA5 := make([]byte, len(m.VarOffset)*10)
@@ -481,15 +493,16 @@ func (m *SaveSliceInfoDef) MarshalTo(dAtA []byte) (int, error) {
 			dAtA5[j4] = uint8(num)
 			j4++
 		}
-		dAtA[i] = 0x1a
-		i++
+		i -= j4
+		copy(dAtA[i:], dAtA5[:j4])
 		i = encodeVarintVariable(dAtA, i, uint64(j4))
-		i += copy(dAtA[i:], dAtA5[:j4])
+		i--
+		dAtA[i] = 0x1a
 	}
-	if len(m.VarShape) > 0 {
-		dAtA7 := make([]byte, len(m.VarShape)*10)
+	if len(m.FullShape) > 0 {
+		dAtA7 := make([]byte, len(m.FullShape)*10)
 		var j6 int
-		for _, num1 := range m.VarShape {
+		for _, num1 := range m.FullShape {
 			num := uint64(num1)
 			for num >= 1<<7 {
 				dAtA7[j6] = uint8(uint64(num)&0x7f | 0x80)
@@ -499,22 +512,32 @@ func (m *SaveSliceInfoDef) MarshalTo(dAtA []byte) (int, error) {
 			dAtA7[j6] = uint8(num)
 			j6++
 		}
-		dAtA[i] = 0x22
-		i++
+		i -= j6
+		copy(dAtA[i:], dAtA7[:j6])
 		i = encodeVarintVariable(dAtA, i, uint64(j6))
-		i += copy(dAtA[i:], dAtA7[:j6])
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if len(m.FullName) > 0 {
+		i -= len(m.FullName)
+		copy(dAtA[i:], m.FullName)
+		i = encodeVarintVariable(dAtA, i, uint64(len(m.FullName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintVariable(dAtA []byte, offset int, v uint64) int {
+	offset -= sovVariable(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *VariableDef) Size() (n int) {
 	if m == nil {
@@ -592,14 +615,7 @@ func (m *SaveSliceInfoDef) Size() (n int) {
 }
 
 func sovVariable(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozVariable(x uint64) (n int) {
 	return sovVariable(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -619,7 +635,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -647,7 +663,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -657,6 +673,9 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthVariable
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVariable
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -676,7 +695,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -686,6 +705,9 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthVariable
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVariable
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -705,7 +727,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -715,6 +737,9 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthVariable
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVariable
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -734,7 +759,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -743,6 +768,9 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthVariable
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthVariable
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -767,7 +795,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -787,7 +815,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -797,6 +825,9 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthVariable
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVariable
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -816,7 +847,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -836,7 +867,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Synchronization |= (VariableSynchronization(b) & 0x7F) << shift
+				m.Synchronization |= VariableSynchronization(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -855,7 +886,7 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Aggregation |= (VariableAggregation(b) & 0x7F) << shift
+				m.Aggregation |= VariableAggregation(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -867,6 +898,9 @@ func (m *VariableDef) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthVariable
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthVariable
 			}
 			if (iNdEx + skippy) > l {
@@ -896,7 +930,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -924,7 +958,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -934,6 +968,9 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthVariable
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthVariable
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -951,7 +988,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -968,7 +1005,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -977,12 +1014,15 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthVariable
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthVariable
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1002,7 +1042,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1024,7 +1064,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1041,7 +1081,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1050,12 +1090,15 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthVariable
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthVariable
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1075,7 +1118,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1097,7 +1140,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					v |= (int64(b) & 0x7F) << shift
+					v |= int64(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1114,7 +1157,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					}
 					b := dAtA[iNdEx]
 					iNdEx++
-					packedLen |= (int(b) & 0x7F) << shift
+					packedLen |= int(b&0x7F) << shift
 					if b < 0x80 {
 						break
 					}
@@ -1123,12 +1166,15 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 					return ErrInvalidLengthVariable
 				}
 				postIndex := iNdEx + packedLen
+				if postIndex < 0 {
+					return ErrInvalidLengthVariable
+				}
 				if postIndex > l {
 					return io.ErrUnexpectedEOF
 				}
 				var elementCount int
 				var count int
-				for _, integer := range dAtA {
+				for _, integer := range dAtA[iNdEx:postIndex] {
 					if integer < 128 {
 						count++
 					}
@@ -1148,7 +1194,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 						}
 						b := dAtA[iNdEx]
 						iNdEx++
-						v |= (int64(b) & 0x7F) << shift
+						v |= int64(b&0x7F) << shift
 						if b < 0x80 {
 							break
 						}
@@ -1167,6 +1213,9 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthVariable
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthVariable
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1182,6 +1231,7 @@ func (m *SaveSliceInfoDef) Unmarshal(dAtA []byte) error {
 func skipVariable(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1213,10 +1263,8 @@ func skipVariable(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1233,53 +1281,34 @@ func skipVariable(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthVariable
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowVariable
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipVariable(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupVariable
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthVariable
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthVariable = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowVariable   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthVariable        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowVariable          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupVariable = fmt.Errorf("proto: unexpected end of group")
 )

@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package tensorflow;
+
 option cc_enable_arenas = true;
 option java_outer_classname = "VersionsProtos";
 option java_multiple_files = true;
@@ -29,4 +30,4 @@ message VersionDef {
 
   // Specific consumer versions which are disallowed (e.g. due to bugs).
   repeated int32 bad_consumers = 3;
-};
+}

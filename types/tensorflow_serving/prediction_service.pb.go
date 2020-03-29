@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -20,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 func init() {
 	proto.RegisterFile("tensorflow_serving/prediction_service.proto", fileDescriptor_5a32f9e98bfbb40c)
@@ -139,6 +141,26 @@ type PredictionServiceServer interface {
 	MultiInference(context.Context, *MultiInferenceRequest) (*MultiInferenceResponse, error)
 	// GetModelMetadata - provides access to metadata for loaded models.
 	GetModelMetadata(context.Context, *GetModelMetadataRequest) (*GetModelMetadataResponse, error)
+}
+
+// UnimplementedPredictionServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedPredictionServiceServer struct {
+}
+
+func (*UnimplementedPredictionServiceServer) Classify(ctx context.Context, req *ClassificationRequest) (*ClassificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Classify not implemented")
+}
+func (*UnimplementedPredictionServiceServer) Regress(ctx context.Context, req *RegressionRequest) (*RegressionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Regress not implemented")
+}
+func (*UnimplementedPredictionServiceServer) Predict(ctx context.Context, req *PredictRequest) (*PredictResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Predict not implemented")
+}
+func (*UnimplementedPredictionServiceServer) MultiInference(ctx context.Context, req *MultiInferenceRequest) (*MultiInferenceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MultiInference not implemented")
+}
+func (*UnimplementedPredictionServiceServer) GetModelMetadata(ctx context.Context, req *GetModelMetadataRequest) (*GetModelMetadataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetModelMetadata not implemented")
 }
 
 func RegisterPredictionServiceServer(s *grpc.Server, srv PredictionServiceServer) {

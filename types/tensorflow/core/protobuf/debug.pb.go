@@ -8,6 +8,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -19,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Option for watching a node in TensorFlow Debugger (tfdbg).
 type DebugTensorWatch struct {
@@ -77,7 +78,7 @@ func (m *DebugTensorWatch) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_DebugTensorWatch.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -160,7 +161,7 @@ func (m *DebugOptions) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 		return xxx_messageInfo_DebugOptions.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -227,7 +228,7 @@ func (m *DebuggedSourceFile) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return xxx_messageInfo_DebuggedSourceFile.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -300,7 +301,7 @@ func (m *DebuggedSourceFiles) XXX_Marshal(b []byte, deterministic bool) ([]byte,
 		return xxx_messageInfo_DebuggedSourceFiles.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -377,7 +378,7 @@ var fileDescriptor_4fbf764b7c91eef6 = []byte{
 func (m *DebugTensorWatch) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -385,68 +386,62 @@ func (m *DebugTensorWatch) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugTensorWatch) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugTensorWatch) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.NodeName) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(len(m.NodeName)))
-		i += copy(dAtA[i:], m.NodeName)
-	}
-	if m.OutputSlot != 0 {
-		dAtA[i] = 0x10
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.OutputSlot))
-	}
-	if len(m.DebugOps) > 0 {
-		for _, s := range m.DebugOps {
-			dAtA[i] = 0x1a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if len(m.DebugUrls) > 0 {
-		for _, s := range m.DebugUrls {
-			dAtA[i] = 0x22
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
 	if m.TolerateDebugOpCreationFailures {
-		dAtA[i] = 0x28
-		i++
+		i--
 		if m.TolerateDebugOpCreationFailures {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x28
 	}
-	return i, nil
+	if len(m.DebugUrls) > 0 {
+		for iNdEx := len(m.DebugUrls) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.DebugUrls[iNdEx])
+			copy(dAtA[i:], m.DebugUrls[iNdEx])
+			i = encodeVarintDebug(dAtA, i, uint64(len(m.DebugUrls[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if len(m.DebugOps) > 0 {
+		for iNdEx := len(m.DebugOps) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.DebugOps[iNdEx])
+			copy(dAtA[i:], m.DebugOps[iNdEx])
+			i = encodeVarintDebug(dAtA, i, uint64(len(m.DebugOps[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.OutputSlot != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.OutputSlot))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.NodeName) > 0 {
+		i -= len(m.NodeName)
+		copy(dAtA[i:], m.NodeName)
+		i = encodeVarintDebug(dAtA, i, uint64(len(m.NodeName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DebugOptions) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -454,44 +449,51 @@ func (m *DebugOptions) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebugOptions) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebugOptions) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.DebugTensorWatchOpts) > 0 {
-		for _, msg := range m.DebugTensorWatchOpts {
-			dAtA[i] = 0x22
-			i++
-			i = encodeVarintDebug(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
-			}
-			i += n
-		}
-	}
-	if m.GlobalStep != 0 {
-		dAtA[i] = 0x50
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.GlobalStep))
-	}
 	if m.ResetDiskByteUsage {
-		dAtA[i] = 0x58
-		i++
+		i--
 		if m.ResetDiskByteUsage {
 			dAtA[i] = 1
 		} else {
 			dAtA[i] = 0
 		}
-		i++
+		i--
+		dAtA[i] = 0x58
 	}
-	return i, nil
+	if m.GlobalStep != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.GlobalStep))
+		i--
+		dAtA[i] = 0x50
+	}
+	if len(m.DebugTensorWatchOpts) > 0 {
+		for iNdEx := len(m.DebugTensorWatchOpts) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.DebugTensorWatchOpts[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDebug(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DebuggedSourceFile) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -499,54 +501,55 @@ func (m *DebuggedSourceFile) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebuggedSourceFile) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebuggedSourceFile) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Host) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(len(m.Host)))
-		i += copy(dAtA[i:], m.Host)
-	}
-	if len(m.FilePath) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(len(m.FilePath)))
-		i += copy(dAtA[i:], m.FilePath)
-	}
-	if m.LastModified != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.LastModified))
-	}
-	if m.Bytes != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintDebug(dAtA, i, uint64(m.Bytes))
-	}
 	if len(m.Lines) > 0 {
-		for _, s := range m.Lines {
+		for iNdEx := len(m.Lines) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Lines[iNdEx])
+			copy(dAtA[i:], m.Lines[iNdEx])
+			i = encodeVarintDebug(dAtA, i, uint64(len(m.Lines[iNdEx])))
+			i--
 			dAtA[i] = 0x2a
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
 		}
 	}
-	return i, nil
+	if m.Bytes != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.Bytes))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.LastModified != 0 {
+		i = encodeVarintDebug(dAtA, i, uint64(m.LastModified))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.FilePath) > 0 {
+		i -= len(m.FilePath)
+		copy(dAtA[i:], m.FilePath)
+		i = encodeVarintDebug(dAtA, i, uint64(len(m.FilePath)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Host) > 0 {
+		i -= len(m.Host)
+		copy(dAtA[i:], m.Host)
+		i = encodeVarintDebug(dAtA, i, uint64(len(m.Host)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DebuggedSourceFiles) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -554,33 +557,42 @@ func (m *DebuggedSourceFiles) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DebuggedSourceFiles) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DebuggedSourceFiles) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.SourceFiles) > 0 {
-		for _, msg := range m.SourceFiles {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintDebug(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.SourceFiles) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.SourceFiles[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDebug(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintDebug(dAtA []byte, offset int, v uint64) int {
+	offset -= sovDebug(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *DebugTensorWatch) Size() (n int) {
 	if m == nil {
@@ -679,14 +691,7 @@ func (m *DebuggedSourceFiles) Size() (n int) {
 }
 
 func sovDebug(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozDebug(x uint64) (n int) {
 	return sovDebug(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -706,7 +711,7 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -734,7 +739,7 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -744,6 +749,9 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -763,7 +771,7 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OutputSlot |= (int32(b) & 0x7F) << shift
+				m.OutputSlot |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -782,7 +790,7 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -792,6 +800,9 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -811,7 +822,7 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -821,6 +832,9 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -840,7 +854,7 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -853,6 +867,9 @@ func (m *DebugTensorWatch) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthDebug
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -882,7 +899,7 @@ func (m *DebugOptions) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -910,7 +927,7 @@ func (m *DebugOptions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -919,6 +936,9 @@ func (m *DebugOptions) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -941,7 +961,7 @@ func (m *DebugOptions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.GlobalStep |= (int64(b) & 0x7F) << shift
+				m.GlobalStep |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -960,7 +980,7 @@ func (m *DebugOptions) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				v |= (int(b) & 0x7F) << shift
+				v |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -973,6 +993,9 @@ func (m *DebugOptions) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthDebug
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -1002,7 +1025,7 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1030,7 +1053,7 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1040,6 +1063,9 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1059,7 +1085,7 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1069,6 +1095,9 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1088,7 +1117,7 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.LastModified |= (int64(b) & 0x7F) << shift
+				m.LastModified |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1107,7 +1136,7 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Bytes |= (int64(b) & 0x7F) << shift
+				m.Bytes |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1126,7 +1155,7 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1136,6 +1165,9 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1148,6 +1180,9 @@ func (m *DebuggedSourceFile) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthDebug
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthDebug
 			}
 			if (iNdEx + skippy) > l {
@@ -1177,7 +1212,7 @@ func (m *DebuggedSourceFiles) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -1205,7 +1240,7 @@ func (m *DebuggedSourceFiles) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1214,6 +1249,9 @@ func (m *DebuggedSourceFiles) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDebug
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1231,6 +1269,9 @@ func (m *DebuggedSourceFiles) Unmarshal(dAtA []byte) error {
 			if skippy < 0 {
 				return ErrInvalidLengthDebug
 			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthDebug
+			}
 			if (iNdEx + skippy) > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1246,6 +1287,7 @@ func (m *DebuggedSourceFiles) Unmarshal(dAtA []byte) error {
 func skipDebug(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1277,10 +1319,8 @@ func skipDebug(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1297,53 +1337,34 @@ func skipDebug(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthDebug
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowDebug
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipDebug(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupDebug
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthDebug
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthDebug = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowDebug   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthDebug        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowDebug          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupDebug = fmt.Errorf("proto: unexpected end of group")
 )

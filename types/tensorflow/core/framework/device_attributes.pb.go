@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type InterconnectLink struct {
 	DeviceId int32  `protobuf:"varint,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
@@ -42,7 +43,7 @@ func (m *InterconnectLink) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_InterconnectLink.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -100,7 +101,7 @@ func (m *LocalLinks) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_LocalLinks.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -150,7 +151,7 @@ func (m *DeviceLocality) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return xxx_messageInfo_DeviceLocality.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -221,7 +222,7 @@ func (m *DeviceAttributes) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_DeviceAttributes.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -329,7 +330,7 @@ var fileDescriptor_74908851c78ce22e = []byte{
 func (m *InterconnectLink) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -337,33 +338,39 @@ func (m *InterconnectLink) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *InterconnectLink) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *InterconnectLink) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.DeviceId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.DeviceId))
+	if m.Strength != 0 {
+		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.Strength))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.Type) > 0 {
-		dAtA[i] = 0x12
-		i++
+		i -= len(m.Type)
+		copy(dAtA[i:], m.Type)
 		i = encodeVarintDeviceAttributes(dAtA, i, uint64(len(m.Type)))
-		i += copy(dAtA[i:], m.Type)
+		i--
+		dAtA[i] = 0x12
 	}
-	if m.Strength != 0 {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.Strength))
+	if m.DeviceId != 0 {
+		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.DeviceId))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *LocalLinks) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -371,29 +378,36 @@ func (m *LocalLinks) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *LocalLinks) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *LocalLinks) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
 	if len(m.Link) > 0 {
-		for _, msg := range m.Link {
-			dAtA[i] = 0xa
-			i++
-			i = encodeVarintDeviceAttributes(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
-			if err != nil {
-				return 0, err
+		for iNdEx := len(m.Link) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Link[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintDeviceAttributes(dAtA, i, uint64(size))
 			}
-			i += n
+			i--
+			dAtA[i] = 0xa
 		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DeviceLocality) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -401,37 +415,44 @@ func (m *DeviceLocality) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DeviceLocality) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DeviceLocality) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.BusId != 0 {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.BusId))
+	if m.Links != nil {
+		{
+			size, err := m.Links.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDeviceAttributes(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
 	}
 	if m.NumaNode != 0 {
-		dAtA[i] = 0x10
-		i++
 		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.NumaNode))
+		i--
+		dAtA[i] = 0x10
 	}
-	if m.Links != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.Links.Size()))
-		n1, err := m.Links.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
+	if m.BusId != 0 {
+		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.BusId))
+		i--
+		dAtA[i] = 0x8
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DeviceAttributes) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -439,60 +460,72 @@ func (m *DeviceAttributes) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DeviceAttributes) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DeviceAttributes) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Name) > 0 {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(len(m.Name)))
-		i += copy(dAtA[i:], m.Name)
-	}
-	if len(m.DeviceType) > 0 {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(len(m.DeviceType)))
-		i += copy(dAtA[i:], m.DeviceType)
-	}
-	if m.MemoryLimit != 0 {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.MemoryLimit))
-	}
-	if m.Locality != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.Locality.Size()))
-		n2, err := m.Locality.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
+	if len(m.PhysicalDeviceDesc) > 0 {
+		i -= len(m.PhysicalDeviceDesc)
+		copy(dAtA[i:], m.PhysicalDeviceDesc)
+		i = encodeVarintDeviceAttributes(dAtA, i, uint64(len(m.PhysicalDeviceDesc)))
+		i--
+		dAtA[i] = 0x3a
 	}
 	if m.Incarnation != 0 {
-		dAtA[i] = 0x31
-		i++
+		i -= 8
 		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(m.Incarnation))
-		i += 8
+		i--
+		dAtA[i] = 0x31
 	}
-	if len(m.PhysicalDeviceDesc) > 0 {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintDeviceAttributes(dAtA, i, uint64(len(m.PhysicalDeviceDesc)))
-		i += copy(dAtA[i:], m.PhysicalDeviceDesc)
+	if m.Locality != nil {
+		{
+			size, err := m.Locality.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintDeviceAttributes(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	if m.MemoryLimit != 0 {
+		i = encodeVarintDeviceAttributes(dAtA, i, uint64(m.MemoryLimit))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.DeviceType) > 0 {
+		i -= len(m.DeviceType)
+		copy(dAtA[i:], m.DeviceType)
+		i = encodeVarintDeviceAttributes(dAtA, i, uint64(len(m.DeviceType)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintDeviceAttributes(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintDeviceAttributes(dAtA []byte, offset int, v uint64) int {
+	offset -= sovDeviceAttributes(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *InterconnectLink) Size() (n int) {
 	if m == nil {
@@ -579,14 +612,7 @@ func (m *DeviceAttributes) Size() (n int) {
 }
 
 func sovDeviceAttributes(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozDeviceAttributes(x uint64) (n int) {
 	return sovDeviceAttributes(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -606,7 +632,7 @@ func (m *InterconnectLink) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -634,7 +660,7 @@ func (m *InterconnectLink) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.DeviceId |= (int32(b) & 0x7F) << shift
+				m.DeviceId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -653,7 +679,7 @@ func (m *InterconnectLink) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -663,6 +689,9 @@ func (m *InterconnectLink) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -682,7 +711,7 @@ func (m *InterconnectLink) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Strength |= (int32(b) & 0x7F) << shift
+				m.Strength |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -694,6 +723,9 @@ func (m *InterconnectLink) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			if (iNdEx + skippy) > l {
@@ -723,7 +755,7 @@ func (m *LocalLinks) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -751,7 +783,7 @@ func (m *LocalLinks) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -760,6 +792,9 @@ func (m *LocalLinks) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -775,6 +810,9 @@ func (m *LocalLinks) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			if (iNdEx + skippy) > l {
@@ -804,7 +842,7 @@ func (m *DeviceLocality) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -832,7 +870,7 @@ func (m *DeviceLocality) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.BusId |= (int32(b) & 0x7F) << shift
+				m.BusId |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -851,7 +889,7 @@ func (m *DeviceLocality) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.NumaNode |= (int32(b) & 0x7F) << shift
+				m.NumaNode |= int32(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -870,7 +908,7 @@ func (m *DeviceLocality) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -879,6 +917,9 @@ func (m *DeviceLocality) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -896,6 +937,9 @@ func (m *DeviceLocality) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			if (iNdEx + skippy) > l {
@@ -925,7 +969,7 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 			}
 			b := dAtA[iNdEx]
 			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
+			wire |= uint64(b&0x7F) << shift
 			if b < 0x80 {
 				break
 			}
@@ -953,7 +997,7 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -963,6 +1007,9 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -982,7 +1029,7 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -992,6 +1039,9 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1011,7 +1061,7 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.MemoryLimit |= (int64(b) & 0x7F) << shift
+				m.MemoryLimit |= int64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1030,7 +1080,7 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
+				msglen |= int(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1039,6 +1089,9 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1073,7 +1126,7 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= (uint64(b) & 0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -1083,6 +1136,9 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
@@ -1095,6 +1151,9 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			if skippy < 0 {
+				return ErrInvalidLengthDeviceAttributes
+			}
+			if (iNdEx + skippy) < 0 {
 				return ErrInvalidLengthDeviceAttributes
 			}
 			if (iNdEx + skippy) > l {
@@ -1112,6 +1171,7 @@ func (m *DeviceAttributes) Unmarshal(dAtA []byte) error {
 func skipDeviceAttributes(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -1143,10 +1203,8 @@ func skipDeviceAttributes(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -1163,53 +1221,34 @@ func skipDeviceAttributes(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			iNdEx += length
 			if length < 0 {
 				return 0, ErrInvalidLengthDeviceAttributes
 			}
-			return iNdEx, nil
+			iNdEx += length
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowDeviceAttributes
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipDeviceAttributes(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupDeviceAttributes
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthDeviceAttributes
+		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthDeviceAttributes = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowDeviceAttributes   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthDeviceAttributes        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowDeviceAttributes          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupDeviceAttributes = fmt.Errorf("proto: unexpected end of group")
 )
