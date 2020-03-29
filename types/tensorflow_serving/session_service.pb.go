@@ -6,7 +6,7 @@ package tensorflow_serving
 import (
 	context "context"
 	fmt "fmt"
-	core "github.com/Applifier/go-tensorflow/types/tensorflow/core"
+	protobuf "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
 	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -32,7 +32,7 @@ type SessionRunRequest struct {
 	// (numerical) version.
 	ModelSpec *ModelSpec `protobuf:"bytes,1,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// Tensors to be fed in the step. Each feed is a named tensor.
-	Feed []*core.NamedTensorProto `protobuf:"bytes,2,rep,name=feed,proto3" json:"feed,omitempty"`
+	Feed []*protobuf.NamedTensorProto `protobuf:"bytes,2,rep,name=feed,proto3" json:"feed,omitempty"`
 	// Fetches. A list of tensor names. The caller expects a tensor to
 	// be returned for each fetch[i] (see RunResponse.tensor). The
 	// order of specified fetches does not change the execution order.
@@ -41,7 +41,7 @@ type SessionRunRequest struct {
 	// to but their outputs will not be fetched.
 	Target []string `protobuf:"bytes,4,rep,name=target,proto3" json:"target,omitempty"`
 	// Options for the run call. **Currently ignored.**
-	Options *core.RunOptions `protobuf:"bytes,5,opt,name=options,proto3" json:"options,omitempty"`
+	Options *protobuf.RunOptions `protobuf:"bytes,5,opt,name=options,proto3" json:"options,omitempty"`
 }
 
 func (m *SessionRunRequest) Reset()         { *m = SessionRunRequest{} }
@@ -84,7 +84,7 @@ func (m *SessionRunRequest) GetModelSpec() *ModelSpec {
 	return nil
 }
 
-func (m *SessionRunRequest) GetFeed() []*core.NamedTensorProto {
+func (m *SessionRunRequest) GetFeed() []*protobuf.NamedTensorProto {
 	if m != nil {
 		return m.Feed
 	}
@@ -105,7 +105,7 @@ func (m *SessionRunRequest) GetTarget() []string {
 	return nil
 }
 
-func (m *SessionRunRequest) GetOptions() *core.RunOptions {
+func (m *SessionRunRequest) GetOptions() *protobuf.RunOptions {
 	if m != nil {
 		return m.Options
 	}
@@ -117,9 +117,9 @@ type SessionRunResponse struct {
 	ModelSpec *ModelSpec `protobuf:"bytes,3,opt,name=model_spec,json=modelSpec,proto3" json:"model_spec,omitempty"`
 	// NOTE: The order of the returned tensors may or may not match
 	// the fetch order specified in RunRequest.
-	Tensor []*core.NamedTensorProto `protobuf:"bytes,1,rep,name=tensor,proto3" json:"tensor,omitempty"`
+	Tensor []*protobuf.NamedTensorProto `protobuf:"bytes,1,rep,name=tensor,proto3" json:"tensor,omitempty"`
 	// Returned metadata if requested in the options.
-	Metadata *core.RunMetadata `protobuf:"bytes,2,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Metadata *protobuf.RunMetadata `protobuf:"bytes,2,opt,name=metadata,proto3" json:"metadata,omitempty"`
 }
 
 func (m *SessionRunResponse) Reset()         { *m = SessionRunResponse{} }
@@ -162,14 +162,14 @@ func (m *SessionRunResponse) GetModelSpec() *ModelSpec {
 	return nil
 }
 
-func (m *SessionRunResponse) GetTensor() []*core.NamedTensorProto {
+func (m *SessionRunResponse) GetTensor() []*protobuf.NamedTensorProto {
 	if m != nil {
 		return m.Tensor
 	}
 	return nil
 }
 
-func (m *SessionRunResponse) GetMetadata() *core.RunMetadata {
+func (m *SessionRunResponse) GetMetadata() *protobuf.RunMetadata {
 	if m != nil {
 		return m.Metadata
 	}
@@ -604,7 +604,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Feed = append(m.Feed, &core.NamedTensorProto{})
+			m.Feed = append(m.Feed, &protobuf.NamedTensorProto{})
 			if err := m.Feed[len(m.Feed)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -703,7 +703,7 @@ func (m *SessionRunRequest) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Options == nil {
-				m.Options = &core.RunOptions{}
+				m.Options = &protobuf.RunOptions{}
 			}
 			if err := m.Options.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -791,7 +791,7 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Tensor = append(m.Tensor, &core.NamedTensorProto{})
+			m.Tensor = append(m.Tensor, &protobuf.NamedTensorProto{})
 			if err := m.Tensor[len(m.Tensor)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
@@ -826,7 +826,7 @@ func (m *SessionRunResponse) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Metadata == nil {
-				m.Metadata = &core.RunMetadata{}
+				m.Metadata = &protobuf.RunMetadata{}
 			}
 			if err := m.Metadata.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

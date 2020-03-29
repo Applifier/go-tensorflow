@@ -5,7 +5,7 @@ package tensorflow_serving
 
 import (
 	fmt "fmt"
-	core "github.com/Applifier/go-tensorflow/types/tensorflow/core"
+	protobuf "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
 	proto "github.com/gogo/protobuf/proto"
 	types "github.com/gogo/protobuf/types"
 	io "io"
@@ -26,7 +26,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Message returned for "signature_def" field.
 type SignatureDefMap struct {
-	SignatureDef map[string]*core.SignatureDef `protobuf:"bytes,1,rep,name=signature_def,json=signatureDef,proto3" json:"signature_def,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SignatureDef map[string]*protobuf.SignatureDef `protobuf:"bytes,1,rep,name=signature_def,json=signatureDef,proto3" json:"signature_def,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *SignatureDefMap) Reset()         { *m = SignatureDefMap{} }
@@ -62,7 +62,7 @@ func (m *SignatureDefMap) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SignatureDefMap proto.InternalMessageInfo
 
-func (m *SignatureDefMap) GetSignatureDef() map[string]*core.SignatureDef {
+func (m *SignatureDefMap) GetSignatureDef() map[string]*protobuf.SignatureDef {
 	if m != nil {
 		return m.SignatureDef
 	}
@@ -182,7 +182,7 @@ func (m *GetModelMetadataResponse) GetMetadata() map[string]*types.Any {
 
 func init() {
 	proto.RegisterType((*SignatureDefMap)(nil), "tensorflow.serving.SignatureDefMap")
-	proto.RegisterMapType((map[string]*core.SignatureDef)(nil), "tensorflow.serving.SignatureDefMap.SignatureDefEntry")
+	proto.RegisterMapType((map[string]*protobuf.SignatureDef)(nil), "tensorflow.serving.SignatureDefMap.SignatureDefEntry")
 	proto.RegisterType((*GetModelMetadataRequest)(nil), "tensorflow.serving.GetModelMetadataRequest")
 	proto.RegisterType((*GetModelMetadataResponse)(nil), "tensorflow.serving.GetModelMetadataResponse")
 	proto.RegisterMapType((map[string]*types.Any)(nil), "tensorflow.serving.GetModelMetadataResponse.MetadataEntry")
@@ -519,10 +519,10 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.SignatureDef == nil {
-				m.SignatureDef = make(map[string]*core.SignatureDef)
+				m.SignatureDef = make(map[string]*protobuf.SignatureDef)
 			}
 			var mapkey string
-			var mapvalue *core.SignatureDef
+			var mapvalue *protobuf.SignatureDef
 			for iNdEx < postIndex {
 				entryPreIndex := iNdEx
 				var wire uint64
@@ -596,7 +596,7 @@ func (m *SignatureDefMap) Unmarshal(dAtA []byte) error {
 					if postmsgIndex > l {
 						return io.ErrUnexpectedEOF
 					}
-					mapvalue = &core.SignatureDef{}
+					mapvalue = &protobuf.SignatureDef{}
 					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
 						return err
 					}

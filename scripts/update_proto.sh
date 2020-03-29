@@ -48,18 +48,10 @@ cp .tensorflow_repo/tensorflow/core/protobuf/{verifier_config,rewriter_config,tr
 # option go_package = "github.com/tensorflow/tensorflow/tensorflow/go ->
 find types/tensorflow -type f -name '*.proto' -exec sed -i '' 's/github.com\/tensorflow\/tensorflow\/tensorflow\/go/github.com\/Applifier\/go-tensorflow\/types\/tensorflow/g' {} \;
 find types/tensorflow -type f -name '*.proto' -exec sed -i '' 's/\(\/[a-zA-Z_]*_go_proto\)//g' {} \;
+find types/tensorflow/core/protobuf -type f -name '*.proto' -exec sed -i '' 's/types\/tensorflow\/core/types\/tensorflow\/core\/protobuf/g' {} \;
 
-function addPackage () {
-    pkg=$1
-    files=$(find $pkg -type f -name '*.proto' | xargs grep -iL "go_package")
 
-    for file in $files
-    do
-        echo -e "syntax = \"proto3\";\noption go_package = \"github.com/Applifier/go-tensorflow/$pkg\";\n$(cat $file | tail -n +2)" > $file
-    done
-}
 
-addPackage types/tensorflow/core/protobuf
 
 PROTOC_OPTS='-I types --gogofaster_out=plugins=grpc,paths=source_relative,\
 Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types,\

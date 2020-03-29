@@ -5,7 +5,7 @@ package tensorflow_serving
 
 import (
 	fmt "fmt"
-	core "github.com/Applifier/go-tensorflow/types/tensorflow/core"
+	protobuf "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
@@ -27,7 +27,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // third_party/tensorflow/core/lib/core/status.h.
 type StatusProto struct {
 	// Error code.
-	ErrorCode core.Code `protobuf:"varint,1,opt,name=error_code,proto3,enum=tensorflow.error.Code" json:"error_code,omitempty"`
+	ErrorCode protobuf.Code `protobuf:"varint,1,opt,name=error_code,proto3,enum=tensorflow.error.Code" json:"error_code,omitempty"`
 	// Error message. Will only be set if an error was encountered.
 	ErrorMessage string `protobuf:"bytes,2,opt,name=error_message,proto3" json:"error_message,omitempty"`
 }
@@ -65,11 +65,11 @@ func (m *StatusProto) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_StatusProto proto.InternalMessageInfo
 
-func (m *StatusProto) GetErrorCode() core.Code {
+func (m *StatusProto) GetErrorCode() protobuf.Code {
 	if m != nil {
 		return m.ErrorCode
 	}
-	return core.Code_OK
+	return protobuf.Code_OK
 }
 
 func (m *StatusProto) GetErrorMessage() string {
@@ -212,7 +212,7 @@ func (m *StatusProto) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.ErrorCode |= core.Code(b&0x7F) << shift
+				m.ErrorCode |= protobuf.Code(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
