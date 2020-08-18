@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Run unit tests
+      run: |
+        make run-mobilenet
+    
+    - name: Run mobilenet tests
+      run: |
+        make run-mobilenet
