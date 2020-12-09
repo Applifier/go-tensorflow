@@ -1,4 +1,4 @@
-package dotsig
+package utils
 
 import (
 	"bytes"
