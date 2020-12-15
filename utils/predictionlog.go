@@ -3,7 +3,7 @@ package utils
 import (
 	"io"
 
-	"github.com/Unity-Technologies/go-tensorflow/types/tensorflow_serving"
+	"github.com/Applifier/go-tensorflow/types/tensorflow_serving"
 )
 
 // PredictionLogReader reads tensorflow_serving.PredictionLog from a given io.Reader
