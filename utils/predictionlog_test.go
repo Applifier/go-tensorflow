@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/Unity-Technologies/go-tensorflow/types/tensorflow_serving"
+	"github.com/Applifier/go-tensorflow/types/tensorflow_serving"
 )
 
 func TestPredictionLog(t *testing.T) {
