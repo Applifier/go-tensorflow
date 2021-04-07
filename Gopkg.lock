@@ -28,15 +28,43 @@
   version = "v1.3.2"
 
 [[projects]]
-  digest = "1:b25a610002a12fbf21b091a1cd99c04ca055c832f5f394ce2ed05755ebeae733"
+  digest = "1:9e1d37b58d17113ec3cb5608ac0382313c5b59470b94ed97d0976e69c7022314"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "614d223910a179a466c1767a985424175c39b465"
+  version = "v0.9.1"
+
+[[projects]]
+  digest = "1:d19b7e532924718b1f2333ecc2063af483cb09e7006ad933bcee0120adf98ef0"
   name = "github.com/tensorflow/tensorflow"
   packages = [
     "tensorflow/go",
+    "tensorflow/go/core/framework/allocation_description_go_proto",
+    "tensorflow/go/core/framework/attr_value_go_proto",
+    "tensorflow/go/core/framework/cost_graph_go_proto",
+    "tensorflow/go/core/framework/device_attributes_go_proto",
+    "tensorflow/go/core/framework/function_go_proto",
+    "tensorflow/go/core/framework/graph_go_proto",
+    "tensorflow/go/core/framework/node_def_go_proto",
+    "tensorflow/go/core/framework/op_def_go_proto",
+    "tensorflow/go/core/framework/resource_handle_go_proto",
+    "tensorflow/go/core/framework/step_stats_go_proto",
+    "tensorflow/go/core/framework/tensor_description_go_proto",
+    "tensorflow/go/core/framework/tensor_go_proto",
+    "tensorflow/go/core/framework/tensor_shape_go_proto",
+    "tensorflow/go/core/framework/tensor_slice_go_proto",
+    "tensorflow/go/core/framework/types_go_proto",
+    "tensorflow/go/core/framework/variable_go_proto",
+    "tensorflow/go/core/framework/versions_go_proto",
+    "tensorflow/go/core/protobuf/for_core_protos_go_proto",
     "tensorflow/go/op",
+    "tensorflow/go/stream_executor",
   ]
   pruneopts = "UT"
-  revision = "590d6eef7e91a6a7392c8ffffb7b58f2e0c8bc6b"
-  version = "v1.15.0"
+  revision = "54944032c560038840283b6dfc0ed4150995bc00"
+  source = "github.com/Unity-Technologies/tensorflow"
+  version = "v2.4.1-go"
 
 [[projects]]
   branch = "master"
@@ -145,9 +173,12 @@
   input-imports = [
     "github.com/gogo/protobuf/proto",
     "github.com/gogo/protobuf/types",
+    "github.com/pkg/errors",
     "github.com/tensorflow/tensorflow/tensorflow/go",
     "github.com/tensorflow/tensorflow/tensorflow/go/op",
     "google.golang.org/grpc",
+    "google.golang.org/grpc/codes",
+    "google.golang.org/grpc/status",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

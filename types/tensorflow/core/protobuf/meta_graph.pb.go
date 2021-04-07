@@ -938,7 +938,7 @@ func (m *TensorInfo_CompositeTensor) GetComponents() []*TensorInfo {
 // graph.
 //
 // For example, a model with two loss computations, sharing a single input,
-// might have the following signature_def map.
+// might have the following signature_def map, in a MetaGraphDef message.
 //
 // Note that across the two SignatureDefs "loss_A" and "loss_B", the input key,
 // output key, and method_name are identical, and will be used by system(s) that
@@ -964,9 +964,9 @@ func (m *TensorInfo_CompositeTensor) GetComponents() []*TensorInfo {
 //         tensor_shape: ...
 //       }
 //     }
+//     method_name: "some/package/compute_loss"
 //   }
 //   ...
-//   method_name: "some/package/compute_loss"
 // }
 // signature_def {
 //   key: "loss_B"
@@ -987,9 +987,9 @@ func (m *TensorInfo_CompositeTensor) GetComponents() []*TensorInfo {
 //         tensor_shape: ...
 //       }
 //     }
+//     method_name: "some/package/compute_loss"
 //   }
 //   ...
-//   method_name: "some/package/compute_loss"
 // }
 type SignatureDef struct {
 	// Named input parameters.

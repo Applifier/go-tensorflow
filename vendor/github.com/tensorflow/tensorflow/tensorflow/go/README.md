@@ -30,6 +30,7 @@ from source.
     sudo apt-get install python swig python-numpy # Linux
     brew install swig                             # OS X with homebrew
     ```
+- [Protocol buffer compiler (protoc) 3.x](https://github.com/google/protobuf/releases/)
 
 ### Build
 
@@ -74,6 +75,7 @@ from source.
 4.  Build and test:
 
     ```sh
+    go generate github.com/tensorflow/tensorflow/tensorflow/go/op
     go test github.com/tensorflow/tensorflow/tensorflow/go
     ```
 
@@ -91,11 +93,11 @@ go generate github.com/tensorflow/tensorflow/tensorflow/go/op
 
 ## Support
 
-Use [stackoverflow](http://stackoverflow.com/questions/tagged/tensorflow) and/or
-[Github issues](https://github.com/tensorflow/tensorflow/issues).
+Use [Stack Overflow](http://stackoverflow.com/questions/tagged/tensorflow)
+and/or [GitHub issues](https://github.com/tensorflow/tensorflow/issues).
 
 ## Contributions
 
 Contributions are welcome. If making any signification changes, probably best to
-discuss on a [Github issue](https://github.com/tensorflow/tensorflow/issues)
-before investing too much time. Github pull requests are used for contributions.
+discuss on a [GitHub issue](https://github.com/tensorflow/tensorflow/issues)
+before investing too much time. GitHub pull requests are used for contributions.

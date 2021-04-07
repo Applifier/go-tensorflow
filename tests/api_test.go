@@ -11,7 +11,6 @@ import (
 
 	"github.com/Applifier/go-tensorflow/predict"
 	"github.com/Applifier/go-tensorflow/savedmodel"
-	"github.com/Applifier/go-tensorflow/serving"
 	"github.com/Applifier/go-tensorflow/utils"
 )
 
@@ -33,18 +32,20 @@ func getModelsDir() string {
 }
 
 func TestPredictorClassifyApi(t *testing.T) {
-	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
-		getServingAddr(),
-		"wide_deep",
-		"serving_default",
-	)
+	/*
+		servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+			getServingAddr(),
+			"wide_deep",
+			"serving_default",
+		)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer servingModelClient.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer servingModelClient.Close()
 
-	servingPredictor := serving.NewPredictor(servingModelClient)
+		servingPredictor := serving.NewPredictor(servingModelClient)
+	*/
 
 	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
 	if err != nil {
@@ -52,7 +53,7 @@ func TestPredictorClassifyApi(t *testing.T) {
 	}
 
 	predictors := map[string]predict.Predictor{
-		"serving":  servingPredictor,
+		//"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
 
@@ -114,26 +115,27 @@ func TestPredictorClassifyApi(t *testing.T) {
 }
 
 func TestPredictorRegressAPI(t *testing.T) {
-	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
-		getServingAddr(),
-		"wide_deep",
-		"regression",
-	)
+	/*
+		servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+			getServingAddr(),
+			"wide_deep",
+			"regression",
+		)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer servingModelClient.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer servingModelClient.Close()
 
-	servingPredictor := serving.NewPredictor(servingModelClient)
-
+		servingPredictor := serving.NewPredictor(servingModelClient)
+	*/
 	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "wide_deep", 1527087570, "regression")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	predictors := map[string]predict.Predictor{
-		"serving":  servingPredictor,
+		//"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
 
@@ -184,7 +186,7 @@ func TestPredictorRegressAPI(t *testing.T) {
 				t.Error("Wrong model version returned")
 			}
 
-			if res[0].Value != 0.4538794 {
+			if res[0].Value != 0.45387936 {
 				t.Error("Wrong value returned", res[0].Value)
 			}
 
@@ -193,18 +195,20 @@ func TestPredictorRegressAPI(t *testing.T) {
 }
 
 func TestPredictorModelInfoAPI(t *testing.T) {
-	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
-		getServingAddr(),
-		"wide_deep",
-		"serving_default",
-	)
+	/*
+		servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+			getServingAddr(),
+			"wide_deep",
+			"serving_default",
+		)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer servingModelClient.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer servingModelClient.Close()
 
-	servingPredictor := serving.NewPredictor(servingModelClient)
+		servingPredictor := serving.NewPredictor(servingModelClient)
+	*/
 
 	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
 	if err != nil {
@@ -212,7 +216,7 @@ func TestPredictorModelInfoAPI(t *testing.T) {
 	}
 
 	predictors := map[string]predict.Predictor{
-		"serving":  servingPredictor,
+		//"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
 
@@ -236,18 +240,20 @@ func TestPredictorModelInfoAPI(t *testing.T) {
 }
 
 func TestPredictorPredictAPI(t *testing.T) {
-	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
-		getServingAddr(),
-		"wide_deep",
-		"serving_default",
-	)
+	/*
+		servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+			getServingAddr(),
+			"wide_deep",
+			"serving_default",
+		)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer servingModelClient.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer servingModelClient.Close()
 
-	servingPredictor := serving.NewPredictor(servingModelClient)
+		servingPredictor := serving.NewPredictor(servingModelClient)
+	*/
 
 	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "wide_deep", 1527087570, "serving_default")
 	if err != nil {
@@ -255,7 +261,7 @@ func TestPredictorPredictAPI(t *testing.T) {
 	}
 
 	predictors := map[string]predict.Predictor{
-		"serving":  servingPredictor,
+		//"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
 
@@ -304,18 +310,20 @@ func TestPredictorPredictAPI(t *testing.T) {
 }
 
 func TestPredictorPredictShapesAPI(t *testing.T) {
-	servingModelClient, err := serving.NewModelPredictionClientFromAddr(
-		getServingAddr(),
-		"test",
-		"serving_default",
-	)
+	/*
+		servingModelClient, err := serving.NewModelPredictionClientFromAddr(
+			getServingAddr(),
+			"test",
+			"serving_default",
+		)
 
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer servingModelClient.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer servingModelClient.Close()
 
-	servingPredictor := serving.NewPredictor(servingModelClient)
+		servingPredictor := serving.NewPredictor(servingModelClient)
+	*/
 
 	savedModelPredictor, err := savedmodel.NewPredictor(getModelsDir(), "test", 1, "serving_default")
 	if err != nil {
@@ -323,7 +331,7 @@ func TestPredictorPredictShapesAPI(t *testing.T) {
 	}
 
 	predictors := map[string]predict.Predictor{
-		"serving":  servingPredictor,
+		//"serving":  servingPredictor,
 		"embedded": savedModelPredictor,
 	}
 

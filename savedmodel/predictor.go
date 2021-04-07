@@ -22,7 +22,7 @@ type savedModelPredictor struct {
 	runner  *Runner
 	name    string
 	version int
-	model 	*tf.SavedModel
+	model   *tf.SavedModel
 
 	bufferPool sync.Pool
 }
@@ -37,17 +37,12 @@ func NewPredictor(modelsDir string, name string, version int, signature string) 
 	}
 	defer file.Close()
 
-	signatureDef, err := GetSignatureDefFromReader(tags, signature, file)
-	if err != nil {
-		return nil, err
-	}
-
 	model, err := tf.LoadSavedModel(modelPath, tags, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	runner, err := NewRunnerWithSignature(model, signatureDef)
+	runner, err := NewRunnerWithSignature(model, signature)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +51,7 @@ func NewPredictor(modelsDir string, name string, version int, signature string) 
 		runner:  runner,
 		name:    name,
 		version: version,
-		model: model,
+		model:   model,
 
 		bufferPool: sync.Pool{
 			New: func() interface{} {

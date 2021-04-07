@@ -1,11 +1,12 @@
 syntax = "proto3";
 
 package tensorflow.serving;
-option cc_enable_arenas = true;
 
 import "google/protobuf/any.proto";
-import "tensorflow_serving/logging_config.proto";
 import "tensorflow_serving/file_system_storage_path_source.proto";
+import "tensorflow_serving/logging_config.proto";
+
+option cc_enable_arenas = true;
 
 // The type of model.
 // TODO(b/31336131): DEPRECATED.
@@ -13,7 +14,7 @@ enum ModelType {
   MODEL_TYPE_UNSPECIFIED = 0 [deprecated = true];
   TENSORFLOW = 1 [deprecated = true];
   OTHER = 2 [deprecated = true];
-};
+}
 
 // Common configuration for loading a model being served.
 message ModelConfig {
@@ -38,7 +39,7 @@ message ModelConfig {
   // (This cannot be changed once a model is in serving.)
   string model_platform = 4;
 
-  reserved 5;
+  reserved 5, 9;
 
   // Version policy for the model indicating which version(s) of the model to
   // load and make available for serving simultaneously.

@@ -33,8 +33,6 @@ type GraphDef struct {
 	// GraphDef changes before "versions" was introduced were forward
 	// compatible, this field is entirely ignored.
 	Version int32 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"` // Deprecated: Do not use.
-	// EXPERIMENTAL. DO NOT USE OR DEPEND ON THIS YET.
-	//
 	// "library" provides user-defined functions.
 	//
 	// Naming:

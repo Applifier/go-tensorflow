@@ -30,8 +30,7 @@ const (
 	// processed by data ingestion pipelines.
 	DataClass_DATA_CLASS_UNKNOWN DataClass = 0
 	// Scalar time series. Each `Value` for the corresponding tag must have
-	// `tensor` set to a rank-0 tensor of floating-point dtype, which will be
-	// converted to float64.
+	// `tensor` set to a rank-0 tensor of type `DT_FLOAT` (float32).
 	DataClass_DATA_CLASS_SCALAR DataClass = 1
 	// Tensor time series. Each `Value` for the corresponding tag must have
 	// `tensor` set. The tensor value is arbitrary, but should be small to

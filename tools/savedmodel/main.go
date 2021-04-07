@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path"
 	"strings"
 
 	"github.com/Applifier/go-tensorflow/internal/typeconv"
@@ -42,23 +41,12 @@ func main() {
 
 	fmt.Printf("Input: %+v\n", inputs)
 
-	file, err := os.Open(path.Join(modelpath, "saved_model.pb"))
-	if err != nil {
-		panic(err)
-	}
-
-	signatureDef, err := savedmodel.GetSignatureDefFromReader([]string{tag}, signature, file)
-	if err != nil {
-		panic(err)
-	}
-	file.Close()
-
 	model, err := tf.LoadSavedModel(modelpath, []string{tag}, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	runner, err := savedmodel.NewRunnerWithSignature(model, signatureDef)
+	runner, err := savedmodel.NewRunnerWithSignature(model, signature)
 	if err != nil {
 		panic(err)
 	}

@@ -235,9 +235,12 @@ func ExampleModelPredictionClient() {
 	// Convert serialized example to tensor
 	tensor, _ := NewTensor([][]byte{exampleSerialized})
 
-	res, _ := cli.Predict(context.Background(), TensorMap{
+	res, err := cli.Predict(context.Background(), TensorMap{
 		"inputs": tensor,
 	}, nil)
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Printf("scores %+v\n", res.Outputs["scores"].FloatVal)
 

@@ -18,12 +18,7 @@ func TestRunner(t *testing.T) {
 	testModelReader := getTestModel("wide_deep", 1527087570)
 	defer testModelReader.Close()
 
-	signatureDef, err := GetSignatureDefFromReader([]string{"serve"}, "serving_default", testModelReader)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	runner, err := NewRunnerWithSignature(model, signatureDef)
+	runner, err := NewRunnerWithSignature(model, "serving_default")
 	if err != nil {
 		t.Fatal(err)
 	}

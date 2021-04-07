@@ -23,6 +23,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// LINT.IfChange
 // Containers to hold repeated fundamental values.
 type BytesList struct {
 	Value [][]byte `protobuf:"bytes,1,rep,name=value,proto3" json:"value,omitempty"`

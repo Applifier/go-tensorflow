@@ -31,7 +31,8 @@
 
 [[constraint]]
   name = "github.com/tensorflow/tensorflow"
-  version = "1.8.0"
+  version = "2.4.1-go"
+  source = "github.com/Unity-Technologies/tensorflow"
 
 [[constraint]]
   branch = "master"

@@ -4,13 +4,12 @@ import (
 	"strconv"
 	"strings"
 
-	protobuf "github.com/Applifier/go-tensorflow/types/tensorflow/core/protobuf"
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
 // Runner transform Session.Run input and output based on given SignatureDef
 type Runner struct {
-	signatureDef *protobuf.SignatureDef
+	signatureDef tf.Signature
 	savedModel   *tf.SavedModel
 
 	feedMapping   map[string]tf.Output
@@ -20,7 +19,9 @@ type Runner struct {
 }
 
 // NewRunnerWithSignature returns a new Runner for a given SignatureDef and tf.SavedModel
-func NewRunnerWithSignature(savedModel *tf.SavedModel, signatureDef *protobuf.SignatureDef) (*Runner, error) {
+func NewRunnerWithSignature(savedModel *tf.SavedModel, signatureName string) (*Runner, error) {
+	signatureDef := savedModel.Signatures[signatureName]
+
 	sr := &Runner{
 		signatureDef: signatureDef,
 		savedModel:   savedModel,
@@ -38,9 +39,8 @@ func NewRunner(savedModel *tf.SavedModel, tags []string, signature string) (*Run
 }
 
 func (sr *Runner) init() error {
-	for inputName, def := range sr.signatureDef.Inputs {
-		encoding := def.Encoding.(*protobuf.TensorInfo_Name)
-		parts := strings.Split(encoding.Name, ":")
+	for inputName, tensorInfo := range sr.signatureDef.Inputs {
+		parts := strings.Split(tensorInfo.Name, ":")
 		name := parts[0]
 		index, err := strconv.Atoi(parts[1])
 		if err != nil {
@@ -53,9 +53,8 @@ func (sr *Runner) init() error {
 		}
 	}
 
-	for outputName, def := range sr.signatureDef.Outputs {
-		encoding := def.Encoding.(*protobuf.TensorInfo_Name)
-		parts := strings.Split(encoding.Name, ":")
+	for outputName, tensorInfo := range sr.signatureDef.Outputs {
+		parts := strings.Split(tensorInfo.Name, ":")
 		name := parts[0]
 		index, err := strconv.Atoi(parts[1])
 		if err != nil {
